@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file datatype="xml" source-language="en-US" target-language="it-CH">
+    <body>
+      <group id="body">
+        <trans-unit id="Codeunit 4033644835 - Method 1289199879 - NamedType 1355770430" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Purch. Req - Status = %1</source>
+          <target>RDA - Stato = %1</target>
+        </trans-unit>
+        <trans-unit id="PageExtension 1550171389 - Control 1863575892 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Security Description</source>
+          <target>Descrizione sicurezza</target>
+        </trans-unit>
+        <trans-unit id="PageExtension 1550171389 - Control 642766454 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Security Status</source>
+          <target>Stato Sicurezza</target>
+        </trans-unit>
+        <trans-unit id="PageExtension 3648421480 - Control 642766454 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Security Status</source>
+          <target>Stato Sicurezza</target>
+        </trans-unit>
+        <trans-unit id="TableExtension 1305001450 - Field 3110349897 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>DS Status Code</source>
+          <target>Cod. Stato DS</target>
+        </trans-unit>
+        <trans-unit id="TableExtension 3633495434 - Field 3110349897 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>DS Status Code</source>
+          <target>Cod. Stato DS</target>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>

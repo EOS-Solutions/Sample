@@ -1,0 +1,55 @@
+{
+    "id":  "e1f66890-c6be-4adb-b664-6c0e4052ae09",
+    "name":  "Data Security for Purchase Request Sample",
+    "publisher":  "EOS Solutions",
+    "brief":  "Data Security for Purchase Request",
+    "description":  "Data Security for Purchase Request",
+    "version":  "1.0.0.0",
+    "privacyStatement":  "https://www.eos-solutions.it/en/privacy.html",
+    "EULA":  "https://www.eos-solutions.it/en/eula.html",
+    "help":  "http://helpbc.eos-solutions.it/",
+    "url":  "https://www.eos-solutions.it/",
+    "logo":  "Images/logo-432.png",
+    "features":  [
+                     "TranslationFile"
+                 ],
+    "supportedLocales":  [
+                             "it-IT",
+                             "it-CH",
+                             "en-US",
+                             "en-CA",
+                             "en-AU",
+                             "en-NZ",
+                             "en-GB",
+                             "de-DE",
+                             "de-AT",
+                             "de-CH"
+                         ],
+    "capabilities":  [
+
+                     ],
+    "dependencies":  [
+        {
+            "appId": "f2d14c8d-6f8a-45a6-8c0e-5b3db46aa59e",
+            "name": "Purchase Request",
+            "publisher": "EOS Solutions",
+            "version": "14.0.2.0"
+        },
+        {
+            "appId": "d3f057ed-e131-4dc6-a1b9-3af3503a5d2a",
+            "name": "Data Security",
+            "publisher": "EOS Solutions",
+            "version": "1.0.74.0"
+        }
+                     ],
+    "screenshots":  [
+
+                    ],
+    "platform":  "13.0.0.0",
+    "application":  "13.0.0.0",
+    "idRange":  {
+                    "from":  61100,
+                    "to":  61105
+                },
+    "runtime":  "3.0"
+}

@@ -1,0 +1,12 @@
+{
+	"ServiceURL": "",
+	"ImportID": "",
+	"JSONFolder": [
+		"PATH to decompressed data 1",
+		"PATH to decompressed data 2",
+		"PATH to decompressed data 3"
+	],
+	"Force": false,
+	"Overwrite": true,
+	"UseSystemDlls": true
+}

@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="Data Security for Purchase Request Sample">
+    <body>
+      <group id="body">
+        <trans-unit id="Codeunit 3645641187 - Method 1289199879 - NamedType 1355770430" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Purch. Req - Status = %1</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit EOSPurch. Request DTS Mgt. - Method DS_ChangeRDAStatus - NamedType FunctionTxt</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 528797245 - Control 2866839606 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2151778819">
+          <source>Security Status</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension EOSPurch. Request List DTS - Control EOSDSStatus - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 528797245 - Control 2366891412 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 2151778819">
+          <source>Security Description</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension EOSPurch. Request List DTS - Control EOSDSDescription - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 900111144 - Control 2866839606 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 3664753017">
+          <source>Security Status</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension EOSArc. Purch. Req. List DTS - Control EOSDSStatus - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2918663978 - Field 1767594906 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 4169734679">
+          <source>DS Status Code</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension EOSPurch. Request Header DST - Field DS Status Code - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2725294666 - Field 1767594906 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 3342786230">
+          <source>DS Status Code</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension EOSArch. Purch. Req. Hdr. DTS - Field DS Status Code - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
