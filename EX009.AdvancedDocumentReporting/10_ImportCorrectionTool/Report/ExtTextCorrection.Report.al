@@ -32,14 +32,26 @@ report 50080 "EOSTOOL ExtText Correction"
                         if not Confirm(Conf2Lbl, true, format(AdvTextHead.Count)) then begin
                             CurrReport.Break();
                             Clear(BoolNotProcessed);
+                            Clear(RecCount);
+                            RecCount := AdvTextHead.COUNT;
+                            RecNo := 0;
                             BoolNotProcessed := True;
                         end;
                 end;
+                Window.OPEN(DialogTxt);
             end;
 
             trigger OnAfterGetRecord()
             begin
                 if ExtTextType = ExtTextType::Line then CurrReport.Skip();
+                RecNo += 1;
+                case TableSource of
+                    TableSource::Customer:
+                        Window.UPDATE(1, AdvTextHead."EOSTOOL Temp Customer No.");
+                    TableSource::Vendor:
+                        Window.UPDATE(1, AdvTextHead."EOSTOOL Temp Vendor No.");
+                end;
+                Window.UPDATE(2, ROUND(RecNo / RecCount * 10000, 1));
                 case ActionType of
                     ActionType::Correction:
                         AdvTextHeaderCorrection(AdvTextHead);
@@ -58,6 +70,7 @@ report 50080 "EOSTOOL ExtText Correction"
                     Message(Msg2Lbl);
                 if BoolNotProcessed = False then
                     Message(Msg1Lbl);
+                Window.CLOSE();
             end;
         }
         dataitem("AdvTextLine"; "EOS009 Doc. Adv. Text Line")
@@ -88,11 +101,22 @@ report 50080 "EOSTOOL ExtText Correction"
                             BoolNotProcessed := True;
                         end;
                 end;
+                RecCount := AdvTextLine.COUNT;
+                RecNo := 0;
+                Window.OPEN(DialogTxt);
             end;
 
             trigger OnAfterGetRecord()
             begin
                 if ExtTextType = ExtTextType::Header then CurrReport.Skip();
+                RecNo += 1;
+                case TableSource of
+                    TableSource::Customer:
+                        Window.UPDATE(1, AdvTextLine."EOSTOOL Temp Customer No.");
+                    TableSource::Vendor:
+                        Window.UPDATE(1, AdvTextLine."EOSTOOL Temp Vendor No.");
+                end;
+                Window.UPDATE(2, ROUND(RecNo / RecCount * 10000, 1));
                 case ActionType of
                     ActionType::Correction:
                         AdvTextLineCorrection(AdvTextLine);
@@ -111,6 +135,7 @@ report 50080 "EOSTOOL ExtText Correction"
                     Message(Msg2Lbl);
                 if BoolNotProcessed = False then
                     Message(Msg1Lbl);
+                Window.CLOSE();
             end;
         }
     }
@@ -157,14 +182,12 @@ report 50080 "EOSTOOL ExtText Correction"
             TableSource::Customer:
                 if VarCustomer.get(ParAdvTextHead."EOSTOOL Temp Customer No.") then begin
                     ParAdvTextHead."Source GUID" := VarCustomer.id;
-                    ParAdvTextHead.SystemId := VarVendor.SystemId;
                     ParAdvTextHead."EOSTOOL Temp Customer No." := '';
                     ParAdvTextHead.Modify();
                 end;
             TableSource::Vendor:
                 if VarVendor.get(ParAdvTextHead."EOSTOOL Temp Vendor No.") then begin
                     ParAdvTextHead."Source GUID" := VarVendor.id;
-                    ParAdvTextHead.SystemId := VarVendor.SystemId;
                     ParAdvTextHead."EOSTOOL Temp Vendor No." := '';
                     ParAdvTextHead.Modify();
                 end;
@@ -199,4 +222,8 @@ report 50080 "EOSTOOL ExtText Correction"
         ActionType: Option Correction,Delete;
         TableSource: Option Customer,Vendor; //20201111 Extended for Vendors
         BoolNotProcessed: Boolean;
+        Window: Dialog;
+        RecNo: Integer;
+        RecCount: Integer;
+        DialogTxt: label 'ENU=#1########//@2@@@@@@@';
 }
