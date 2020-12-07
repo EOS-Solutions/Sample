@@ -1,0 +1,39 @@
+{
+  "id": "da4eccd7-4abe-4c38-80d5-b42bc9a689b3",
+  "name": "Extended Text Import Correction",
+  "publisher": "EOS Solutions",
+  "version": "16.0.1.10",
+  "brief": "Correction for import of Extended Text",
+  "description": "Correction for import of Extended Text",
+  "privacyStatement":  "https://www.eos-solutions.it/en/privacy.html",
+  "EULA":  "https://www.eos-solutions.it/en/eula.html",
+  "help":  "http://helpbc.eos-solutions.it/",
+  "url":  "https://www.eos-solutions.it/",
+  "contextSensitiveHelpUrl": "https://www.eos-solutions.it/en/apps-microsoft-dynamics-365.html",
+  "logo": "./Image/NewEOS.png",
+  "dependencies": [
+    {
+      "id": "63ca2fa4-4f03-4f2b-a480-172fef340d3f",
+      "publisher": "Microsoft",
+      "name": "System Application",
+      "version": "16.0.0.0"
+    },
+    {
+      "id": "437dbf0e-84ff-417a-965d-ed2bb9650972",
+      "publisher": "Microsoft",
+      "name": "Base Application",
+      "version": "16.0.0.0"
+    },
+    {
+      "id": "b2dd1d81-3e95-46a8-94ef-8c32d872bf0c",
+      "name": "Advanced Document Reporting",
+      "publisher": "EOS Solutions",
+      "version": "16.0.63.0"
+    }
+  ],
+  "screenshots": [],
+  "platform": "16.0.0.0",
+  "idRanges": [{"from": 50079,"to": 50080},{"from": 59000,"to": 59010}],
+  "showMyCode": true,
+  "runtime": "5.0"
+}
