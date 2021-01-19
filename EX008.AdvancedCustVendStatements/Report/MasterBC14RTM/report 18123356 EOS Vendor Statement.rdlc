@@ -7,7 +7,7 @@
         <DataProvider>SQL</DataProvider>
         <ConnectString />
       </ConnectionProperties>
-      <rd:SecurityType>None</rd:SecurityType>
+      <rd:DataSourceID>01e40bc1-52b8-4b57-986d-4d7bff31e441</rd:DataSourceID>
     </DataSource>
   </DataSources>
   <ReportSections>
@@ -838,6 +838,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1122,6 +1123,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1383,6 +1385,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1664,6 +1667,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1931,6 +1935,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -2477,10 +2482,14 @@
                     <TablixMember>
                       <Group Name="DocumentGroup">
                         <GroupExpressions>
+                          <GroupExpression>=Fields!DocumentGroupDate.Value</GroupExpression>
                           <GroupExpression>=Fields!DocumentGroup.Value</GroupExpression>
                         </GroupExpressions>
                       </Group>
                       <SortExpressions>
+                        <SortExpression>
+                          <Value>=Fields!DocumentGroupDate.Value</Value>
+                        </SortExpression>
                         <SortExpression>
                           <Value>=Fields!DocumentGroup.Value</Value>
                         </SortExpression>
@@ -3314,6 +3323,7 @@
   <Language>=User!Language</Language>
   <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>78bdf39b-bcd5-4be7-b913-7106bb432272</rd:ReportID>
   <DataSets>
     <DataSet Name="DataSet_Result">
       <Fields>
@@ -3379,6 +3389,9 @@
         </Field>
         <Field Name="AssetGroup">
           <DataField>AssetGroup</DataField>
+        </Field>
+        <Field Name="DocumentGroupDate">
+          <DataField>DocumentGroupDate</DataField>
         </Field>
         <Field Name="LineType">
           <DataField>LineType</DataField>

@@ -234,6 +234,7 @@ report 18123356 "EOS Vendor Statement"
                 column(ShowAssetTotal; TempReportingBuffer[1]."EOS Reporting Boolean 2") { }
                 column(DocumentGroup; TempReportingBuffer[1]."EOS Reporting Group 1") { }
                 column(AssetGroup; TempReportingBuffer[1]."EOS Reporting Group 2") { }
+                column(DocumentGroupDate; TempReportingBuffer[1]."EOS Posting Date 1") { }
                 column(LineType; GetLineType()) { }
                 column(PostingDate; Format(TempReportingBuffer[1]."EOS Posting Date")) { }
                 column(DocumentType; GetDocumentTypeAbbreviation(TempReportingBuffer[1]."EOS Document Type")) { }
