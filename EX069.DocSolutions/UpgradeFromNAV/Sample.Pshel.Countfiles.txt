@@ -1,0 +1,4 @@
+cd \\<YourDrive>\DocSolutions$\<YourCompany>\DOCS\PURCHASE\2001
+(Get-ChildItem -File -Recurse | Measure-Object).Count
+
+
