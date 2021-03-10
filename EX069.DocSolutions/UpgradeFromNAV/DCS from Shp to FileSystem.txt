@@ -1,0 +1,630 @@
+OBJECT Codeunit 80000 DCS from Shp to FileSystem
+{
+  OBJECT-PROPERTIES
+  {
+    Date=10/03/21;
+    Time=10:18:20;
+    Modified=Yes;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+            ProcessRecords;
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      UserSetup@1106000000 : Record 91;
+      Window@1106000001 : Dialog;
+
+    [LineStart(3)]
+    LOCAL PROCEDURE ProcessRecords@1106000000();
+    VAR
+      Customer@1106000000 : Record 18;
+      LineCount@1106000001 : Integer;
+      Count@1106000002 : Integer;
+      GLEntry@1106000003 : Record 17;
+      Job@1106000004 : Record 167;
+      Vendor@1106000005 : Record 23;
+      SalesHeader@1106000006 : Record 36;
+      PurchaseHeader@1106000007 : Record 38;
+      SalesInvoiceHeader@1106000008 : Record 112;
+      SalesCrMemoHeader@1106000009 : Record 114;
+      PurchInvHeader@1106000010 : Record 122;
+      PurchCrMemoHdr@1106000011 : Record 124;
+      FixedAsset@1106000012 : Record 5600;
+      RecRefLoc@1106000013 : RecordRef;
+      RecRefLoc2@1106000014 : RecordRef;
+    BEGIN
+
+      {
+      //Vendite
+      //Customer
+      CLEAR(Window);
+        Window.OPEN(
+          '#1#################################\\' +
+          '#2#################################');
+      Customer.RESET;
+      //Customer.SETRANGE("No.",'K01616');
+      LineCount := Customer.COUNT;
+      Count := 0;
+      IF Customer.FINDFIRST THEN
+        REPEAT
+          Count += 1;
+          Window.UPDATE(1,Count);
+          Window.UPDATE(2,'Cliente: '+ FORMAT(Customer."No."));
+          ProcessRecordVariant(Customer);
+        UNTIL Customer.NEXT = 0;
+      Window.CLOSE;
+      {
+      //GLENTRY
+      CLEAR(Window);
+        Window.OPEN(
+          '#1#################################\\' +
+          '#2#################################');
+      GLEntry.RESET;
+      //GLEntry.SETFILTER("Posting Date",'>=%1',131215D);
+      GLEntry.SETFILTER("Entry No.",'>%1',3338);
+      LineCount := GLEntry.COUNT;
+      Count := 0;
+      IF GLEntry.FINDFIRST THEN
+        REPEAT
+          Count += 1;
+          Window.UPDATE(1,Count);
+          Window.UPDATE(2,'GLENTRY: '+ FORMAT(GLEntry."Entry No."));
+          ProcessRecordVariant(GLEntry);
+        UNTIL GLEntry.NEXT = 0;
+      Window.CLOSE;
+      }
+      //JOB
+      CLEAR(Window);
+        Window.OPEN(
+          '#1#################################\\' +
+          '#2#################################');
+      Job.RESET;
+      LineCount := Job.COUNT;
+      Count := 0;
+      IF Job.FINDFIRST THEN
+        REPEAT
+          Count += 1;
+          Window.UPDATE(1,Count);
+          Window.UPDATE(2,'JOB: '+ FORMAT(Job."No."));
+          ProcessRecordVariant(Job);
+        UNTIL Job.NEXT = 0;
+      Window.CLOSE;
+
+      //Vendor
+      CLEAR(Window);
+        Window.OPEN(
+          '#1#################################\\' +
+          '#2#################################');
+      Vendor.RESET;
+      LineCount := Vendor.COUNT;
+      Count := 0;
+      IF Vendor.FINDFIRST THEN
+        REPEAT
+          Count += 1;
+          Window.UPDATE(1,Count);
+          Window.UPDATE(2,'Vendor: '+ FORMAT(Vendor."No."));
+          ProcessRecordVariant(Vendor);
+        UNTIL Vendor.NEXT = 0;
+      Window.CLOSE;
+
+      //Vendite
+      //ODV
+      CLEAR(Window);
+        Window.OPEN(
+          '#1#################################\\' +
+          '#2#################################');
+      SalesHeader.RESET;
+      SalesHeader.SETRANGE("Document Type",SalesHeader."Document Type"::Order);
+      LineCount := SalesHeader.COUNT;
+      Count := 0;
+      IF SalesHeader.FINDFIRST THEN
+        REPEAT
+          Count += 1;
+          Window.UPDATE(1,Count);
+          Window.UPDATE(2,'SalesHeader: '+ FORMAT(SalesHeader."No."));
+          ProcessRecordVariant(SalesHeader);
+        UNTIL SalesHeader.NEXT = 0;
+      Window.CLOSE;
+      //FV
+      CLEAR(Window);
+        Window.OPEN(
+          '#1#################################\\' +
+          '#2#################################');
+      SalesHeader.RESET;
+      SalesHeader.SETRANGE("Document Type",SalesHeader."Document Type"::Invoice);
+      LineCount := SalesHeader.COUNT;
+      Count := 0;
+      IF SalesHeader.FINDFIRST THEN
+        REPEAT
+          Count += 1;
+          Window.UPDATE(1,Count);
+          Window.UPDATE(2,'SalesHeader: '+ FORMAT(SalesHeader."No."));
+          ProcessRecordVariant(SalesHeader);
+        UNTIL SalesHeader.NEXT = 0;
+      Window.CLOSE;
+      //NC
+      CLEAR(Window);
+        Window.OPEN(
+          '#1#################################\\' +
+          '#2#################################');
+      SalesHeader.RESET;
+      SalesHeader.SETRANGE("Document Type",SalesHeader."Document Type"::"Credit Memo");
+      LineCount := SalesHeader.COUNT;
+      Count := 0;
+      IF SalesHeader.FINDFIRST THEN
+        REPEAT
+          Count += 1;
+          Window.UPDATE(1,Count);
+          Window.UPDATE(2,'SalesHeader: '+ FORMAT(SalesHeader."No."));
+          ProcessRecordVariant(SalesHeader);
+        UNTIL SalesHeader.NEXT = 0;
+      Window.CLOSE;
+      }
+      {
+      //ACQUISTI
+      //ODA
+      CLEAR(Window);
+        Window.OPEN(
+          '#1#################################\\' +
+          '#2#################################');
+      PurchaseHeader.RESET;
+      PurchaseHeader.SETRANGE("Document Type",PurchaseHeader."Document Type"::Order);
+      LineCount := PurchaseHeader.COUNT;
+      Count := 0;
+      IF PurchaseHeader.FINDFIRST THEN
+        REPEAT
+          Count += 1;
+          Window.UPDATE(1,Count);
+          Window.UPDATE(2,'PurchaseHeader: '+ FORMAT(PurchaseHeader."No."));
+          ProcessRecordVariant(PurchaseHeader);
+        UNTIL PurchaseHeader.NEXT = 0;
+      Window.CLOSE;
+
+      //FA
+      CLEAR(Window);
+        Window.OPEN(
+          '#1#################################\\' +
+          '#2#################################');
+      PurchaseHeader.RESET;
+      PurchaseHeader.SETRANGE("Document Type",PurchaseHeader."Document Type"::Invoice);
+      LineCount := PurchaseHeader.COUNT;
+      Count := 0;
+      IF PurchaseHeader.FINDFIRST THEN
+        REPEAT
+          Count += 1;
+          Window.UPDATE(1,Count);
+          Window.UPDATE(2,'PurchaseHeader: '+ FORMAT(PurchaseHeader."No."));
+          ProcessRecordVariant(PurchaseHeader);
+        UNTIL PurchaseHeader.NEXT = 0;
+      Window.CLOSE;
+
+      //Fat Ve Reg
+      CLEAR(Window);
+        Window.OPEN(
+          '#1#################################\\' +
+          '#2#################################');
+      SalesInvoiceHeader.RESET;
+      //SalesInvoiceHeader.SETRANGE("Document Date",011216D,311225D);
+      SalesInvoiceHeader.SETRANGE("Document Date",010119D,311219D);
+
+      LineCount := SalesInvoiceHeader.COUNT;
+      Count := 0;
+      IF SalesInvoiceHeader.FINDFIRST THEN
+        REPEAT
+          Count += 1;
+          Window.UPDATE(1,Count);
+          Window.UPDATE(2,'SalesInvoiceHeader: '+ FORMAT(SalesInvoiceHeader."No."));
+          ProcessRecordVariant(SalesInvoiceHeader);
+        UNTIL SalesInvoiceHeader.NEXT = 0;
+      Window.CLOSE;
+
+      //NC Reg
+      CLEAR(Window);
+        Window.OPEN(
+          '#1#################################\\' +
+          '#2#################################');
+      SalesCrMemoHeader.RESET;
+      SalesCrMemoHeader.SETRANGE("Document Date",011216D,311225D);
+      LineCount := SalesCrMemoHeader.COUNT;
+      Count := 0;
+      IF SalesCrMemoHeader.FINDFIRST THEN
+        REPEAT
+          Count += 1;
+          Window.UPDATE(1,Count);
+          Window.UPDATE(2,'SalesCrMemoHeader: '+ FORMAT(SalesCrMemoHeader."No."));
+          ProcessRecordVariant(SalesCrMemoHeader);
+        UNTIL SalesCrMemoHeader.NEXT = 0;
+      Window.CLOSE;
+      }
+      {
+      //Fat acq Reg
+      CLEAR(Window);
+        Window.OPEN(
+          '#1#################################\\' +
+          '#2#################################');
+      PurchInvHeader.RESET;
+      LineCount := PurchInvHeader.COUNT;
+      Count := 0;
+      IF PurchInvHeader.FINDFIRST THEN
+        REPEAT
+          Count += 1;
+          Window.UPDATE(1,Count);
+          Window.UPDATE(2,'PurchInvHeader: '+ FORMAT(PurchInvHeader."No."));
+          ProcessRecordVariant(PurchInvHeader);
+        UNTIL PurchInvHeader.NEXT = 0;
+      Window.CLOSE;
+
+      //NC acq Reg
+      CLEAR(Window);
+        Window.OPEN(
+          '#1#################################\\' +
+          '#2#################################');
+      PurchCrMemoHdr.RESET;
+      PurchCrMemoHdr.SETRANGE("Document Date",010112D,311215D);
+      LineCount := PurchCrMemoHdr.COUNT;
+      Count := 0;
+      IF PurchCrMemoHdr.FINDFIRST THEN
+        REPEAT
+          Count += 1;
+          Window.UPDATE(1,Count);
+          Window.UPDATE(2,'PurchCrMemoHdr: '+ FORMAT(PurchCrMemoHdr."No."));
+          ProcessRecordVariant(PurchCrMemoHdr);
+        UNTIL PurchCrMemoHdr.NEXT = 0;
+      Window.CLOSE;
+
+
+      //FA
+      CLEAR(Window);
+        Window.OPEN(
+          '#1#################################\\' +
+          '#2#################################');
+      FixedAsset.RESET;
+      LineCount := FixedAsset.COUNT;
+      Count := 0;
+      IF FixedAsset.FINDFIRST THEN
+        REPEAT
+          Count += 1;
+          Window.UPDATE(1,Count);
+          Window.UPDATE(2,'FixedAsset: '+ FORMAT(FixedAsset."No."));
+          ProcessRecordVariant(FixedAsset);
+        UNTIL FixedAsset.NEXT = 0;
+      Window.CLOSE;
+
+      //RDA che sono AL
+      CLEAR(Window);
+        Window.OPEN(
+          '#1#################################\\' +
+          '#2#################################');
+      RecRefLoc.OPEN(18123250);
+      LineCount := RecRefLoc.COUNT;
+      Count := 0;
+      IF RecRefLoc.FINDFIRST THEN
+        REPEAT
+          Count += 1;
+          Window.UPDATE(1,Count);
+          Window.UPDATE(2,'RDA: ');
+          Process(RecRefLoc);
+        UNTIL RecRefLoc.NEXT = 0;
+      Window.CLOSE;
+
+      //RDA archiviate che sono AL
+      CLEAR(Window);
+        Window.OPEN(
+          '#1#################################\\' +
+          '#2#################################');
+      RecRefLoc2.OPEN(18123254);
+      LineCount := RecRefLoc2.COUNT;
+      Count := 0;
+      IF RecRefLoc2.FINDFIRST THEN
+        REPEAT
+          Count += 1;
+          Window.UPDATE(1,Count);
+          Window.UPDATE(2,'RDA ARC: ');
+          Process(RecRefLoc2);
+        UNTIL RecRefLoc2.NEXT = 0;
+      Window.CLOSE;
+      }
+    END;
+
+    [LineStart(296)]
+    LOCAL PROCEDURE ProcessRecordVariant@1106000002(FromRec@1106000000 : Variant);
+    VAR
+      DataTypeMgt@1106000002 : Codeunit 701;
+      FromRecRef@1106000001 : RecordRef;
+    BEGIN
+      DataTypeMgt.GetRecordRef(FromRec, FromRecRef);
+      Process(FromRecRef);
+    END;
+
+    [LineStart(300)]
+    LOCAL PROCEDURE Process@1106000001(VAR FromRecRef@1106000000 : RecordRef);
+    VAR
+      dcsFile@1106000017 : DotNet "'Eos.Lib.DocSolutions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=null'.Eos.Lib.DocSolutions.DocSolutionsFile";
+      dcsFileNew@1106000016 : DotNet "'Eos.Lib.DocSolutions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=null'.Eos.Lib.DocSolutions.DocSolutionsFile";
+      dcsFiles@1106000015 : DotNet "'Eos.Lib.DocSolutions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=null'.Eos.Lib.DocSolutions.DocSolutionsFileCollection";
+      FromDCSTableSetup@1106000014 : Record 18121905;
+      ToDCSTableSetup@1106000013 : Record 18121905;
+      FromLibrary@1106000012 : Record 18121907;
+      ToLibrary@1106000011 : Record 18121907;
+      emptyArray@1106000010 : DotNet "'mscorlib'.System.Array";
+      dcsFrom@1106000009 : DotNet "'Eos.Lib.DocSolutions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=null'.Eos.Lib.DocSolutions.DocSolutionsService";
+      dcsTo@1106000008 : DotNet "'Eos.Lib.DocSolutions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=null'.Eos.Lib.DocSolutions.DocSolutionsService";
+      dcsToRec@1106000007 : DotNet "'Eos.Lib.DocSolutions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=null'.Eos.Lib.DocSolutions.DocSolutionsRecordRef";
+      dcsFromRec@1106000006 : DotNet "'Eos.Lib.DocSolutions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=null'.Eos.Lib.DocSolutions.DocSolutionsRecordRef";
+      ms@1106000005 : DotNet "'mscorlib'.System.IO.MemoryStream";
+      IsEnabled@1106000004 : Boolean;
+      DownloadAndUpload@1106000003 : Boolean;
+      s@1106000002 : Text;
+      IsHandled@1106000001 : Boolean;
+      ToRecRef@1106000018 : RecordRef;
+      i@1106000019 : Integer;
+    BEGIN
+      ToRecRef := FromRecRef;
+
+      IF NOT GetTableSetup(FromDCSTableSetup, FromRecRef) THEN
+        EXIT;
+      ToDCSTableSetup := FromDCSTableSetup;
+      FromDCSTableSetup."Storage Type" := FromDCSTableSetup."Storage Type"::Sharepoint;
+
+
+      // Init DocSolutions for source document
+      CreateService(dcsFrom);
+      InitStorage(FromDCSTableSetup, FromRecRef, dcsFrom);
+      CreateRecord(FromRecRef, dcsFromRec, FALSE);
+
+      // Init DocSolutions for destination document
+      CreateService(dcsTo);
+      InitStorage(ToDCSTableSetup, ToRecRef, dcsTo);
+      CreateRecord(ToRecRef, dcsToRec, TRUE);
+
+      //library
+
+      FromLibrary.RESET;
+      FromLibrary.SETRANGE("Table ID",FromDCSTableSetup."Table ID");
+      FromLibrary.SETRANGE("Table Option Type",FromDCSTableSetup."Table Option Type");
+      FromLibrary.SETFILTER("Folder Pattern Code",'NULL_FOLDE');
+      IF FromLibrary.FINDFIRST THEN
+        REPEAT
+          IF FromDCSTableSetup."Table ID" = DATABASE::Customer THEN BEGIN
+            IF FromLibrary.Code = 'ACCORDI'THEN
+              ToLibrary.GET(ToDCSTableSetup."Table ID", ToDCSTableSetup."Table Option Type", 'FS_CUSAGR');
+            IF FromLibrary.Code = 'IX-ABLETECH'THEN
+              ToLibrary.GET(ToDCSTableSetup."Table ID", ToDCSTableSetup."Table Option Type", 'FS_CUSIXFE');
+            IF FromLibrary.Code = 'SOLLECITI'THEN
+              ToLibrary.GET(ToDCSTableSetup."Table ID", ToDCSTableSetup."Table Option Type", 'FS_CUSREM');
+          END ELSE BEGIN
+            ToLibrary.GET(ToDCSTableSetup."Table ID", ToDCSTableSetup."Table Option Type", ToDCSTableSetup."Default Library Code");
+          END;
+          CLEAR(emptyArray);
+          CLEAR(dcsFiles);
+          CLEAR(ms);
+          CLEAR(dcsFileNew);
+          FromLibrary."Folder Pattern Code" := '';
+          FromLibrary."Filename Pattern Code" := '';
+
+          DownloadAndUpload := TRUE;
+          emptyArray := emptyArray.CreateInstance(GETDOTNETTYPE(s), 0);
+          dcsFiles := dcsFiles.DocSolutionsFileCollection();
+          dcsFiles.AddRange(dcsFrom.GetDocuments(dcsFromRec, FromLibrary."External ID", FALSE, emptyArray));
+          i := dcsFiles.Count;
+          FOREACH dcsFile IN dcsFiles DO BEGIN
+            IF DownloadAndUpload THEN BEGIN
+              ms := ms.MemoryStream(dcsFrom.DownloadDocument(dcsFile.LibraryName, dcsFile.Id));
+              dcsFileNew := dcsFileNew.FromStream(ms, dcsFile.Filename);
+              dcsFileNew.Fields.Merge(dcsToRec);
+              dcsFileNew.NewLibraryName := ToLibrary."External ID";
+              dcsTo.UploadDocument(dcsFileNew);
+            END ELSE BEGIN
+              dcsFile.Fields.Clear();
+              dcsFile.Fields.AddRange(dcsToRec);
+            END;
+          END;
+
+
+        UNTIL FromLibrary.NEXT   = 0;
+
+          dcsFrom.DisposeStorage();
+          dcsTo.DisposeStorage();
+    END;
+
+    [LineStart(368)]
+    LOCAL PROCEDURE GetTableSetupByValue@1101318007(VAR DCSTableSetup@1020900000 : Record 18121905;SourceType@1101318000 : Integer;SourceSubtype@1101318003 : Integer) : Boolean;
+    BEGIN
+      IF NOT DCSTableSetup.GET(SourceType, SourceSubtype) THEN
+        EXIT(FALSE);
+      EXIT(TRUE);
+    END;
+
+    [LineStart(373)]
+    LOCAL PROCEDURE GetTableSetup@1101318002(VAR DCSTableSetup@1020900002 : Record 18121905;VAR RecRef@1101318000 : RecordRef) : Boolean;
+    VAR
+      EosLib@1020900001 : Codeunit 18004110;
+      RecIdBuf@1020900000 : Record 18004130;
+    BEGIN
+      EosLib.DecodeRecRef(RecRef, RecIdBuf);
+      EXIT(GetTableSetupByValue(DCSTableSetup, RecIdBuf."Source Type", RecIdBuf."Source Subtype"));
+    END;
+
+    [LineStart(377)]
+    PROCEDURE GetUserSetup@18006601(aUserId@18006600 : Code[50]) : Boolean;
+    VAR
+      User@18006602 : Record 2000000120;
+    BEGIN
+      IF aUserId = '' THEN
+        aUserId := USERID;
+      IF NOT User.ISEMPTY THEN BEGIN
+        User.SETRANGE("User Name", aUserId);
+        IF NOT User.FINDFIRST THEN
+          EXIT(FALSE);
+      END;
+      EXIT(UserSetup.GET(aUserId))
+    END;
+
+    [LineStart(387)]
+    LOCAL PROCEDURE GetCompanyName@1106000016(VAR RecRef@1106000002 : RecordRef;VAR TableSetup@1106000000 : Record 18121905) : Text;
+    VAR
+      FieldSetup@1106000001 : Record 18121906;
+    BEGIN
+      FieldSetup.SETRANGE("Table ID", TableSetup."Table ID");
+      FieldSetup.SETRANGE("Table Option Type", TableSetup."Table Option Type");
+      FieldSetup.SETRANGE("External ID", 'DSCompany');
+      IF FieldSetup.FINDLAST THEN
+        EXIT(FieldSetup.GetValue(RecRef));
+      EXIT(COMPANYNAME);
+    END;
+
+    [LineStart(395)]
+    PROCEDURE CreateService@1020900001(VAR dcs@1020900000 : DotNet "'Eos.Lib.DocSolutions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=null'.Eos.Lib.DocSolutions.DocSolutionsService");
+    BEGIN
+      CLEAR(dcs);
+      dcs := dcs.DocSolutionsService();
+    END;
+
+    [LineStart(399)]
+    PROCEDURE InitStorage@1102000005(DCSTableSetup@1102000006 : Record 18121905;VAR RecRef@1102000009 : RecordRef;dcs@1102000000 : DotNet "'Eos.Lib.DocSolutions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=null'.Eos.Lib.DocSolutions.DocSolutionsService");
+    VAR
+      DCSDocLibrary@1020900002 : Record 18121907;
+      TmpDCSDocLibrary@1020900004 : TEMPORARY Record 18121907;
+      FolderPattern@1020900003 : Record 18121919;
+      EosLib@1020900006 : Codeunit 18004110;
+      storage@1102000001 : DotNet "'Eos.Lib.DocSolutions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=null'.Eos.Lib.DocSolutions.Storage.IStorage" SUPPRESSDISPOSE;
+      spStorage@1102000002 : DotNet "'Eos.Lib.DocSolutions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=null'.Eos.Lib.DocSolutions.Storage.Sharepoint.SharepointStorage" SUPPRESSDISPOSE;
+      fsStorage@1020900001 : DotNet "'Eos.Lib.DocSolutions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=null'.Eos.Lib.DocSolutions.Storage.FileSystem.FileSystemStorage" SUPPRESSDISPOSE;
+      fsLibrary@1020900005 : DotNet "'Eos.Lib.DocSolutions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=null'.Eos.Lib.DocSolutions.Storage.FileSystem.FileSystemLibrary";
+      nullStorage@1020900000 : DotNet "'Eos.Lib.DocSolutions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=null'.Eos.Lib.DocSolutions.Storage.NullStorage" SUPPRESSDISPOSE;
+      url@1102000004 : DotNet "'System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Uri";
+      creds@1102000005 : DotNet "'System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Net.NetworkCredential";
+      NewUrlStr@1102000007 : Text;
+      UrlStr@1106000000 : Text;
+      IsHandled@1102000008 : Boolean;
+    BEGIN
+      GetUserSetup('');
+
+      UrlStr := DCSTableSetup."Storage URL";
+      //OnServerURLRequested(RecRef, NewUrlStr, IsHandled);
+      IF IsHandled THEN
+        UrlStr := NewUrlStr;
+
+      dcs.DisposeStorage();
+      storage := nullStorage.NullStorage();
+
+      IF UrlStr <> '' THEN
+        url := url.Uri(UrlStr);
+
+      CASE DCSTableSetup."Storage Type" OF
+
+        DCSTableSetup."Storage Type"::Sharepoint:
+          IF (NOT ISNULL(url)) THEN BEGIN
+
+            //Start TDAG30360/dc
+            IF DCSTableSetup."Table ID" = 50013 THEN
+              creds := creds.NetworkCredential(UserSetup."E-Mail", UserSetup.GetDCSPassword(DCSTableSetup."Storage Type"::Sharepoint))
+            ELSE
+            //Stop TDAG30360/dc
+
+            creds := creds.NetworkCredential(UserSetup."DCS Sharepoint Username", UserSetup.GetDCSPassword(DCSTableSetup."Storage Type"::Sharepoint));
+            storage := spStorage.SharepointStorage(url, creds);
+          END;
+          {
+        DCSTableSetup."Storage Type"::ARXivar:
+          IF (NOT ISNULL(url)) THEN BEGIN
+            DCSTableSetup.TESTFIELD("AOO Name");
+            creds := creds.NetworkCredential(UserSetup."DCS Arxivar Username", UserSetup.GetDCSPassword(DCSTableSetup."Storage Type"::ARXivar));
+            arxStorage := arxStorage.ArxivarStorage(url, creds, DCSTableSetup."AOO Name");
+            storage := arxStorage;
+          END;
+
+
+        DCSTableSetup."Storage Type"::"ARXivar NEXT":
+          IF (NOT ISNULL(url)) THEN BEGIN
+            DCSTableSetup.TESTFIELD("AOO Name");
+            DCSTableSetup.TESTFIELD("Client Secret");
+            creds := creds.NetworkCredential(UserSetup."DCS Arxivar Username", UserSetup.GetDCSPassword(DCSTableSetup."Storage Type"::"ARXivar NEXT"));
+            arxNextStorage := arxNextStorage.ArxivarNextStorage(url.ToString(), DCSTableSetup."AOO Name", DCSTableSetup."Client Secret");
+            arxNextStorage.Credentials := creds;
+            storage := arxNextStorage;
+          END;
+          }
+        DCSTableSetup."Storage Type"::"File System": BEGIN
+          fsStorage := fsStorage.FileSystemStorage();
+          DCSDocLibrary.SETRANGE("Table ID", DCSTableSetup."Table ID");
+          DCSDocLibrary.SETRANGE("Table Option Type", DCSTableSetup."Table Option Type");
+          DCSDocLibrary.SETRANGE(Blocked, FALSE);
+          IF DCSDocLibrary.FINDSET THEN
+            REPEAT
+              DCSDocLibrary.TESTFIELD("Folder Pattern Code");
+              FolderPattern.GET(DCSDocLibrary."Folder Pattern Code");
+              FolderPattern.TESTFIELD(Status, FolderPattern.Status::Certified);
+
+              fsLibrary := fsLibrary.FileSystemLibrary();
+              DCSDocLibrary.TESTFIELD("External ID");
+              fsLibrary.Id := DCSDocLibrary."External ID";
+              fsLibrary.Location := FolderPattern.Build('', RecRef, FALSE);
+              fsLibrary.TrashLocation := FolderPattern.BuildTrash('', RecRef, FALSE);
+              fsStorage.Libraries.Add(fsLibrary);
+            UNTIL DCSDocLibrary.NEXT = 0;
+          storage := fsStorage;
+        END;
+
+      END;
+
+      dcs.Storage := storage;
+    END;
+
+    [LineStart(472)]
+    PROCEDURE CreateRecord@1101318004(VAR RecRef@1101318001 : RecordRef;VAR dcsRecord@1101318000 : DotNet "'Eos.Lib.DocSolutions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=null'.Eos.Lib.DocSolutions.DocSolutionsRecordRef";AllFields@1101318003 : Boolean);
+    VAR
+      DCSTableSetup@1102000000 : Record 18121905;
+      DCSCustField@1101318002 : Record 18121908;
+      DCSFieldsSetup@1101318004 : Record 18121906;
+      RecIdBuf@1020900000 : Record 18004130;
+      EosLib@1020900001 : Codeunit 18004110;
+      value@1102000001 : Text;
+      DcsRecordId@1020900002 : Text;
+      DcsDocumentType@1020900003 : Text;
+      IsHandled@1021000000 : Boolean;
+    BEGIN
+      CLEAR(dcsRecord);
+      IF NOT GetTableSetup(DCSTableSetup, RecRef) THEN
+        EXIT;
+
+      IF (DCSTableSetup."Document Type Code" <> '') THEN
+        IF DCSCustField.GET(DATABASE::"DocSolutions Table Setup", 10, DCSTableSetup."Document Type Code") THEN
+          DcsDocumentType := DCSCustField."External ID";
+
+      //OnGetDcsRecordId(RecRef,  DcsRecordId, IsHandled);
+      IF NOT IsHandled THEN BEGIN
+        EosLib.DecodeRecRef(RecRef, RecIdBuf);
+        DcsRecordId := RecIdBuf."Source ID";
+        IF RecIdBuf."Source Ref. No." <> 0 THEN
+          DcsRecordId := DcsRecordId + '|' + FORMAT(RecIdBuf."Source Ref. No.");
+      END;
+
+      dcsRecord := dcsRecord.DocSolutionsRecordRef(
+        DcsRecordId,
+        DcsDocumentType,
+        GetCompanyName(RecRef, DCSTableSetup));
+
+      IF AllFields THEN BEGIN
+        DCSFieldsSetup.SETRANGE("Table ID", DCSTableSetup."Table ID");
+        DCSFieldsSetup.SETRANGE("Table Option Type", DCSTableSetup."Table Option Type");
+        IF DCSFieldsSetup.FINDSET THEN
+          REPEAT
+            value := DCSFieldsSetup.GetValue(RecRef);
+            IF value <> '' THEN
+              dcsRecord.TrySetValue(DCSFieldsSetup."External ID", value, TRUE);
+          UNTIL DCSFieldsSetup.NEXT = 0;
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+
