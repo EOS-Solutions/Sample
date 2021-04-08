@@ -1,0 +1,38 @@
+{
+    "id": "01526f68-38ed-472f-a919-cd94cfae80d8",
+    "name": "Data Migration",
+    "publisher": "EOS Solutions",
+    "brief": "Data Migration Sample",
+    "description": "Data Migration Sample",
+    "version": "1.0.0.0",
+    "privacyStatement": "https://www.eos-solutions.it/en/privacy.html",
+    "EULA": "https://www.eos-solutions.it/en/eula.html",
+    "help": "https://www.eos-solutions.it/en/data-migration-en.html",
+    "url": "https://www.eos-solutions.it/",
+    "logo": "Images/logo-432.png",
+    "features": [
+        "TranslationFile"
+    ],
+    "supportedLocales": [
+        "it-IT",
+        "it-CH",
+        "en-US"
+    ],
+    "capabilities": [],
+    "dependencies": [
+        {
+            "appId": "8bb96677-5112-4566-b742-12eebbb9a058",
+            "name": "EOS Administration Library",
+            "publisher": "EOS Solutions",
+            "version": "1.1.177.0"
+        }
+    ],
+    "screenshots": [],
+    "platform": "13.0.0.0",
+    "application": "13.0.0.0",
+    "idRange": {
+        "from": 60000,
+        "to": 70000
+    },
+    "runtime": "2.0"
+}

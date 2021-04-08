@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file datatype="xml" source-language="en-US" target-language="it-IT">
+    <body>
+      <group id="body">
+        <trans-unit id="Page 1355655497 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Additional Data Setup (MIG)</source>
+          <target>Dati aggiuntivi setup (MIG)</target>
+        </trans-unit>
+        <trans-unit id="Page 29913412 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Additional Data (MIG)</source>
+          <target>Dati Aggiuntivi (MIG)</target>
+        </trans-unit>
+        <trans-unit id="PageExtension 1337236096 - Control 1893160067 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Additional Data EXT</source>
+          <target>Dati aggiuntivi EXT</target>
+        </trans-unit>
+        <trans-unit id="PageExtension 699539479 - Control 1893160067 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Additional Data EXT</source>
+          <target>Dati aggiuntivi EXT</target>
+        </trans-unit>
+        <trans-unit id="Table 1410696362 - Field 3004954119 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Code</source>
+          <target>Codice</target>
+        </trans-unit>
+        <trans-unit id="Table 1410696362 - Field 3461834954 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Description</source>
+          <target>Descrizione</target>
+        </trans-unit>
+        <trans-unit id="Table 1410696362 - Field 636392376 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Amount</source>
+          <target>Importo</target>
+        </trans-unit>
+        <trans-unit id="Table 1410696362 - Field 883711285 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Entry No.</source>
+          <target>Nr. movimento</target>
+        </trans-unit>
+        <trans-unit id="Table 1410696362 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Additional Table</source>
+          <target>Tabella aggiuntiva</target>
+        </trans-unit>
+        <trans-unit id="TableExtension 1642203491 - Field 1568828874 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Additional Description</source>
+          <target>Descrizione aggiuntiva</target>
+        </trans-unit>
+        <trans-unit id="TableExtension 1642203491 - Field 1586873095 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Additional Code</source>
+          <target>Codice aggiuntivo</target>
+        </trans-unit>
+        <trans-unit id="TableExtension 1642203491 - Field 3476594124 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Additional Ref. No.</source>
+          <target>Nr. Rif.</target>
+        </trans-unit>
+        <trans-unit id="TableExtension 2279900108 - Field 1568828874 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Additional Description</source>
+          <target>Descrizione aggiuntiva</target>
+        </trans-unit>
+        <trans-unit id="TableExtension 2279900108 - Field 1586873095 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Additional Code</source>
+          <target>Codice aggiuntivo</target>
+        </trans-unit>
+        <trans-unit id="TableExtension 2279900108 - Field 3476594124 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Additional Ref. No.</source>
+          <target>Nr. Rif.</target>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>

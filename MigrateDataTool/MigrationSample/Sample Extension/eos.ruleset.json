@@ -1,0 +1,15 @@
+{
+"name": "Eos ruleset",
+"rules": [
+            {
+                "id": "PTE0001",
+                "action": "None",
+                "justification": "object outside 50000..99999 range"
+            },
+            {
+                "id": "PTE0002",
+                "action": "None",
+                "justification": "fields outside 50000..99999 range on table extensions"                
+            }            
+        ]
+}
