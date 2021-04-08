@@ -1,0 +1,1087 @@
+OBJECT Report 18006505 Export Conf. Package To JSON
+{
+  OBJECT-PROPERTIES
+  {
+    Date=24/09/19;
+    Time=09:44:15;
+    Modified=Yes;
+    Version List=NP11.03;
+  }
+  PROPERTIES
+  {
+    ProcessingOnly=Yes;
+  }
+  DATASET
+  {
+    { 1031100001;;DataItem;Config. Package   ;
+               DataItemTable=Table8623;
+               OnPreDataItem=BEGIN
+                               win.OPEN('#1##################\@2@@@@@@@@@@@@@@@@@@\@3@@@@@@@@@@@@@@@@@@');
+                             END;
+                              }
+
+    { 1031100000;1;DataItem;Config. Package Table;
+               DataItemTable=Table8613;
+               DataItemTableView=SORTING(Package Code,Table ID);
+               OnPreDataItem=VAR
+                               os@1031100000 : OutStream;
+                             BEGIN
+                               Zip.CreateNewZip();
+
+                               IndexBlob.Blob.CREATEOUTSTREAM(os);
+
+                               sw := sw.StreamWriter(os);
+                               jw := jw.JsonTextWriter(sw);
+                               jw.WriteStartArray();
+                             END;
+
+               OnAfterGetRecord=VAR
+                                  NoOfPages@1031100000 : Integer;
+                                  RecRef@1031100001 : RecordRef;
+                                  i@1031100002 : Integer;
+                                BEGIN
+                                  win.UPDATE(1, "Table Name");
+
+                                  RecRef.OPEN("Table ID");
+                                  NoOfPages := ROUND(RecRef.COUNT / MaxRecordsPerFile, 1, '>');
+                                  win.SetPctCounter(2, NoOfPages);
+
+                                  jw.WriteValue("Table ID");
+
+                                  FOR i := 1 TO NoOfPages DO BEGIN
+                                    win.UPDATE_Pct(2);
+                                    SerializeRecordPage("Table ID", i);
+                                  END;
+                                END;
+
+               OnPostDataItem=VAR
+                                TmpBlob@1031100005 : TEMPORARY Record 99008535;
+                                os@1031100004 : OutStream;
+                                is@1031100000 : InStream;
+                                ToFolder@1031100001 : Text;
+                                ToFilter@1031100002 : Text;
+                                ToFile@1031100003 : Text;
+                              BEGIN
+                                jw.WriteEndArray();
+                                jw.Flush();
+
+                                IndexBlob.Blob.CREATEINSTREAM(is);
+                                Zip.AddEntryFromStreamToZip('index.json', is);
+                                CLEAR(IndexBlob);
+                                jw.Close();
+
+                                TmpBlob.Blob.CREATEOUTSTREAM(os);
+                                Zip.SaveZipToStream(os);
+                                TmpBlob.Blob.CREATEINSTREAM(is);
+                                ToFile := STRSUBSTNO('%1.Zip', "Config. Package"."Package Name");
+                                ToFilter := 'ZIP Files (*.zip)|*.zip';
+                                DOWNLOADFROMSTREAM(is, '', ToFolder, ToFilter, ToFile);
+                              END;
+
+               DataItemLink=Package Code=FIELD(Code) }
+
+  }
+  REQUESTPAGE
+  {
+    PROPERTIES
+    {
+      OnOpenPage=BEGIN
+                   MaxRecordsPerFile := 25000;
+                 END;
+
+    }
+    CONTROLS
+    {
+      { 1031100000;;Container;
+                  ContainerType=ContentArea }
+
+      { 1031100002;1;Group  ;
+                  CaptionML=[DEU=Optionen;
+                             ENU=Options;
+                             ITA=Opzioni];
+                  GroupType=Group }
+
+      { 1031100001;2;Field  ;
+                  CaptionML=[DEU=Anzahl Datens�tze pro Datei;
+                             ENU=No. of Records per File;
+                             ITA=Nr. di record per file];
+                  SourceExpr=MaxRecordsPerFile }
+
+    }
+  }
+  LABELS
+  {
+  }
+  CODE
+  {
+    VAR
+      IndexBlob@1031100003 : TEMPORARY Record 99008535;
+      Zip@1031100006 : Codeunit 706;
+      win@1031100000 : Codeunit 18004193;
+      MaxRecordsPerFile@1031100005 : Integer;
+      sw@1031100002 : DotNet "'mscorlib'.System.IO.StreamWriter";
+      jw@1031100001 : DotNet "'Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed'.Newtonsoft.Json.JsonTextWriter";
+
+    [LineStart(0)]
+    LOCAL PROCEDURE SerializeRecordPage@1101318018(TableId@1031100003 : Integer;PageNo@1031100004 : Integer);
+    VAR
+      TmpBlob@1031100009 : TEMPORARY Record 99008535;
+      os@1031100010 : OutStream;
+      is@1031100011 : InStream;
+      jw@1031100008 : DotNet "'Newtonsoft.Json, Version=*, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed'.Newtonsoft.Json.JsonTextWriter";
+      sw@1031100007 : DotNet "'mscorlib'.System.IO.StreamWriter";
+      RecRef@1031100002 : RecordRef;
+      Field@1031100012 : Record 2000000041;
+      ConfigPkgField@1031100001 : Record 8616;
+      ExcelBuffer@1101318001 : TEMPORARY Record 370;
+      LineNo@1101318002 : Integer;
+      i@1101318003 : Integer;
+      j@1031100000 : Integer;
+      Counter@1031100006 : Integer;
+      FiRef@1101318004 : FieldRef;
+      ServerFileName@18006601 : Text;
+      TextVariant@18006603 : Variant;
+      Filename@18006604 : Text;
+      Offset@1031100005 : Integer;
+      TempBlob2@1031100014 : TEMPORARY Record 99008535;
+    BEGIN
+      TmpBlob.Blob.CREATEOUTSTREAM(os);
+      sw := sw.StreamWriter(os);
+      jw := jw.JsonTextWriter(sw);
+
+      Offset := (PageNo - 1) * MaxRecordsPerFile;
+      CLEAR(ExcelBuffer);
+
+      RecRef.OPEN(TableId);
+      win.SetPctCounter(3, RecRef.COUNT);
+
+      jw.WriteStartObject();
+
+      jw.WritePropertyName('TableId');
+      jw.WriteValue(RecRef.NUMBER);
+
+      jw.WritePropertyName('TableName');
+      jw.WriteValue(RecRef.NAME);
+
+      jw.WritePropertyName('PageNo');
+      jw.WriteValue(PageNo);
+
+      ConfigPkgField.SETRANGE("Package Code", "Config. Package".Code);
+      ConfigPkgField.SETRANGE("Table ID", RecRef.NUMBER);
+      // Start lma
+      ConfigPkgField.SETRANGE("Include Field", TRUE);
+      // Stop lma
+      //ConfigPkgField.SETRANGE(Class, ConfigPkgField.Class::Normal);
+
+      jw.WritePropertyName('FieldIDs');
+      jw.WriteStartArray();
+      IF ConfigPkgField.FINDSET THEN
+        REPEAT
+          jw.WriteValue(ConfigPkgField."Field ID");
+        UNTIL ConfigPkgField.NEXT = 0;
+      jw.WriteEndArray();
+
+      jw.WritePropertyName('FieldNames');
+      jw.WriteStartArray();
+      IF ConfigPkgField.FINDSET THEN
+        REPEAT
+          jw.WriteValue(ConfigPkgField."Field Name");
+        UNTIL ConfigPkgField.NEXT = 0;
+      jw.WriteEndArray();
+
+      jw.WritePropertyName('Records');
+      jw.WriteStartArray();
+
+      IF (PageNo = 1) THEN
+        RecRef.FINDFIRST
+      ELSE
+        RecRef.NEXT(MaxRecordsPerFile * (PageNo - 1) + 1);
+
+      REPEAT
+        Counter += 1;
+        win.UPDATE_Pct(3);
+        jw.WriteStartArray();
+        IF ConfigPkgField.FINDSET THEN
+          REPEAT
+            i += 1;
+            FiRef := RecRef.FIELD(ConfigPkgField."Field ID");
+            // Start lma
+            CASE FORMAT(FiRef.TYPE) OF
+              'BLOB':
+                BEGIN
+                  FiRef.CALCFIELD();
+                  TempBlob2.Blob := FiRef.VALUE();
+                  TempBlob2.Blob.CREATEINSTREAM(is);
+                  jw.WriteValue(FORMAT(TempBlob2.ToBase64String(), 0, 9));
+                END;
+              ELSE // All other dataTypes
+                jw.WriteValue(FORMAT(FiRef.VALUE, 0, 9));
+              END;
+            // Stop lma
+          UNTIL ConfigPkgField.NEXT = 0;
+        jw.WriteEndArray();
+      UNTIL (RecRef.NEXT = 0) OR (Counter = MaxRecordsPerFile);
+
+      jw.WriteEndArray();
+      jw.WriteEndObject();
+
+      jw.Flush();
+
+      TmpBlob.Blob.CREATEINSTREAM(is);
+      Zip.AddEntryFromStreamToZip(STRSUBSTNO('%1\%1-%2.json', RecRef.NUMBER, PageNo), is);
+    END;
+
+    BEGIN
+    END.
+  }
+  RDLDATA
+  {
+  }
+}
+
+OBJECT Codeunit 18004193 EOS Advanced Dialog Mng
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/02/18;
+    Time=12:00:00;
+    Version List=NP9.06;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      Window@1101318000 : Dialog;
+      GlobalDialogText@1080416053 : Text;
+      GlobalValuesText@1080416056 : ARRAY [15] OF Text;
+      GlobalValuesInteger@1080416058 : ARRAY [15] OF Integer;
+      GlobalValuesDecimal@1080416061 : ARRAY [15] OF Integer;
+      ValueType@1080416057 : ARRAY [15] OF ' ,text,integer,decimal';
+      GlobalNeedRedraw@1080416060 : Boolean;
+      NeedRedraw@1080416059 : ARRAY [15] OF Boolean;
+      WindowOpened@1080416051 : Boolean;
+      LastUpdateTime@1080416052 : DateTime;
+      NoOfEntries@1080416064 : Integer;
+      UpdateTime@1080416065 : Integer;
+      Counter@1080416054 : ARRAY [15] OF Integer;
+      PctMaxValue@1080416055 : ARRAY [15] OF Integer;
+
+    [LineStart(88)]
+    LOCAL PROCEDURE DoPendingRedraw@1080416060();
+    VAR
+      i@1080416050 : Integer;
+    BEGIN
+      IF NOT WindowOpened THEN
+        EXIT;
+
+      IF GlobalNeedRedraw THEN
+        FOR i := 1 TO NoOfEntries DO
+          IF NeedRedraw[i] THEN BEGIN
+            CASE ValueType[i] OF
+              ValueType::text    : Window.UPDATE(i, GlobalValuesText[i]);
+              ValueType::integer : Window.UPDATE(i, GlobalValuesInteger[i]);
+              ValueType::decimal : Window.UPDATE(i, GlobalValuesDecimal[i]);
+            END;
+            NeedRedraw[i] := FALSE;
+          END;
+
+      GlobalNeedRedraw := FALSE;
+    END;
+
+    [LineStart(105)]
+    PROCEDURE ResetCounters@1080416066();
+    BEGIN
+      CLEAR(Counter);
+      UPDATE_Pending;
+    END;
+
+    [LineStart(109)]
+    LOCAL PROCEDURE "-"@1080416059();
+    BEGIN
+    END;
+
+    [LineStart(112)]
+    PROCEDURE OPEN@1080416051(DialogText@1080416050 : Text);
+    VAR
+      i@1080416052 : Integer;
+    BEGIN
+      OPEN2(DialogText, TRUE);
+    END;
+
+    [LineStart(115)]
+    PROCEDURE OPEN2@1101314001(DialogText@1080416050 : Text;Delayed@1080416051 : Boolean);
+    VAR
+      i@1080416052 : Integer;
+    BEGIN
+      IF NOT GUIALLOWED THEN
+        EXIT;
+
+      IF WindowOpened THEN
+        CLOSE;
+
+      GlobalDialogText := DialogText;
+
+      LastUpdateTime := CURRENTDATETIME;
+      IF (NOT Delayed) THEN BEGIN
+        Window.OPEN(DialogText);
+        WindowOpened := TRUE;
+        DoPendingRedraw;
+      END;
+    END;
+
+    [LineStart(131)]
+    PROCEDURE CLOSE@1080416050();
+    BEGIN
+      IF NOT GUIALLOWED THEN
+        EXIT;
+
+      IF WindowOpened THEN BEGIN
+        Window.CLOSE;
+        WindowOpened := FALSE;
+      END;
+
+      CLEAR(NeedRedraw);
+      CLEAR(GlobalDialogText);
+      CLEAR(GlobalValuesText);
+      CLEAR(GlobalValuesInteger);
+      CLEAR(GlobalValuesDecimal);
+      CLEAR(ValueType);
+      CLEAR(Window);
+      GlobalNeedRedraw := FALSE;
+    END;
+
+    [LineStart(149)]
+    PROCEDURE UPDATE@1101314005(Index@1101314001 : Integer;Value@1101314000 : Variant);
+    VAR
+      TextValue@1101314002 : Text;
+      IntegerValue@1101314003 : BigInteger;
+      DecimalValue@1101314004 : Decimal;
+      DateValue@1101314005 : Date;
+      TimeValue@1101314006 : Time;
+      DateTimeValue@1101314007 : DateTime;
+      BooleanValue@1101314008 : Boolean;
+    BEGIN
+      IF NOT GUIALLOWED THEN
+        EXIT;
+
+      CASE TRUE OF
+        Value.ISTEXT,
+        Value.ISCODE,
+        Value.ISCHAR,
+        Value.ISWIDECHAR : BEGIN
+          TextValue := Value;
+          UPDATE_Txt(Index, TextValue);
+        END;
+        Value.ISINTEGER,
+        Value.ISBIGINTEGER : BEGIN
+          IntegerValue := Value;
+          UPDATE_Int(Index, IntegerValue);
+        END;
+        Value.ISDECIMAL : BEGIN
+          DecimalValue := Value;
+          UPDATE_Dec(Index, DecimalValue);
+        END;
+        Value.ISDATE : BEGIN
+          DateValue := Value;
+          UPDATE_Txt(Index, FORMAT(DateValue));
+        END;
+        Value.ISTIME : BEGIN
+          TimeValue := Value;
+          UPDATE_Txt(Index, FORMAT(TimeValue));
+        END;
+        Value.ISDATETIME : BEGIN
+          DateTimeValue := Value;
+          UPDATE_Txt(Index, FORMAT(DateTimeValue));
+        END;
+        Value.ISBOOLEAN : BEGIN
+          BooleanValue := Value;
+          UPDATE_Txt(Index, FORMAT(BooleanValue));
+        END;
+        ELSE BEGIN
+          TextValue := FORMAT(Value);
+          UPDATE_Txt(Index, TextValue);
+        END;
+      END;
+    END;
+
+    [LineStart(192)]
+    PROCEDURE UPDATE2@1080416064();
+    BEGIN
+      IF NOT WindowOpened THEN
+        EXIT;
+
+      UPDATE_Pending;
+      Window.UPDATE;
+    END;
+
+    [LineStart(199)]
+    PROCEDURE UPDATE_Txt@1080416053(Index@1080416050 : Integer;Value@1080416051 : Text);
+    VAR
+      SameValue@1080416052 : Boolean;
+    BEGIN
+      IF NOT GUIALLOWED THEN
+        EXIT;
+
+      IF NoOfEntries > Index THEN
+        NoOfEntries := Index;
+
+      SetUpdateTime(-1);
+
+      SameValue := GlobalValuesText[Index] = Value;
+      GlobalValuesText[Index] := Value;
+      ValueType[Index]:= ValueType::text;
+
+      IF WindowOpened THEN BEGIN
+        IF CURRENTDATETIME - LastUpdateTime > UpdateTime THEN BEGIN
+          LastUpdateTime := CURRENTDATETIME;
+          Window.UPDATE(Index, Value);
+          NeedRedraw[Index] := FALSE;
+          DoPendingRedraw;
+        END ELSE BEGIN
+          NeedRedraw[Index] := TRUE;
+          GlobalNeedRedraw := TRUE;
+        END;
+      END ELSE BEGIN
+        IF CURRENTDATETIME - LastUpdateTime > 2000 THEN BEGIN
+          OPEN2(GlobalDialogText, FALSE);
+          Window.UPDATE(Index, Value);
+        END ELSE BEGIN
+          NeedRedraw[Index] := TRUE;
+          GlobalNeedRedraw := TRUE;
+        END;
+      END;
+    END;
+
+    [LineStart(232)]
+    PROCEDURE UPDATE_Int@1080416052(Index@1080416050 : Integer;Value@1080416051 : Integer);
+    BEGIN
+      IF NOT GUIALLOWED THEN
+        EXIT;
+
+      IF NoOfEntries > Index THEN
+        NoOfEntries := Index;
+
+      SetUpdateTime(-1);
+
+      GlobalValuesInteger[Index] := Value;
+      ValueType[Index]:= ValueType::integer;
+
+      IF WindowOpened THEN BEGIN
+        IF CURRENTDATETIME - LastUpdateTime > UpdateTime THEN BEGIN
+          LastUpdateTime := CURRENTDATETIME;
+          Window.UPDATE(Index, Value);
+          NeedRedraw[Index] := FALSE;
+          DoPendingRedraw;
+        END ELSE BEGIN
+          NeedRedraw[Index] := TRUE;
+          GlobalNeedRedraw := TRUE;
+        END;
+      END ELSE BEGIN
+        IF CURRENTDATETIME - LastUpdateTime > 2000 THEN BEGIN
+          OPEN2(GlobalDialogText, FALSE);
+          Window.UPDATE(Index, Value);
+        END ELSE BEGIN
+          NeedRedraw[Index] := TRUE;
+          GlobalNeedRedraw := TRUE;
+        END;
+      END;
+    END;
+
+    [LineStart(264)]
+    PROCEDURE UPDATE_Dec@1080416058(Index@1080416050 : Integer;Value@1080416051 : Integer);
+    BEGIN
+      IF NOT GUIALLOWED THEN
+        EXIT;
+
+      IF NoOfEntries > Index THEN
+        NoOfEntries := Index;
+
+      SetUpdateTime(-1);
+
+      GlobalValuesDecimal[Index] := Value;
+      ValueType[Index]:= ValueType::decimal;
+
+      IF WindowOpened THEN BEGIN
+        IF CURRENTDATETIME - LastUpdateTime > UpdateTime THEN BEGIN
+          LastUpdateTime := CURRENTDATETIME;
+          Window.UPDATE(Index, Value);
+          NeedRedraw[Index] := FALSE;
+          DoPendingRedraw;
+        END ELSE BEGIN
+          NeedRedraw[Index] := TRUE;
+          GlobalNeedRedraw := TRUE;
+        END;
+      END ELSE BEGIN
+        IF CURRENTDATETIME - LastUpdateTime > 2000 THEN BEGIN
+          OPEN2(GlobalDialogText, FALSE);
+          Window.UPDATE(Index, Value);
+        END ELSE BEGIN
+          NeedRedraw[Index] := TRUE;
+          GlobalNeedRedraw := TRUE;
+        END;
+      END;
+    END;
+
+    [LineStart(296)]
+    PROCEDURE UPDATE_Inc@1080416054(Index@1080416050 : Integer);
+    BEGIN
+      IF NOT GUIALLOWED THEN
+        EXIT;
+
+      IF NoOfEntries > Index THEN
+        NoOfEntries := Index;
+
+      SetUpdateTime(-1);
+
+      Counter[Index] += 1;
+      GlobalValuesInteger[Index] := Counter[Index];
+      ValueType[Index]:= ValueType::integer;
+
+      IF WindowOpened THEN BEGIN
+        IF CURRENTDATETIME - LastUpdateTime > UpdateTime THEN BEGIN
+          LastUpdateTime := CURRENTDATETIME;
+          Window.UPDATE(Index, Counter[Index]);
+          NeedRedraw[Index] := FALSE;
+          DoPendingRedraw;
+        END ELSE BEGIN
+          NeedRedraw[Index] := TRUE;
+          GlobalNeedRedraw := TRUE;
+        END;
+      END ELSE BEGIN
+        IF CURRENTDATETIME - LastUpdateTime > 2000 THEN BEGIN
+          OPEN2(GlobalDialogText, FALSE);
+          Window.UPDATE(Index, Counter[Index]);
+        END ELSE BEGIN
+          NeedRedraw[Index] := TRUE;
+          GlobalNeedRedraw := TRUE;
+        END;
+      END;
+    END;
+
+    [LineStart(329)]
+    PROCEDURE UPDATE_Pct@1080416057(Index@1080416050 : Integer);
+    VAR
+      InternalPos@1080416051 : Integer;
+    BEGIN
+      IF NOT GUIALLOWED THEN
+        EXIT;
+
+      IF NoOfEntries > Index THEN
+        NoOfEntries := Index;
+
+      SetUpdateTime(-1);
+
+      Counter[Index] += 1;
+      IF (PctMaxValue[Index] <> 0) AND (Counter[Index] <> 0) THEN
+        InternalPos := ROUND(10000 / PctMaxValue[Index] * Counter[Index],1);
+      GlobalValuesInteger[Index] := InternalPos;
+      ValueType[Index] := ValueType::integer;
+
+      IF WindowOpened THEN BEGIN
+        IF CURRENTDATETIME - LastUpdateTime > UpdateTime THEN BEGIN
+          LastUpdateTime := CURRENTDATETIME;
+          Window.UPDATE(Index, InternalPos);
+          NeedRedraw[Index] := FALSE;
+          DoPendingRedraw;
+        END ELSE BEGIN
+          NeedRedraw[Index] := TRUE;
+          GlobalNeedRedraw := TRUE;
+        END;
+      END ELSE BEGIN
+        IF CURRENTDATETIME - LastUpdateTime > 2000 THEN BEGIN
+          OPEN2(GlobalDialogText, FALSE);
+          Window.UPDATE(Index, InternalPos);
+        END ELSE BEGIN
+          NeedRedraw[Index] := TRUE;
+          GlobalNeedRedraw := TRUE;
+        END;
+      END;
+    END;
+
+    [LineStart(364)]
+    PROCEDURE UPDATE_Pct2@1080416063(Index@1080416050 : Integer;NewPosition@1080416052 : Integer);
+    VAR
+      InternalPos@1080416051 : Integer;
+    BEGIN
+      IF NOT GUIALLOWED THEN
+        EXIT;
+
+      IF NoOfEntries > Index THEN
+        NoOfEntries := Index;
+
+      SetUpdateTime(-1);
+
+      Counter[Index]  := NewPosition;
+      IF (PctMaxValue[Index] <> 0) AND (Counter[Index] <> 0) THEN
+        InternalPos := ROUND(10000 / PctMaxValue[Index] * Counter[Index],1);
+      GlobalValuesInteger[Index] := InternalPos;
+      ValueType[Index] := ValueType::integer;
+
+      IF WindowOpened THEN BEGIN
+        IF CURRENTDATETIME - LastUpdateTime > UpdateTime THEN BEGIN
+          LastUpdateTime := CURRENTDATETIME;
+          Window.UPDATE(Index, InternalPos);
+          NeedRedraw[Index] := FALSE;
+          DoPendingRedraw;
+        END ELSE BEGIN
+          NeedRedraw[Index] := TRUE;
+          GlobalNeedRedraw := TRUE;
+        END;
+      END ELSE BEGIN
+        IF CURRENTDATETIME - LastUpdateTime > 2000 THEN BEGIN
+          OPEN2(GlobalDialogText, FALSE);
+          Window.UPDATE(Index, InternalPos);
+        END ELSE BEGIN
+          NeedRedraw[Index] := TRUE;
+          GlobalNeedRedraw := TRUE;
+        END;
+      END;
+    END;
+
+    [LineStart(399)]
+    PROCEDURE UPDATE_Pending@1080416062();
+    VAR
+      i@1080416050 : Integer;
+    BEGIN
+      LastUpdateTime := 0DT;
+
+      FOR i := 1 TO NoOfEntries DO
+        NeedRedraw[i] := TRUE;
+
+      IF LastUpdateTime = 0DT THEN
+        LastUpdateTime := CURRENTDATETIME;
+
+      GlobalNeedRedraw := TRUE;
+
+      DoPendingRedraw;
+    END;
+
+    [LineStart(412)]
+    LOCAL PROCEDURE "--"@1080416056();
+    BEGIN
+    END;
+
+    [LineStart(415)]
+    PROCEDURE SetPctCounter@1080416055(Index@1080416051 : Integer;MaxValue@1080416050 : Integer);
+    BEGIN
+      PctMaxValue[Index] := MaxValue;
+      Counter[Index] := 0;
+    END;
+
+    [LineStart(419)]
+    PROCEDURE GetIntPctCounter@1080416061(Index@1080416050 : Integer) : Integer;
+    BEGIN
+      EXIT(Counter[Index]);
+    END;
+
+    [LineStart(422)]
+    PROCEDURE SetUpdateTime@1080416065(Milliseconds@1080416064 : Integer);
+    BEGIN
+      IF UpdateTime > 0 THEN
+        EXIT;
+
+      IF (Milliseconds = -1) AND (UpdateTime <= 0) THEN
+        UpdateTime := 500
+      ELSE
+        UpdateTime := Milliseconds;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+
+OBJECT Page 8614 Config. Package Card
+{
+  OBJECT-PROPERTIES
+  {
+    Date=24/09/19;
+    Time=09:43:27;
+    Modified=Yes;
+    Version List=NAVW111.00,NP11.03;
+  }
+  PROPERTIES
+  {
+    CaptionML=[DEU=Paketkarte konfigurieren;
+               ENU=Config. Package Card;
+               ITA=Scheda pacchetto di configurazione];
+    SourceTable=Table8623;
+    PageType=Document;
+    PromotedActionCategoriesML=[DEU=Neu,Verarbeiten,Melden,Verwalten,Paket;
+                                ENU=New,Process,Report,Manage,Package;
+                                ITA=Nuovo,Elabora,Report,Gestisci,Pacchetto];
+    OnInit=BEGIN
+             SetActionVisibility;
+           END;
+
+    OnNewRecord=BEGIN
+                  IF NOT ActionVisible THEN
+                    ERROR(UnsupportedNewErr);
+                END;
+
+    OnInsertRecord=BEGIN
+                     IF NOT ActionVisible THEN
+                       ERROR(UnsupportedEditErr);
+                   END;
+
+    OnModifyRecord=BEGIN
+                     IF NOT ActionVisible THEN
+                       ERROR(UnsupportedEditErr);
+                   END;
+
+    OnDeleteRecord=BEGIN
+                     IF NOT ActionVisible THEN
+                       ERROR(UnsupportedDeleteErr);
+                   END;
+
+    ActionList=ACTIONS
+    {
+      { 11      ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 24      ;1   ;ActionGroup;
+                      CaptionML=[DEU=Paket;
+                                 ENU=Package;
+                                 ITA=Pacchetto] }
+      { 23      ;2   ;Action    ;
+                      Ellipsis=Yes;
+                      CaptionML=[DEU=Paket exportieren;
+                                 ENU=Export Package;
+                                 ITA=Esporta pacchetto];
+                      ToolTipML=[DEU=Erstellt eine .rapidstart-Datei, die die Paketinhalte in einem komprimierten Format liefert. Konfigurationsfrageb�gen, Konfigurationsvorlagen und das Konfigurationsarbeitsblatt werden dem Paket automatisch hinzugef�gt, es sei denn, Sie entscheiden sich speziell daf�r, sie auszuschlie�en.;
+                                 ENU=Create a .rapidstart file that which delivers the package contents in a compressed format. Configuration questionnaires, configuration templates, and the configuration worksheet are added to the package automatically unless you specifically decide to exclude them.;
+                                 ITA=Creare un file con estensione rapidstart che invia il contenuto del pacchetto in un formato compresso. I questionari di configurazione, i modelli di configurazione e il foglio di lavoro di configurazione vengono aggiunti al pacchetto automaticamente a meno che non si sia espressamente deciso di escluderli.];
+                      ApplicationArea=#Advanced;
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Export;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 TESTFIELD(Code);
+                                 ConfigXMLExchange.ExportPackage(Rec);
+                               END;
+                                }
+      { 22      ;2   ;Action    ;
+                      Ellipsis=Yes;
+                      CaptionML=[DEU=Paket importieren;
+                                 ENU=Import Package;
+                                 ITA=Importa pacchetto];
+                      ToolTipML=[DEU=Importiert eine .rapidstart-Paketdatei.;
+                                 ENU=Import a .rapidstart package file.;
+                                 ITA=Importare un file di pacchetto con estensione rapidstart.];
+                      ApplicationArea=#Advanced;
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Import;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 ConfigXMLExchange.ImportPackageXMLFromClient;
+                               END;
+                                }
+      { 21      ;2   ;Action    ;
+                      CaptionML=[DEU=In Excel exportieren;
+                                 ENU=Export to Excel;
+                                 ITA=Esporta in Excel];
+                      ToolTipML=[DEU=Exportiert die Daten im Paket in Excel.;
+                                 ENU=Export the data in the package to Excel.;
+                                 ITA=Esportare i dati del pacchetto in Excel.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      Image=ExportToExcel;
+                      PromotedCategory=Category5;
+                      OnAction=VAR
+                                 ConfigPackageTable@1000 : Record 8613;
+                                 ConfigExcelExchange@1001 : Codeunit 8618;
+                               BEGIN
+                                 TESTFIELD(Code);
+
+                                 ConfigPackageTable.SETRANGE("Package Code",Code);
+                                 IF CONFIRM(Text004,TRUE,Code,ConfigPackageTable.COUNT) THEN
+                                   ConfigExcelExchange.ExportExcelFromTables(ConfigPackageTable);
+                               END;
+                                }
+      { 20      ;2   ;Action    ;
+                      CaptionML=[DEU=Aus Excel importieren;
+                                 ENU=Import from Excel;
+                                 ITA=Importa da Excel];
+                      ToolTipML=[DEU=Beginnt die Migration der Stammdaten.;
+                                 ENU=Begin the migration of legacy data.;
+                                 ITA=Iniziare la migrazione dei dati legacy.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      Image=ImportExcel;
+                      PromotedCategory=Category5;
+                      OnAction=VAR
+                                 ConfigExcelExchange@1000 : Codeunit 8618;
+                               BEGIN
+                                 ConfigExcelExchange.ImportExcelFromPackage;
+                               END;
+                                }
+      { 1031100000;2 ;Action    ;
+                      CaptionML=[DEU=Exportieren (JSON);
+                                 ENU=Export (JSON);
+                                 ITA=Esporta (JSON)];
+                      Promoted=Yes;
+                      Image=ExportFile;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 Rec2@1031100001 : Record 8623;
+                                 ExportToJson@1031100000 : Report 18006505;
+                               BEGIN
+                                 Rec2 := Rec;
+                                 Rec2.SETRECFILTER;
+                                 ExportToJson.SETTABLEVIEW(Rec2);
+                                 ExportToJson.RUNMODAL;
+                               END;
+                                }
+      { 19      ;1   ;ActionGroup;
+                      CaptionML=[DEU=F&unktionen;
+                                 ENU=F&unctions;
+                                 ITA=F&unzioni] }
+      { 17      ;2   ;Action    ;
+                      Ellipsis=Yes;
+                      CaptionML=[DEU=Tabellen abrufen;
+                                 ENU=Get Tables;
+                                 ITA=Ottieni tabelle];
+                      ToolTipML=[DEU=W�hlt Tabellen aus, die Sie dem Konfigurationspaket hinzuf�gen m�chten.;
+                                 ENU=Select tables that you want to add to the configuration package.;
+                                 ITA=Selezionare le tabelle che si desidera aggiungere al pacchetto di configurazione.];
+                      ApplicationArea=#Advanced;
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=GetLines;
+                      PromotedCategory=New;
+                      OnAction=VAR
+                                 GetPackageTables@1000 : Report 8616;
+                               BEGIN
+                                 CurrPage.SAVERECORD;
+                                 GetPackageTables.Set(Code);
+                                 GetPackageTables.RUNMODAL;
+                                 CLEAR(GetPackageTables);
+                               END;
+                                }
+      { 15      ;2   ;Action    ;
+                      CaptionML=[DEU=Paket �bernehmen;
+                                 ENU=Apply Package;
+                                 ITA=Collega pacchetto];
+                      ToolTipML=[DEU=Importiert das Konfigurationspaket und �bernimmt gleichzeitig die Paketdatenbankdaten.;
+                                 ENU=Import the configuration package and apply the package database data at the same time.;
+                                 ITA=Importare il pacchetto di configurazione e collegare i dati del database del pacchetto contemporaneamente.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Apply;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 ConfigPackageTable@1002 : Record 8613;
+                                 ConfigPackageMgt@1000 : Codeunit 8611;
+                               BEGIN
+                                 TESTFIELD(Code);
+                                 IF CONFIRM(Text003,TRUE,Code) THEN BEGIN
+                                   ConfigPackageTable.SETRANGE("Package Code",Code);
+                                   ConfigPackageMgt.ApplyPackage(Rec,ConfigPackageTable,TRUE);
+                                 END;
+                               END;
+                                }
+      { 13      ;2   ;Action    ;
+                      CaptionML=[DEU=Paket kopieren;
+                                 ENU=Copy Package;
+                                 ITA=Copia pacchetto];
+                      ToolTipML=[DEU=Kopiert ein vorhandenes Konfigurationspaket, um ein neues Paket auf Grundlage desselben Inhalts zu erstellen.;
+                                 ENU=Copy an existing configuration package to create a new package based on the same content.;
+                                 ITA=Copiare un pacchetto di configurazione esistente per creare un nuovo pacchetto basato sullo stesso contenuto.];
+                      ApplicationArea=#Advanced;
+                      Image=CopyWorksheet;
+                      OnAction=VAR
+                                 CopyPackage@1000 : Report 8615;
+                               BEGIN
+                                 TESTFIELD(Code);
+                                 CopyPackage.Set(Rec);
+                                 CopyPackage.RUNMODAL;
+                                 CLEAR(CopyPackage);
+                               END;
+                                }
+      { 8       ;2   ;Action    ;
+                      CaptionML=[DEU=Paket �berpr�fen;
+                                 ENU=Validate Package;
+                                 ITA=Convalida pacchetto];
+                      ToolTipML=[DEU=Ermittelt, ob Sie Fehler eingef�hrt haben, wie etwa Tabellen nicht einzuf�gen, auf denen die Konfiguration beruht.;
+                                 ENU=Determine if you have introduced errors, such as not including tables that the configuration relies on.;
+                                 ITA=Determinare se sono stati introdotti errori, ad esempio non sono state incluse le tabelle su cui si basa la configurazione.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=CheckRulesSyntax;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 ConfigPackageTable@1000 : Record 8613;
+                                 TempConfigPackageTable@1001 : TEMPORARY Record 8613;
+                                 ConfigPackageMgt@1002 : Codeunit 8611;
+                               BEGIN
+                                 IF CONFIRM(Text002,TRUE,"Package Name") THEN BEGIN
+                                   ConfigPackageTable.SETRANGE("Package Code",Code);
+                                   ConfigPackageMgt.ValidatePackageRelations(ConfigPackageTable,TempConfigPackageTable,TRUE);
+                                 END;
+                               END;
+                                }
+      { 7       ;2   ;Separator  }
+      { 6       ;2   ;Action    ;
+                      CaptionML=[DEU=In �bersetzung exportieren;
+                                 ENU=Export to Translation;
+                                 ITA=Esporta in traduzione];
+                      ToolTipML=[DEU=Die Daten in eine Datei, die sich zur �bersetzung eignet, exportieren.;
+                                 ENU=Export the data to a file that is suited for translation.;
+                                 ITA=Esportare i dati in un file appropriato per la traduzione.];
+                      ApplicationArea=#Advanced;
+                      Visible=FALSE;
+                      Image=Export;
+                      OnAction=VAR
+                                 ConfigPackageTable@1001 : Record 8613;
+                               BEGIN
+                                 TESTFIELD(Code);
+
+                                 ConfigXMLExchange.SetAdvanced(TRUE);
+                                 ConfigPackageTable.SETRANGE("Package Code",Code);
+                                 IF CONFIRM(Text004,TRUE,Code,ConfigPackageTable.COUNT) THEN
+                                   ConfigXMLExchange.ExportPackageXML(ConfigPackageTable,'');
+                               END;
+                                }
+      { 12      ;2   ;Action    ;
+                      Name=ProcessData;
+                      CaptionML=[DEU=Daten verarbeiten;
+                                 ENU=Process Data;
+                                 ITA=Elabora dati];
+                      ToolTipML=[DEU=Verarbeitet Daten im Konfigurationspaket, bevor Sie sie auf die Datenbank anwenden. Beispiel: Konvertieren Sie Daten und Dezimalzahlen in das Format, das f�r die regionalen Einstellungen auf dem Computer eines Benutzers erforderlich ist, und entfernen Sie die Leerzeichen am Anfang oder Ende oder Sonderzeichen.;
+                                 ENU=Process data in the configuration package before you apply it to the database. For example, convert dates and decimals to the format required by the regional settings on a user's computer and remove leading/trailing spaces or special characters.;
+                                 ITA=Elaborare i dati del pacchetto di configurazione prima di collegarlo al database. Ad esempio, convertire le date e i decimali nel formato richiesto dalle impostazioni internazionali del computer dell'utente e rimuovere gli spazi iniziali/finali o i caratteri speciali.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=DataEntry;
+                      OnAction=BEGIN
+                                 ProcessPackageTablesWithDefaultProcessingReport;
+                                 ProcessPackageTablesWithCustomProcessingReports;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                CaptionML=[DEU=Allgemein;
+                           ENU=General;
+                           ITA=Generale];
+                GroupType=Group }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[DEU=Gibt einen Code f�r das Konfigurationspaket an.;
+                           ENU=Specifies a code for the configuration package.;
+                           ITA=Specifica un codice per il pacchetto di configurazione.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Code;
+                ShowMandatory=TRUE;
+                ImplicitType=Code20 }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[DEU=Gibt den Namen des Pakets an.;
+                           ENU=Specifies the name of the package.;
+                           ITA=Specifica il nome del pacchetto.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Package Name";
+                ShowMandatory=TRUE;
+                ImplicitType=Text50 }
+
+    { 5   ;2   ;Field     ;
+                ToolTipML=[DEU=Gibt die Version des Produkts an, das Sie konfigurieren. Sie k�nnen dieses Feld verwenden, um verschiedene Versionen einer L�sung zu unterscheiden.;
+                           ENU=Specifies the version of the product that you are configuring. You can use this field to help differentiate among various versions of a solution.;
+                           ITA=Specifica la versione del prodotto che si sta configurando. � possibile utilizzare questo campo per differenziare le varie versioni di una soluzione.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Product Version";
+                ImplicitType=Text248 }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[DEU=Gibt die ID der Windows-Sprache an, die f�r das Konfigurationspaket verwendet werden soll. W�hlen Sie das Feld aus, und w�hlen Sie eine Sprach-ID aus der Liste aus.;
+                           ENU=Specifies the ID of the Windows language to use for the configuration package. Choose the field and select a language ID from the list.;
+                           ITA=Specifica l'ID della lingua di Windows da utilizzare per il pacchetto di configurazione. Scegliere il campo e selezionare un ID lingua dall'elenco.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Language ID";
+                ImplicitType=Integer }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[DEU=Gibt die Reihenfolge an, in der das Paket verarbeitet werden soll.;
+                           ENU=Specifies the order in which the package is to be processed.;
+                           ITA=Specifica l'ordine nel quale il pacchetto deve essere elaborato.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Processing Order";
+                ImplicitType=Integer }
+
+    { 9   ;2   ;Field     ;
+                ToolTipML=[DEU=Gibt an, ob Konfigurationstabellen aus dem Paket ausgeschlossen werden sollen. Aktivieren Sie das Kontrollk�stchen, um diese Arten von Tabellen auszuschlie�en.;
+                           ENU=Specifies whether to exclude configuration tables from the package. Select the check box to exclude these types of tables.;
+                           ITA=Specifica se escludere le tabelle di configurazione dal pacchetto. Selezionare la casella di controllo per escludere questi tipi di tabelle.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Exclude Config. Tables";
+                ImplicitType=Boolean }
+
+    { 10  ;1   ;Part      ;
+                ApplicationArea=#Advanced;
+                SubPageView=SORTING(Package Code,Table ID);
+                SubPageLink=Package Code=FIELD(Code);
+                PagePartID=Page8625;
+                PartType=Page }
+
+  }
+  CODE
+  {
+    VAR
+      ConfigXMLExchange@1001 : Codeunit 8614;
+      Text002@1005 : TextConst 'DEU=Paket %1 �berpr�fen?;ENU=Validate package %1?;ITA=Convalidare il pacchetto %1?';
+      Text003@1004 : TextConst 'DEU=Daten aus Paket %1 �bernehmen?;ENU=Apply data from package %1?;ITA=Collegare i dati dal pacchetto %1?';
+      Text004@1003 : TextConst 'DEU=Paket %1 mit %2 Tabellen exportieren?;ENU=Export package %1 with %2 tables?;ITA=Esportare il pacchetto %1 con %2 tabelle?';
+      ActionVisible@1000 : Boolean;
+      UnsupportedNewErr@1002 : TextConst 'DEU=Sie k�nnen keine neuen Konfigurationspakete erstellen.;ENU=You cannot create new Config. Packages.;ITA=Impossibile creare nuovi pacchetti di configurazione.';
+      UnsupportedEditErr@1006 : TextConst 'DEU=Sie k�nnen "Pakete konfigurieren" nicht bearbeiten.;ENU=You cannot edit Config. Packages.;ITA=Impossibile modificare pacchetti di configurazione.';
+      UnsupportedDeleteErr@1007 : TextConst 'DEU=Sie k�nnen "Pakete konfigurieren" nicht l�schen.;ENU=You cannot delete Config. Packages.;ITA=Impossibile eliminare pacchetti di configurazione.';
+
+    [LineStart(448)]
+    LOCAL PROCEDURE ProcessPackageTablesWithDefaultProcessingReport@2();
+    VAR
+      ConfigPackageTable@1000 : Record 8613;
+    BEGIN
+      ConfigPackageTable.SETRANGE("Package Code",Code);
+      ConfigPackageTable.SETRANGE("Processing Report ID",0);
+      IF NOT ConfigPackageTable.ISEMPTY THEN
+        REPORT.RUNMODAL(REPORT::"Config. Package - Process",FALSE,FALSE,ConfigPackageTable);
+    END;
+
+    [LineStart(454)]
+    LOCAL PROCEDURE ProcessPackageTablesWithCustomProcessingReports@3();
+    VAR
+      ConfigPackageTable@1000 : Record 8613;
+    BEGIN
+      ConfigPackageTable.SETRANGE("Package Code",Code);
+      ConfigPackageTable.SETFILTER("Processing Report ID",'<>0',0);
+      IF ConfigPackageTable.FINDSET THEN
+        REPEAT
+          REPORT.RUNMODAL(ConfigPackageTable."Processing Report ID",FALSE,FALSE,ConfigPackageTable)
+        UNTIL ConfigPackageTable.NEXT = 0;
+    END;
+
+    [LineStart(462)]
+    LOCAL PROCEDURE SetActionVisibility@1();
+    VAR
+      ApplicationAreaSetup@1000 : Record 9178;
+    BEGIN
+      ActionVisible := NOT ApplicationAreaSetup.IsFoundationEnabled;  // Only hide for Basic and Suite
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

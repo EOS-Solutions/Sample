@@ -1,0 +1,21 @@
+variables:
+  build_version_major: 1
+  build_version_minor: 0
+  build_version_build: $[counter('buildno_counter')]
+
+name: $(BuildID)_$(BuildDefinitionName)_$(build_version_major).$(build_version_minor).$(build_version_build)
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: Eos.Nav.Platform/BuildTemplates
+
+trigger:
+  branches:
+    include: [ master ]
+  paths:
+    exclude: ['Documentation/*','Build/*','Images/*','Scripts/*', '*.app', 'Other/*']
+
+jobs:
+- template: app-build-template.yml@templates

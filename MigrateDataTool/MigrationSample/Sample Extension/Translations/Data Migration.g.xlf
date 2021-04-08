@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="Data Migration">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 1410696362 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Additional Table</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table EOS Additional Table - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 1410696362 - Field 883711285 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Entry No.</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table EOS Additional Table - Field Entry No. - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 1410696362 - Field 3004954119 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Code</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table EOS Additional Table - Field Code - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 1410696362 - Field 3461834954 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Description</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table EOS Additional Table - Field Description - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 1410696362 - Field 636392376 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Amount</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table EOS Additional Table - Field Amount - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 29913412 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Additional Data (MIG)</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page EOS Additional Data - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 1355655497 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Additional Data Setup (MIG)</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page EOS Additional Data Setup - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 699539479 - Control 1893160067 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Additional Data EXT</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension EOS PageExt60000 - Control EOS Additional Data EXT - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 1337236096 - Control 1893160067 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Additional Data EXT</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension EOS PageExt60001 - Control EOS Additional Data EXT - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2279900108 - Field 1586873095 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Additional Code</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension EOS TableExt60000 - Field EOS Additional Code - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2279900108 - Field 1568828874 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Additional Description</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension EOS TableExt60000 - Field EOS Additional Description - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2279900108 - Field 3476594124 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Additional Ref. No.</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension EOS TableExt60000 - Field EOS Additional Ref. No. - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 1642203491 - Field 1586873095 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Additional Code</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension EOS TableExt60001 - Field EOS Additional Code - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 1642203491 - Field 1568828874 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Additional Description</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension EOS TableExt60001 - Field EOS Additional Description - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 1642203491 - Field 3476594124 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Additional Ref. No.</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension EOS TableExt60001 - Field EOS Additional Ref. No. - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>

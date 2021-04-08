@@ -1,0 +1,37 @@
+{
+    "id":  "7cba9514-83a3-4040-a236-5a3ed23a955e",
+    "name":  "Data Migration Test",
+    "publisher":  "EOS Solutions",
+    "brief":  "",
+    "description":  "",
+    "version":  "1.0.0.0",
+    "privacyStatement":  "https://www.eos-solutions.it/en/privacy.html",
+    "EULA":  "https://www.eos-solutions.it/en/eula.html",
+    "help":  "https://www.eos-solutions.it/en/data-migration-en.html",
+    "url":  "https://www.eos-solutions.it/",
+    "logo":  "Images/logo-432.png",
+    "features":  [
+
+                 ],
+    "capabilities":  [
+
+                     ],
+    "dependencies":  [
+                         {
+                             "appId":  "01526f68-38ed-472f-a919-cd94cfae80d8",
+                             "publisher":  "EOS Solutions",
+                             "name":  "Data Migration",
+                             "version":  "1.0.0.0"
+                         }
+                     ],
+    "screenshots":  [
+
+                    ],
+    "platform":  "13.0.0.0",
+    "application":  "13.0.0.0",
+    "idRange":  {
+                    "from":  60000,
+                    "to":  70000
+                },
+    "runtime":  "2.0"
+}
