@@ -1,23 +1,23 @@
-report 18123356 "EOS Vendor Statement"
+report 18123355 "EOS Customer Statement"
 {
-
     DefaultLayout = RDLC;
-    RDLCLayout = './source/Report/report 18123356 EOS Vendor Statement.rdlc';
-    Caption = 'Vendor Statement (CVS)';
+    RDLCLayout = './source/Report/report 18123355 EOS Customer Statement.rdlc';
+    Caption = 'Customer Statement (CVS)';
     PreviewMode = PrintLayout;
     ApplicationArea = All;
     UsageCategory = ReportsAndAnalysis;
 
     dataset
     {
-        dataitem(Vendor; Vendor)
+        dataitem(Customer; Customer)
         {
             DataItemTableView = sorting("No.");
             RequestFilterFields = "No.", Name, "Country/Region Code";
 
             trigger OnPreDataItem();
+            var
             begin
-                Vendor.SETVIEW(AssetsEngine.CollapsSecurityFiltersToView(Vendor));
+                Customer.SETVIEW(AssetsEngine.CollapsSecurityFiltersToView(Customer));
 
                 CurrReport.BREAK();
             end;
@@ -55,34 +55,32 @@ report 18123356 "EOS Vendor Statement"
             var
                 SalespersonFilter: Text;
             begin
-                if UseSalespersonFromVendorPrmtr then
+                if UseSalespersonFromCustomerPrmtr then
                     if SalespersonFilters.GetFilters() <> '' then begin
                         SalespersonFilter := GetSelectionFilterForSalesperson(SalespersonFilters);
-                        Vendor.SetFilter("Purchaser Code", SalespersonFilter);
+                        Customer.SetFilter("Salesperson Code", SalespersonFilter);
                     end;
 
                 case SortOrderPrmtr of
-                    SortOrderPrmtr::VendorNo:
-                        Vendor.SetCurrentKey("No.");
-                    SortOrderPrmtr::VendorName:
-                        Vendor.SetCurrentKey("Name", "Name 2", "No.");
+                    SortOrderPrmtr::CustomerNo:
+                        Customer.SetCurrentKey("No.");
+                    SortOrderPrmtr::CustomerName:
+                        Customer.SetCurrentKey("Name", "Name 2", "No.");
                 end;
 
                 AssetsEngine.SetAddPreviousBalance(true);
 
-                AssetsEngine.SetForceCustomerSalesperson(UseSalespersonFromVendorPrmtr);
-                AssetsEngine.BuildMultiSourceTreeView(1, Vendor.GETVIEW(false), 0, StartingPostingDate, EndingPostingDate,
+                AssetsEngine.SetForceCustomerSalesperson(UseSalespersonFromCustomerPrmtr);
+                AssetsEngine.BuildMultiSourceTreeView(0, Customer.GETVIEW(false), 0, StartingPostingDate, EndingPostingDate,
                                                          StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', TempReportingBuffer[1]);
 
-                OnAfterBuildMultiSourceTreeView(Vendor.GETVIEW(false), 0, StartingPostingDate, EndingPostingDate,
-                                                         StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', TempReportingBuffer[1]);
+                OnAfterBuildMultiSourceTreeView(Customer.GETVIEW(false), 0, StartingPostingDate, EndingPostingDate,
+                                                StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', TempReportingBuffer[1]);
 
                 TempReportingBuffer[1].Reset();
                 TempReportingBuffer[1].setrange("EOS Document Type", TempReportingBuffer[1]."EOS Document Type"::"Previous Balance");
                 TempReportingBuffer[1].DeleteAll();
                 TempReportingBuffer[1].Reset();
-
-                AssetsEngine.ReverseSigns(TempReportingBuffer[1]); //Amount Reversed for Vendors
 
                 if ShowLinkedEntriesPrmtr then begin
                     AssetsEngine.MergeMultipleLevel3Items(TempReportingBuffer[1]);
@@ -113,7 +111,7 @@ report 18123356 "EOS Vendor Statement"
                 TempReportingBuffer[4].ModifyAll("EOS Reporting Group 2", 0);
                 Clear(TempReportingBuffer);
 
-                if not UseSalespersonFromVendorPrmtr then
+                if not UseSalespersonFromCustomerPrmtr then
                     if SalespersonFilters.GetFilters() <> '' then begin
                         SalespersonFilter := GetSelectionFilterForSalesperson(SalespersonFilters);
                         TempReportingBuffer[2].SetFilter("EOS Salesperson Code", SalespersonFilter);
@@ -214,22 +212,22 @@ report 18123356 "EOS Vendor Statement"
                 Clear(TempReportingBuffer);
                 Clear(TempDueAmountsBuffer);
 
-                OnAfterBuildReportingDataset(Vendor.GETVIEW(false), 0, StartingPostingDate, EndingPostingDate,
+                OnAfterBuildReportingDataset(Customer.GETVIEW(false), 0, StartingPostingDate, EndingPostingDate,
                                              StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '',
                                              TempReportingBuffer[1])
             end;
         }
-        dataitem(VendorPrint; Vendor)
+        dataitem(CustomerPrint; Customer)
         {
             DataItemTableView = sorting("No.");
             PrintOnlyIfDetail = true;
-            column(VendorAddress; GetVendorAddress()) { }
-            column(VendorSalespersonCode; GetVendorSalesPersonCode()) { }
-            column(VendorSalespersonName; GetCVendorSalesPersonName()) { }
-            column(VendorPaymentMethod; GetVendorPaymentMethod()) { }
-            column(VendorPaymentTerms; GetVendorPaymentTerms()) { }
-            column(VendorPhone; GetVendorPhone()) { }
-            column(VendorNo; "No.") { }
+            column(CustomerAddress; GetCustomerAddress()) { }
+            column(CustomerSalespersonCode; GetCustomerSalesPersonCode()) { }
+            column(CustomerSalespersonName; GetCustomerSalesPersonName()) { }
+            column(CustomerPaymentMethod; GetCustomerPaymentMethod()) { }
+            column(CustomerPaymentTerms; GetCustomerPaymentTerms()) { }
+            column(CustomerPhone; GetCustomerPhone()) { }
+            column(CustomerNo; "No.") { }
             dataitem(Detail; Integer)
             {
                 DataItemTableView = sorting(Number)
@@ -256,7 +254,6 @@ report 18123356 "EOS Vendor Statement"
                 {
                     DecimalPlaces = 2 : 2;
                 }
-                column(ExternalDocumentNo; TempReportingBuffer[1]."EOS External Document No.") { }
                 column(ExposureLCY; TempReportingBuffer[1]."EOS Exposure (LCY)")
                 {
                     DecimalPlaces = 2 : 2;
@@ -280,8 +277,8 @@ report 18123356 "EOS Vendor Statement"
                 trigger OnPreDataItem();
                 begin
                     Clear(TempReportingBuffer);
-                    TempReportingBuffer[1].SetRange("EOS Source Type", TempReportingBuffer[1]."EOS Source Type"::Vendor);
-                    TempReportingBuffer[1].SetRange("EOS Source No.", VendorPrint."No.");
+                    TempReportingBuffer[1].SetRange("EOS Source Type", TempReportingBuffer[1]."EOS Source Type"::Customer);
+                    TempReportingBuffer[1].SetRange("EOS Source No.", CustomerPrint."No.");
                     TempReportingBuffer[1].SetCurrentKey("EOS Entry No.");
                     if ShowLinkedEntriesPrmtr then
                         TempReportingBuffer[1].SetRange("EOS Level No.", 2, 4)
@@ -318,8 +315,8 @@ report 18123356 "EOS Vendor Statement"
                 trigger OnPreDataItem();
                 begin
                     TempDueAmountsBuffer[1].SetCurrentKey("EOS Reporting Group 1", "EOS Due Date");
-                    TempDueAmountsBuffer[1].SetRange("EOS Source Type", TempReportingBuffer[1]."EOS Source Type"::Vendor);
-                    TempDueAmountsBuffer[1].SetRange("EOS Source No.", VendorPrint."No.");
+                    TempDueAmountsBuffer[1].SetRange("EOS Source Type", TempReportingBuffer[1]."EOS Source Type"::Customer);
+                    TempDueAmountsBuffer[1].SetRange("EOS Source No.", CustomerPrint."No.");
                     if not TempDueAmountsBuffer[1].Find('-') then
                         CurrReport.BREAK();
                 end;
@@ -334,7 +331,7 @@ report 18123356 "EOS Vendor Statement"
             trigger OnPreDataItem();
             var
             begin
-                CopyFilterS(Vendor);
+                CopyFilterS(Customer);
             end;
         }
     }
@@ -351,22 +348,25 @@ report 18123356 "EOS Vendor Statement"
                 {
                     Caption = 'Only Open Entries';
                     ApplicationArea = all;
+                    ToolTip = 'Specifies the value of the "Only Open Entries" field.';
                 }
                 // field(SortOrder; SortOrderPrmtr)
                 // {
                 //     Caption = 'Sort Order';
-                //     OptionCaption = 'Vendor No.,Vendor Name';
+                //     OptionCaption = 'Customer No.,Customer Name';
                 //     ApplicationArea = All;
                 // }
                 field(ShowLinkedEntries; ShowLinkedEntriesPrmtr)
                 {
                     Caption = 'Show Linked Entries';
                     ApplicationArea = all;
+                    ToolTip = 'Specifies the value of the "Show Linked Entries" field.';
                 }
                 field(PostingDateFilter; PostingDateFilterPrmtr)
                 {
                     Caption = 'Posting Date Filter';
                     ApplicationArea = all;
+                    ToolTip = 'Specifies the value of the "Posting Date Filter" field.';
 
                     trigger OnValidate();
                     var
@@ -380,6 +380,7 @@ report 18123356 "EOS Vendor Statement"
                 {
                     Caption = 'Due Date Filter';
                     ApplicationArea = all;
+                    ToolTip = 'Specifies the value of the "Due Date Filter" field.';
 
                     trigger OnValidate();
                     var
@@ -394,15 +395,19 @@ report 18123356 "EOS Vendor Statement"
                     Caption = 'Payment Method Filter';
                     TableRelation = "Payment Method";
                     ApplicationArea = all;
+                    ToolTip = 'Specifies the value of the "Payment Method Filter" field.';
                 }
-                field(UseSalespersonFromVendor; UseSalespersonFromVendorPrmtr)
+                field(UseSalespersonFromCustomer; UseSalespersonFromCustomerPrmtr)
                 {
-                    Caption = 'Use Salesperson from Vendor';
+                    Caption = 'Use Salesperson from Customer';
                     ApplicationArea = all;
+                    ToolTip = 'Specifies the value of the "Use Salesperson from Customer" field.';
                 }
                 group("Output Options")
                 {
                     Caption = 'Output Options';
+                    Visible = false;
+                    //Enabled = SubscriptionActiv;
                     field(ReportOutput; SupportedOutputMethod)
                     {
                         Caption = 'Report Output';
@@ -410,6 +415,7 @@ report 18123356 "EOS Vendor Statement"
                         //'Each item is a verb/action - to print, to preview, to export to Word, export to PDF, send email, export to XML for RDLC layouts only
                         Visible = false;
                         ApplicationArea = all;
+                        ToolTip = 'Specifies the value of the "Report Output" field.';
 
                         trigger OnValidate();
                         var
@@ -427,7 +433,7 @@ report 18123356 "EOS Vendor Statement"
             }
         }
 
-        trigger OnOpenPage();
+        trigger OnOpenPage()
         var
             Parameters: Record "EOS008 CVS Report Parameters";
             AdvCustVendStatSharedMem: Codeunit "EOS AdvCustVendStat SharedMem";
@@ -437,14 +443,14 @@ report 18123356 "EOS Vendor Statement"
             if AdvCustVendStatSharedMem.GetReportParameter(Parameters) then begin
                 OnlyOpenPrmtr := Parameters."Only Open";
                 ShowLinkedEntriesPrmtr := Parameters."Show Linked Entries";
-                UseSalespersonFromVendorPrmtr := Parameters."Use Salesperson from Vendor";
+                UseSalespersonFromCustomerPrmtr := Parameters."Use Salesperson from Customer";
                 PostingDateFilterPrmtr := Parameters."Posting Date Filter";
                 DueDateFilterPrmtr := Parameters."Due Date Filter";
                 PaymentMethodFilterPrmtr := Parameters."Payment Method Filter";
 
                 if Parameters."Customer Vendor Table Filter 1" <> '' then begin
-                    Vendor.Reset();
-                    Vendor.SetView(Parameters."Customer Vendor Table Filter 1");
+                    Customer.Reset();
+                    Customer.SetView(Parameters."Customer Vendor Table Filter 1");
                 end;
                 if Parameters."SalesPerson Table Filter 1" <> '' then begin
                     SalespersonFilters.Reset();
@@ -452,26 +458,27 @@ report 18123356 "EOS Vendor Statement"
                 end;
             end;
         end;
+
     }
 
     labels
     {
-        ReportTitle = 'Vendor Account Statement at';
-        VendorNoLabel = 'Vendor';
+        ReportTitle = 'Customer Account Statement at';
+        CustomerNoLabel = 'Customer';
         SalesPersonLabel = 'Salesperson';
-        VendorNameLabel = 'Name';
-        VendorPhoneLabel = 'Phone';
+        CustomerNameLabel = 'Name';
+        CustomerPhoneLabel = 'Phone';
         DescriptionLabel = 'Description';
         PostingDateLabel = 'Posting Date';
         DueDateLabel = 'Due Date';
         AssetTotalLabel = 'Total';
         DocumentTotalLabel = 'Document Total';
-        VendorTotalLabel = 'Vendor Total';
+        CustomerTotalLabel = 'Customer Total';
         PageNoLabel = 'Page';
         DocumentTypeLabel = 'Type';
         DocumentNoLabel = 'Document';
         DocumentDateLabel = 'Doc. Date';
-        ExternalDocumentNoLabel = 'External Document No.';
+        ExternalDocumentNo = 'External Document No.';
         PaymentMethodLabel = 'Payment Method Code';
         PaymentTermsLabel = 'Payment Terms Code';
         RemainingAmountLCYLabel = 'Remaining Amt. (LCY)';
@@ -492,13 +499,19 @@ report 18123356 "EOS Vendor Statement"
     begin
         OnlyOpenPrmtr := false;
         ShowLinkedEntriesPrmtr := true;
-        UseSalespersonFromVendorPrmtr := true;
+        UseSalespersonFromCustomerPrmtr := true;
 
         ChosenOutputMethod := CustomLayoutReporting.GetPreviewOption();
+
+        SubscriptionActive := SubscriptionMgt.GetSubscriptionIsActive();
+
     end;
 
     trigger OnPreReport();
     begin
+        if not SubscriptionActive then
+            Currreport.quit();
+
         CompanyInformation.Get();
         CompanyInformation.CalcFields(Picture);
 
@@ -515,7 +528,8 @@ report 18123356 "EOS Vendor Statement"
         SubscriptionMgt: Codeunit "EOS AdvCustVendStat Subscript";
         OnlyOpenPrmtr: Boolean;
         ShowLinkedEntriesPrmtr: Boolean;
-        UseSalespersonFromVendorPrmtr: Boolean;
+        SubscriptionActive: Boolean;
+        UseSalespersonFromCustomerPrmtr: Boolean;
         EndingDueDate: Date;
         EndingPostingDate: Date;
         StartingDueDate: Date;
@@ -523,12 +537,13 @@ report 18123356 "EOS Vendor Statement"
         ChosenOutputMethod: Integer;
         [InDataSet]
         DetailLoopNo: Integer;
-        SortOrderPrmtr: Option VendorNo,VendorName;
+        SortOrderPrmtr: Option CustomerNo,CustomerName;
         SupportedOutputMethod: Option Print,Preview;
+        CustomerAddress: array[11] of Text[100];
         DueDateFilterPrmtr: Text;
         PaymentMethodFilterPrmtr: Text;
         PostingDateFilterPrmtr: Text;
-        VendorAddress: array[11] of Text[100];
+
 
     local procedure GetBufferGroup(var BufferAssets: Record "EOS Statem. Assets Buffer EXT" temporary): Text;
     begin
@@ -573,7 +588,6 @@ report 18123356 "EOS Vendor Statement"
     var
         EndingPostingDate2: Date;
         StartingPostingDate2: Date;
-
     begin
         if PostingDateFilterPrmtr = '' then
             exit(Format(TODAY()));
@@ -664,26 +678,26 @@ report 18123356 "EOS Vendor Statement"
                   CompanyInformation."Country/Region Code";
     end;
 
-    local procedure GetVendorAddress(): Text;
+    local procedure GetCustomerAddress(): Text;
     var
         FormatAddress: Codeunit "Format Address";
     begin
         if DetailLoopNo > 1 then
             exit('');
 
-        FormatAddress.Vendor(VendorAddress, VendorPrint);
-        exit(GetAddressString(VendorAddress));
+        FormatAddress.Customer(CustomerAddress, CustomerPrint);
+        exit(GetAddressString(CustomerAddress));
     end;
 
-    local procedure GetVendorSalesPersonCode(): Text;
+    local procedure GetCustomerSalesPersonCode(): Text;
     begin
         if DetailLoopNo > 1 then
             exit('');
 
-        exit(VendorPrint."Purchaser Code");
+        exit(CustomerPrint."Salesperson Code");
     end;
 
-    local procedure GetCVendorSalesPersonName(): Text;
+    local procedure GetCustomerSalesPersonName(): Text;
     var
         SalesPerson: Record "Salesperson/Purchaser";
     begin
@@ -691,30 +705,30 @@ report 18123356 "EOS Vendor Statement"
             exit('');
 
         Clear(SalesPerson);
-        if VendorPrint."Purchaser Code" <> '' then
-            if SalesPerson.Get(VendorPrint."Purchaser Code") then
+        if CustomerPrint."Salesperson Code" <> '' then
+            if SalesPerson.Get(CustomerPrint."Salesperson Code") then
                 exit(SalesPerson.Name);
     end;
 
-    local procedure GetVendorPaymentMethod(): Text;
+    local procedure GetCustomerPaymentMethod(): Text;
     begin
         if DetailLoopNo > 1 then
             exit('');
 
-        AdvCustVendStatRoutines.GetPaymentMethodDescription(VendorPrint."Payment Method Code", VendorPrint."Language Code");
+        AdvCustVendStatRoutines.GetPaymentMethodDescription(CustomerPrint."Payment Method Code", CustomerPrint."Language Code");
     end;
 
-    local procedure GetVendorPaymentTerms(): Text;
+    local procedure GetCustomerPaymentTerms(): Text;
     begin
         if DetailLoopNo > 1 then
             exit('');
 
-        exit(VendorPrint."Payment Terms Code");
+        exit(CustomerPrint."Payment Terms Code");
     end;
 
-    local procedure GetVendorPhone(): Text;
+    local procedure GetCustomerPhone(): Text;
     begin
-        exit(VendorPrint."Phone No.");
+        exit(CustomerPrint."Phone No.");
     end;
 
     local procedure GetBackReceiptNo(): Text;
@@ -740,9 +754,9 @@ report 18123356 "EOS Vendor Statement"
         ShowLinkedEntriesPrmtr := Set;
     end;
 
-    procedure SetUseVendorSalesperson(Set: Boolean);
+    procedure SetUseCustomerSalesperson(Set: Boolean);
     begin
-        UseSalespersonFromVendorPrmtr := Set;
+        UseSalespersonFromCustomerPrmtr := Set;
     end;
 
     procedure SetPostingDateFilter(Set: Text);

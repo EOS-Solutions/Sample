@@ -246,6 +246,7 @@ report 18122010 "EOS Purchase Document"
                 column(GrossWeight; HeaderLoop."EOS Gross Weight Dec") { }
                 column(NetWeight; HeaderLoop."EOS Net Weight Dec") { }
                 column(Volume; HeaderLoop."EOS Volume Dec") { }
+                column(NoOfPallets; HeaderLoop."EOS No. of Pallets") { }
                 column(AddressPosition; Format(ReportSetup."EOS Address Position", 0, 9)) { }
                 column(OurBank; HeaderLoop."EOS Bank IBAN") { }
                 column(YourReference; HeaderLoop."EOS Your Reference") { }
@@ -560,7 +561,7 @@ report 18122010 "EOS Purchase Document"
         Line_LineDiscountPerc_Caption = 'Disc. %';
         Line_OrderQuantity_Caption = 'Order Quantity';
         Line_Quantity_Caption = 'Quantity';
-        Line_ShipmentDate_Caption = 'Shpt. Date';
+        Line_ShipmentDate_Caption = 'Rcpt. Date';
         Line_Type_Descr_Caption = 'Type';
         Line_UnitPrice_Caption = 'Price';
         Line_UoM_Caption = 'U.M.';
@@ -580,7 +581,7 @@ report 18122010 "EOS Purchase Document"
         Reason_Caption = 'Transport reason';
         ReturnAddr_Caption = 'Return address';
         Salesperson_Caption = 'Purchaser';
-        ShipmentDate_Caption = 'Shpt. Date';
+        ShipmentDate_Caption = 'Rcpt. Date';
         ShipToAddress_Caption = 'Shipping address';
         ShpAgent_Caption = 'Shipping agent';
         ShptBy_Caption = 'Shpt. by';

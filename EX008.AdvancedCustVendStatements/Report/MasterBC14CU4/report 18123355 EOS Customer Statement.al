@@ -77,6 +77,11 @@ report 18123355 "EOS Customer Statement"
                 OnAfterBuildMultiSourceTreeView(Customer.GETVIEW(false), 0, StartingPostingDate, EndingPostingDate,
                                                 StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', TempReportingBuffer[1]);
 
+                TempReportingBuffer[1].Reset();
+                TempReportingBuffer[1].setrange("EOS Document Type", TempReportingBuffer[1]."EOS Document Type"::"Previous Balance");
+                TempReportingBuffer[1].DeleteAll();
+                TempReportingBuffer[1].Reset();
+
                 if ShowLinkedEntriesPrmtr then begin
                     AssetsEngine.MergeMultipleLevel3Items(TempReportingBuffer[1]);
                     AssetsEngine.MergeL2RemainingAmounts(TempReportingBuffer[1]);
