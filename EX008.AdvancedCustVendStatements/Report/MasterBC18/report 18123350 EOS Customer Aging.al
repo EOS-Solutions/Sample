@@ -427,11 +427,13 @@ report 18123350 "EOS Customer Aging"
                 {
                     Caption = 'Only Open Entries';
                     ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "Only Open Entries" field.';
                 }
                 field(SortOrder; SortOrderPrmtr)
                 {
                     Caption = 'Sort Order';
                     ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "Sort Order" field.';
 
                     trigger OnValidate();
                     begin
@@ -443,6 +445,7 @@ report 18123350 "EOS Customer Aging"
                     Caption = 'Detail Level';
                     Enabled = NewPagePerCustomerEnabled;
                     ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "Detail Level" field.';
 
                     trigger OnValidate();
                     begin
@@ -454,12 +457,14 @@ report 18123350 "EOS Customer Aging"
                     Caption = 'Show Linked Entries';
                     Enabled = LinkedEntriesEnabled;
                     ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "Show Linked Entries" field.';
                 }
                 field(NewPagePerSalesperson; NewPagePerSalespersonPrmtr)
                 {
                     Caption = 'New Page Per Salesperson';
                     Editable = NewPagePerSalespersonEnabled;
                     ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "New Page Per Salesperson" field.';
 
                     trigger OnValidate();
                     begin
@@ -471,6 +476,7 @@ report 18123350 "EOS Customer Aging"
                     Caption = 'New Page Per Customer';
                     Enabled = NewPagePerCustomerEnabled;
                     ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "New Page Per Customer" field.';
 
                     trigger OnValidate();
                     begin
@@ -481,11 +487,13 @@ report 18123350 "EOS Customer Aging"
                 {
                     Caption = 'Use Salesperson from Customer';
                     ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "Use Salesperson from Customer" field.';
                 }
                 field(PostingDateFilter; PostingDateFilterPrmtr)
                 {
                     Caption = 'Posting Date Filter';
                     ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "Posting Date Filter" field.';
 
                     trigger OnValidate();
                     var
@@ -500,6 +508,7 @@ report 18123350 "EOS Customer Aging"
                 {
                     Caption = 'Due Date Filter';
                     ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "Due Date Filter" field.';
 
                     trigger OnValidate();
                     var
@@ -514,17 +523,20 @@ report 18123350 "EOS Customer Aging"
                     Caption = 'Payment Method Filter';
                     TableRelation = "Payment Method";
                     ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "Payment Method Filter" field.';
                 }
                 field(ShowFilters; ShowFiltersPrmtr)
                 {
                     Caption = 'Print Filters';
                     ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "Print Filters" field.';
                 }
                 field(HideSalespersonTotal; HideSalespersonTotalPrmtr)
                 {
                     Caption = 'Hide Salesperson Total';
                     Enabled = HideSalespersonTotalEnabled;
                     ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "Hide Salesperson Total" field.';
                 }
             }
         }
@@ -593,7 +605,7 @@ report 18123350 "EOS Customer Aging"
         OnlyOpenPrmtr := true;
         ShowLinkedEntriesPrmtr := false;
         UseSalespersonFromCustomerPrmtr := true;
-        SubscriptionActive := SubscriptionMgt.GetSubscriptionIsActiveWithCommit();
+        SubscriptionActive := SubscriptionMgt.GetSubscriptionIsActive();
     end;
 
     trigger OnPreReport();

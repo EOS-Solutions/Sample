@@ -6699,6 +6699,9 @@ End Function
         <Field Name="VolumeFormat">
           <DataField>VolumeFormat</DataField>
         </Field>
+        <Field Name="NoOfPallets">
+          <DataField>NoOfPallets</DataField>
+        </Field>
         <Field Name="AddressPosition">
           <DataField>AddressPosition</DataField>
         </Field>

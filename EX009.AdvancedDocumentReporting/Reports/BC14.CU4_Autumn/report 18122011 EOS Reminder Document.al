@@ -384,6 +384,7 @@ report 18122011 "EOS Reminder Document"
     trigger OnPreReport()
     var
         AdvancedReportingMngt: Codeunit "EOS Advanced Reporting Mngt";
+        AdvRptStdRemindExt: Codeunit "EOS AdvRpt Std Remind Ext";
         AdvRptDebug: Codeunit "EOS AdvRpt Debug";
         StopExecution: Boolean;
     begin
@@ -395,6 +396,8 @@ report 18122011 "EOS Reminder Document"
 
         SetupLanguage(DocVariantToPrint);
         AdvancedReportingMngt.PrepareBuffer(DocVariantToPrint, ReportSetupCode, HeaderLoop, LineLoop, CurrReport.ObjectId(false));
+
+        AdvRptStdRemindExt.CompressParagraph(LineLoop);
 
         OnBeforePrintingReport(HeaderLoop, LineLoop, NoOfCopies, LogInteraction, PrintVAT, StopExecution);
         if StopExecution then
