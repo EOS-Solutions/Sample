@@ -39,6 +39,8 @@ report 18123350 "EOS Customer Aging"
                 Customer: Record Customer;
                 SalespersonPurchaser: Record "Salesperson/Purchaser";
                 TempAssetsBufferLocal: array[12] of Record "EOS Statem. Assets Buffer EXT" temporary;
+                Language: Codeunit Language;
+                CurrentLanguageCode: Code[10];
                 LastCustomer: Code[20];
                 LastSalesperson: Code[20];
                 Level2DueDate: Date;
@@ -46,6 +48,8 @@ report 18123350 "EOS Customer Aging"
                 Level3Node: Integer;
                 SalespersonFilter: Text;
             begin
+                CurrentLanguageCode := Language.GetUserLanguageCode();
+
                 if UseSalespersonFromCustomerPrmtr then
                     if SalespersonFilters.GetFilters() <> '' then begin
                         SalespersonFilter := GetSelectionFilterForSalesperson(SalespersonFilters);
@@ -88,7 +92,7 @@ report 18123350 "EOS Customer Aging"
                 TempAssetsBufferLocal[2].SetFilter("EOS Payment Method", PaymentMethodFilterPrmtr);
                 if TempAssetsBufferLocal[2].FindSet() then
                     repeat
-                        TempAssetsBufferLocal[2]."EOS Language Code" := Customer."Language Code";
+                        TempAssetsBufferLocal[2]."EOS Language Code" := CurrentLanguageCode;
 
                         TempAssetsBufferLocal[12] := TempAssetsBufferLocal[2];
                         if LastCustomer <> TempAssetsBufferLocal[12]."EOS Source No." then begin
@@ -417,7 +421,7 @@ report 18123350 "EOS Customer Aging"
 
     requestpage
     {
-        SaveValues = true;
+        SaveValues = false;
 
         layout
         {

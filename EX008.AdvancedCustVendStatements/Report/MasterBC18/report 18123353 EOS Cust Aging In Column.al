@@ -267,7 +267,7 @@ report 18123353 "EOS Cust Aging In Column"
     }
     requestpage
     {
-        SaveValues = true;
+        SaveValues = false;
 
         layout
         {
@@ -277,31 +277,26 @@ report 18123353 "EOS Cust Aging In Column"
                 {
                     Caption = 'Heading Type';
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "Heading Type" field.';
                 }
                 field(DueDateAt; DueDateAtPrmtr)
                 {
                     Caption = 'Aged As Of';
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "Aged As Of" field.';
                 }
                 field(PeriodLength; PeriodLengthPrmtr)
                 {
                     Caption = 'Period Length';
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "Period Length" field.';
                 }
                 field(PrintAmountInLCY; PrintAmountInLCYPrmtr)
                 {
                     Caption = 'Print Amounts in LCY';
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "Print Amounts in LCY" field.';
                 }
                 field(DetailLevel; DetailLevelPrmtr)
                 {
                     Caption = 'Detail Level';
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "Detail Level" field.';
 
                     trigger OnValidate();
                     begin
@@ -312,31 +307,26 @@ report 18123353 "EOS Cust Aging In Column"
                 {
                     Caption = 'Column Count due/to be due';
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "Column Count due/to be due" field.';
                 }
                 field(NewPagePerCustomer; NewPagePerCustomerPrmtr)
                 {
                     Caption = 'New Page Per Customer';
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "New Page Per Customer" field.';
                 }
                 field(UseSalespersonFromCustomer; UseSalespersonFromCustomerPrmtr)
                 {
                     Caption = 'Use Salesperson from Customer';
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "Use Salesperson from Customer" field.';
                 }
                 field(PrintFilters; PrintFiltersPrmtr)
                 {
                     Caption = 'Print Filters';
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "Print Filters" field.';
                 }
                 field(PostingDateFilter; PostingDateFilterPrmtr)
                 {
                     Caption = 'Posting Date Filter';
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "Posting Date Filter" field.';
 
                     trigger OnValidate();
                     begin
@@ -348,7 +338,6 @@ report 18123353 "EOS Cust Aging In Column"
                 {
                     Caption = 'Due Date Filter';
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "Due Date Filter" field.';
 
                     trigger OnValidate();
                     begin
@@ -361,7 +350,6 @@ report 18123353 "EOS Cust Aging In Column"
                     Caption = 'Payment Method Filter';
                     TableRelation = "Payment Method";
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "Payment Method Filter" field.';
                 }
             }
         }

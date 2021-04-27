@@ -113,7 +113,7 @@ report 18123357 "EOS Send fin. rpt to salesp"
 
     requestpage
     {
-        SaveValues = true;
+        SaveValues = false;
 
         layout
         {
@@ -126,7 +126,6 @@ report 18123357 "EOS Send fin. rpt to salesp"
                     {
                         Caption = 'Batch processing type';
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value of the "Batch processing type" field.';
 
                         trigger OnValidate();
                         begin
@@ -142,7 +141,6 @@ report 18123357 "EOS Send fin. rpt to salesp"
                             Caption = 'Report Setup';
                             Enabled = ReportSetupEnabled;
                             ApplicationArea = All;
-                            ToolTip = 'Specifies the value of the "Report Setup" field.';
 
                             trigger OnLookup(var Text: Text): Boolean
                             begin
@@ -154,13 +152,11 @@ report 18123357 "EOS Send fin. rpt to salesp"
                     {
                         Caption = 'One PDF per Customer';
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value of the "One PDF per Customer" field.';
                     }
                     field(ProcessLineAging; ProcessLineAgingPrmtr)
                     {
                         Caption = 'Process Line Aging';
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value of the "Process Line Aging" field.';
 
                         trigger OnValidate();
                         begin
@@ -171,7 +167,6 @@ report 18123357 "EOS Send fin. rpt to salesp"
                     {
                         Caption = 'Process Column Aging';
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value of the "Process Column Aging" field.';
 
                         trigger OnValidate();
                         begin
@@ -182,7 +177,6 @@ report 18123357 "EOS Send fin. rpt to salesp"
                     {
                         Caption = 'Process Account Statement';
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value of the "Process Account Statement" field.';
 
                         trigger OnValidate();
                         begin
@@ -193,13 +187,11 @@ report 18123357 "EOS Send fin. rpt to salesp"
                     {
                         Caption = 'Only Open Entries';
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value of the "Only Open Entries" field.';
                     }
                     field(DetailLevel; DetailLevelPrmtr)
                     {
                         Caption = 'Detail Level';
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value of the "Detail Level" field.';
 
                         trigger OnValidate();
                         begin
@@ -211,32 +203,27 @@ report 18123357 "EOS Send fin. rpt to salesp"
                         Caption = 'Show Linked Entries';
                         Enabled = ShowLinkedEntriesEnabled;
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value of the "Show Linked Entries" field.';
                     }
                     field(UseSalespersonFromCustomer; UseSalespersonFromCustomerPrmtr)
                     {
                         Caption = 'Use Salesperson from Customer';
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value of the "Use Salesperson from Customer" field.';
                     }
                     field(PostingDateFilter; PostingDateFilterPrmtr)
                     {
                         Caption = 'Posting Date Filter';
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value of the "Posting Date Filter" field.';
                     }
                     field(DueDateFilter; DueDateFilterPrmtr)
                     {
                         Caption = 'Due Date Filter';
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value of the "Due Date Filter" field.';
                     }
                     field(PaymentMethodFilter; PaymentMethodFilterPrmtr)
                     {
                         Caption = 'Payment Method Filter';
                         TableRelation = "Payment Method";
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value of the "Payment Method Filter" field.';
                     }
                 }
                 group("Fälligkeitsregister in Spalte")
@@ -247,28 +234,24 @@ report 18123357 "EOS Send fin. rpt to salesp"
                         Caption = 'Aged As Of';
                         Enabled = ColumnFieldsEnabled;
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value of the "Aged As Of" field.';
                     }
                     field(PeriodLength; PeriodLengthPrmtr)
                     {
                         Caption = 'Period Length';
                         Enabled = ColumnFieldsEnabled;
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value of the "Period Length" field.';
                     }
                     field(PrintAmountInLCY; PrintAmountInLCYPrmtr)
                     {
                         Caption = 'Print Amounts in LCY';
                         Enabled = ColumnFieldsEnabled;
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value of the "Print Amounts in LCY" field.';
                     }
                     field(ColumnLayout; ColumnLayoutPrmtr)
                     {
                         Caption = 'Column Count due/to be due';
                         Enabled = ColumnFieldsEnabled;
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value of the "Column Count due/to be due" field.';
                     }
                 }
             }

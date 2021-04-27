@@ -338,7 +338,7 @@ report 18123355 "EOS Customer Statement"
 
     requestpage
     {
-        SaveValues = true;
+        SaveValues = false;
 
         layout
         {
@@ -348,7 +348,6 @@ report 18123355 "EOS Customer Statement"
                 {
                     Caption = 'Only Open Entries';
                     ApplicationArea = all;
-                    ToolTip = 'Specifies the value of the "Only Open Entries" field.';
                 }
                 // field(SortOrder; SortOrderPrmtr)
                 // {
@@ -360,13 +359,11 @@ report 18123355 "EOS Customer Statement"
                 {
                     Caption = 'Show Linked Entries';
                     ApplicationArea = all;
-                    ToolTip = 'Specifies the value of the "Show Linked Entries" field.';
                 }
                 field(PostingDateFilter; PostingDateFilterPrmtr)
                 {
                     Caption = 'Posting Date Filter';
                     ApplicationArea = all;
-                    ToolTip = 'Specifies the value of the "Posting Date Filter" field.';
 
                     trigger OnValidate();
                     var
@@ -380,7 +377,6 @@ report 18123355 "EOS Customer Statement"
                 {
                     Caption = 'Due Date Filter';
                     ApplicationArea = all;
-                    ToolTip = 'Specifies the value of the "Due Date Filter" field.';
 
                     trigger OnValidate();
                     var
@@ -395,13 +391,11 @@ report 18123355 "EOS Customer Statement"
                     Caption = 'Payment Method Filter';
                     TableRelation = "Payment Method";
                     ApplicationArea = all;
-                    ToolTip = 'Specifies the value of the "Payment Method Filter" field.';
                 }
                 field(UseSalespersonFromCustomer; UseSalespersonFromCustomerPrmtr)
                 {
                     Caption = 'Use Salesperson from Customer';
                     ApplicationArea = all;
-                    ToolTip = 'Specifies the value of the "Use Salesperson from Customer" field.';
                 }
                 group("Output Options")
                 {
@@ -415,7 +409,6 @@ report 18123355 "EOS Customer Statement"
                         //'Each item is a verb/action - to print, to preview, to export to Word, export to PDF, send email, export to XML for RDLC layouts only
                         Visible = false;
                         ApplicationArea = all;
-                        ToolTip = 'Specifies the value of the "Report Output" field.';
 
                         trigger OnValidate();
                         var
