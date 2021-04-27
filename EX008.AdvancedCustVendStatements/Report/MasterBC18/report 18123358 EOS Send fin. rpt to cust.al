@@ -91,7 +91,7 @@ report 18123358 "EOS Send fin. rpt to cust"
 
     requestpage
     {
-        SaveValues = true;
+        SaveValues = false;
 
         layout
         {
@@ -104,7 +104,6 @@ report 18123358 "EOS Send fin. rpt to cust"
                     {
                         Caption = 'Batch processing type';
                         ApplicationArea = all;
-                        ToolTip = 'Specifies the value of the "Batch processing type" field.';
 
                         trigger OnValidate();
                         begin
@@ -120,7 +119,6 @@ report 18123358 "EOS Send fin. rpt to cust"
                             Caption = 'Report Setup';
                             Enabled = ReportSetupEnabled;
                             ApplicationArea = all;
-                            ToolTip = 'Specifies the value of the "Report Setup" field.';
 
                             trigger OnLookup(var Text: Text): Boolean
                             begin
@@ -132,7 +130,6 @@ report 18123358 "EOS Send fin. rpt to cust"
                     {
                         Caption = 'Process Line Aging';
                         ApplicationArea = all;
-                        ToolTip = 'Specifies the value of the "Process Line Aging" field.';
 
                         trigger OnValidate();
                         begin
@@ -143,7 +140,6 @@ report 18123358 "EOS Send fin. rpt to cust"
                     {
                         Caption = 'Process Column Aging';
                         ApplicationArea = all;
-                        ToolTip = 'Specifies the value of the "Process Column Aging" field.';
 
                         trigger OnValidate();
                         begin
@@ -154,7 +150,6 @@ report 18123358 "EOS Send fin. rpt to cust"
                     {
                         Caption = 'Process Account Statement';
                         ApplicationArea = all;
-                        ToolTip = 'Specifies the value of the "Process Account Statement" field.';
 
                         trigger OnValidate();
                         begin
@@ -165,13 +160,11 @@ report 18123358 "EOS Send fin. rpt to cust"
                     {
                         Caption = 'Only Open Entries';
                         ApplicationArea = all;
-                        ToolTip = 'Specifies the value of the "Only Open Entries" field.';
                     }
                     field(DetailLevel; DetailLevelPrmtr)
                     {
                         Caption = 'Detail Level';
                         ApplicationArea = all;
-                        ToolTip = 'Specifies the value of the "Detail Level" field.';
 
                         trigger OnValidate();
                         begin
@@ -183,32 +176,27 @@ report 18123358 "EOS Send fin. rpt to cust"
                         Caption = 'Show Linked Entries';
                         Enabled = ShowLinkedEntriesEnabled;
                         ApplicationArea = all;
-                        ToolTip = 'Specifies the value of the "Show Linked Entries" field.';
                     }
                     field(UseSalespersonFromCustomer; UseSalespersonFromCustomerPrmtr)
                     {
                         Caption = 'Use Salesperson from Customer';
                         ApplicationArea = all;
-                        ToolTip = 'Specifies the value of the "Use Salesperson from Customer" field.';
                     }
                     field(PostingDateFilter; PostingDateFilterPrmtr)
                     {
                         Caption = 'Posting Date Filter';
                         ApplicationArea = all;
-                        ToolTip = 'Specifies the value of the "Posting Date Filter" field.';
                     }
                     field(DueDateFilter; DueDateFilterPrmtr)
                     {
                         Caption = 'Due Date Filter';
                         ApplicationArea = all;
-                        ToolTip = 'Specifies the value of the "Due Date Filter" field.';
                     }
                     field(PaymentMethodFilter; PaymentMethodFilterPrmtr)
                     {
                         Caption = 'Payment Method Filter';
                         TableRelation = "Payment Method";
                         ApplicationArea = all;
-                        ToolTip = 'Specifies the value of the "Payment Method Filter" field.';
                     }
                 }
                 group("Fälligkeitsregister in Spalte")
@@ -219,28 +207,24 @@ report 18123358 "EOS Send fin. rpt to cust"
                         Caption = 'Aged As Of';
                         Enabled = ColumnFieldsEnabled;
                         ApplicationArea = all;
-                        ToolTip = 'Specifies the value of the "Aged As Of" field.';
                     }
                     field(PeriodLength; PeriodLengthPrmtr)
                     {
                         Caption = 'Period Length';
                         Enabled = ColumnFieldsEnabled;
                         ApplicationArea = all;
-                        ToolTip = 'Specifies the value of the "Period Length" field.';
                     }
                     field(PrintAmountInLCY; PrintAmountInLCYPrmtr)
                     {
                         Caption = 'Print Amounts in LCY';
                         Enabled = ColumnFieldsEnabled;
                         ApplicationArea = all;
-                        ToolTip = 'Specifies the value of the "Print Amounts in LCY" field.';
                     }
                     field(ColumnLayout; ColumnLayoutPrmtr)
                     {
                         Caption = 'Column Count due/to be due';
                         Enabled = ColumnFieldsEnabled;
                         ApplicationArea = all;
-                        ToolTip = 'Specifies the value of the "Column Count due/to be due" field.';
                     }
                 }
             }

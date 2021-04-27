@@ -338,7 +338,7 @@ report 18123355 "EOS Customer Statement"
 
     requestpage
     {
-        SaveValues = true;
+        SaveValues = false;
 
         layout
         {

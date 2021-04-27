@@ -267,7 +267,7 @@ report 18123352 "EOS Vend Aging In Column"
     }
     requestpage
     {
-        SaveValues = true;
+        SaveValues = false;
 
         layout
         {

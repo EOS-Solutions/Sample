@@ -16,9 +16,9 @@ report 18123351 "EOS Vendor Aging"
             DataItemTableView = sorting("No.");
             RequestFilterFields = "No.", Name, "Country/Region Code";
 
-            trigger OnAfterGetRecord();
+            trigger OnPreDataItem();
             begin
-                CurrReport.BREAK();
+                CurrReport.Break();
             end;
         }
         dataitem(DataProcessing; Integer)
@@ -31,11 +31,15 @@ report 18123351 "EOS Vendor Aging"
                 SalespersonPurchaser: Record "Salesperson/Purchaser";
                 TempAssetsBufferLocal: array[12] of Record "EOS Statem. Assets Buffer EXT" temporary;
                 Vendor: Record "Vendor";
+                Language: Codeunit Language;
+                CurrentLanguageCode: Code[10];
                 LastVendor: Code[20];
                 Level2DueDate: Date;
                 Level2Node: Integer;
                 Level3Node: Integer;
             begin
+                CurrentLanguageCode := Language.GetUserLanguageCode();
+
                 AssetsEngine.BuildMultiSourceTreeView(1, VendorFilters.GETVIEW(false), 0, StartingPostingDate, EndingPostingDate,
                                                          StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', TempAssetsBufferLocal[1]);
 
@@ -62,8 +66,9 @@ report 18123351 "EOS Vendor Aging"
                 TempAssetsBufferLocal[2].SetFilter("EOS Payment Method", PaymentMethodFilterPrmtr);
                 if TempAssetsBufferLocal[2].FindSet() then
                     repeat
-                        TempAssetsBufferLocal[12] := TempAssetsBufferLocal[2];
+                        TempAssetsBufferLocal[2]."EOS Language Code" := CurrentLanguageCode;
 
+                        TempAssetsBufferLocal[12] := TempAssetsBufferLocal[2];
                         if LastVendor <> TempAssetsBufferLocal[12]."EOS Source No." then begin
                             LastVendor := TempAssetsBufferLocal[12]."EOS Source No.";
                             Vendor.Get(TempAssetsBufferLocal[12]."EOS Source No.");
@@ -354,7 +359,7 @@ report 18123351 "EOS Vendor Aging"
 
     requestpage
     {
-        SaveValues = true;
+        SaveValues = false;
 
         layout
         {
@@ -364,13 +369,11 @@ report 18123351 "EOS Vendor Aging"
                 {
                     Caption = 'Only Open Entries';
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "Only Open Entries" field.';
                 }
                 field(SortOrder; SortOrderPrmtr)
                 {
                     Caption = 'Sort Order';
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "Sort Order" field.';
 
                     trigger OnValidate();
                     begin
@@ -382,7 +385,6 @@ report 18123351 "EOS Vendor Aging"
                     Caption = 'Detail Level';
                     Enabled = NewPagePerVendorEnabled;
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "Detail Level" field.';
 
                     trigger OnValidate();
                     begin
@@ -394,20 +396,17 @@ report 18123351 "EOS Vendor Aging"
                     Caption = 'Show Linked Entries';
                     Enabled = LinkedEntriesEnabled;
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "Show Linked Entries" field.';
                 }
                 field(NewPagePerVendor; NewPagePerVendorPrmtr)
                 {
                     Caption = 'New Page Per Vendor';
                     Enabled = NewPagePerVendorEnabled;
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "New Page Per Vendor" field.';
                 }
                 field(PostingDateFilter; PostingDateFilterPrmtr)
                 {
                     Caption = 'Posting Date Filter';
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "Posting Date Filter" field.';
 
                     trigger OnValidate();
                     var
@@ -422,7 +421,6 @@ report 18123351 "EOS Vendor Aging"
                 {
                     Caption = 'Due Date Filter';
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "Due Date Filter" field.';
 
                     trigger OnValidate();
                     var
@@ -437,13 +435,11 @@ report 18123351 "EOS Vendor Aging"
                     Caption = 'Payment Method Filter';
                     TableRelation = "Payment Method";
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "Payment Method Filter" field.';
                 }
                 field(ShowFilters; ShowFiltersPrmtr)
                 {
                     Caption = 'Print Filters';
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "Print Filters" field.';
                 }
             }
         }

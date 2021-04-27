@@ -341,7 +341,7 @@ report 18123356 "EOS Vendor Statement"
 
     requestpage
     {
-        SaveValues = true;
+        SaveValues = false;
 
         layout
         {

@@ -16,9 +16,9 @@ report 18123351 "EOS Vendor Aging"
             DataItemTableView = sorting("No.");
             RequestFilterFields = "No.", Name, "Country/Region Code";
 
-            trigger OnAfterGetRecord();
+            trigger OnPreDataItem();
             begin
-                CurrReport.BREAK();
+                CurrReport.Break();
             end;
         }
         dataitem(DataProcessing; Integer)
@@ -31,11 +31,15 @@ report 18123351 "EOS Vendor Aging"
                 SalespersonPurchaser: Record "Salesperson/Purchaser";
                 TempAssetsBufferLocal: array[12] of Record "EOS Statem. Assets Buffer EXT" temporary;
                 Vendor: Record "Vendor";
+                Language: Codeunit Language;
+                CurrentLanguageCode: Code[10];
                 LastVendor: Code[20];
                 Level2DueDate: Date;
                 Level2Node: Integer;
                 Level3Node: Integer;
             begin
+                CurrentLanguageCode := Language.GetUserLanguageCode();
+
                 AssetsEngine.BuildMultiSourceTreeView(1, VendorFilters.GETVIEW(false), 0, StartingPostingDate, EndingPostingDate,
                                                          StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', TempAssetsBufferLocal[1]);
 
@@ -62,8 +66,9 @@ report 18123351 "EOS Vendor Aging"
                 TempAssetsBufferLocal[2].SetFilter("EOS Payment Method", PaymentMethodFilterPrmtr);
                 if TempAssetsBufferLocal[2].FindSet() then
                     repeat
-                        TempAssetsBufferLocal[12] := TempAssetsBufferLocal[2];
+                        TempAssetsBufferLocal[2]."EOS Language Code" := CurrentLanguageCode;
 
+                        TempAssetsBufferLocal[12] := TempAssetsBufferLocal[2];
                         if LastVendor <> TempAssetsBufferLocal[12]."EOS Source No." then begin
                             LastVendor := TempAssetsBufferLocal[12]."EOS Source No.";
                             Vendor.Get(TempAssetsBufferLocal[12]."EOS Source No.");
@@ -354,7 +359,7 @@ report 18123351 "EOS Vendor Aging"
 
     requestpage
     {
-        SaveValues = true;
+        SaveValues = false;
 
         layout
         {
