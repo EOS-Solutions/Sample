@@ -7,6 +7,7 @@ report 18123351 "EOS Vendor Aging"
     Caption = 'Receivable aging (CVS)';
     PreviewMode = PrintLayout;
     UsageCategory = ReportsAndAnalysis;
+    ApplicationArea = All;
 
     dataset
     {

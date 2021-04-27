@@ -248,6 +248,7 @@ report 18122007 "EOS Sales Document"
                 column(GrossWeight; HeaderLoop."EOS Gross Weight Dec") { }
                 column(NetWeight; HeaderLoop."EOS Net Weight Dec") { }
                 column(Volume; HeaderLoop."EOS Volume Dec") { }
+                column(NoOfPallets; HeaderLoop."EOS No. of Pallets") { }
                 column(AddressPosition; Format(ReportSetup."EOS Address Position", 0, 9)) { }
                 column(OurBank; HeaderLoop."EOS Bank IBAN") { }
                 column(YourReference; HeaderLoop."EOS Your Reference") { }

@@ -5,6 +5,7 @@ report 18123350 "EOS Customer Aging"
     Caption = 'Customer Aging (CVS)';
     PreviewMode = PrintLayout;
     UsageCategory = ReportsAndAnalysis;
+    ApplicationArea = All;
 
     dataset
     {

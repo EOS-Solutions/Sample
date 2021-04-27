@@ -24,7 +24,7 @@ Codeunit 50022 "FOS015 Det. Doc. Dis. Mgt."
         Rec.Validate("EOS Discount Set ID", DtldDiscounts.WriteDiscountSet(TempDiscSetEntry));
     end;
 
-    local procedure CreateDiscSetEntry(var TempDiscSetEntry: Record "EOS037 Discount Set Entry"; DiscValue: Integer; Sequence: Integer)
+    local procedure CreateDiscSetEntry(var TempDiscSetEntry: Record "EOS037 Discount Set Entry"; DiscValue: Decimal; Sequence: Integer)
     begin
         if DiscValue = 0 then
             exit;
