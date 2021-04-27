@@ -1201,7 +1201,7 @@ report 18008302 "EOS Purch. ProForma Invoice"
         Codice_IVACaptionLbl: Label 'VAT Identifier';
         RIEPILOGO_IMPORTI_FATTURACaptionLbl: Label 'Invoice Amounts Summary';
         Ritenuta_d_AccontoCaptionLbl: Label 'Withholding Tax';
-        TOTALE_FATTURACaptionLbl: Label 'CHECK TOTAL';
+        TOTALE_FATTURACaptionLbl: Label 'DOCUMENT TOTAL';
         Totale_ImponibileCaptionLbl: Label 'Total Base';
         Contributo_ENASARCOCaptionLbl: Label 'ENASARCO contribution';
         TOTALE_AL_NETTOCaptionLbl: Label 'NET TOTAL';

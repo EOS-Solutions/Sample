@@ -28,6 +28,7 @@ report 18008300 "EOS Commission Prospect"
             }
             dataitem(ProspectLine; "EOS Commission Prospect Line")
             {
+                DataItemTableView = sorting("Commission Period Code", "Salesperson Code", "Line No.");
                 DataItemLink = "Commission Period Code" = field("Commission Period Code"),
                                 "Salesperson Code" = field("Salesperson Code");
 
@@ -43,7 +44,7 @@ report 18008300 "EOS Commission Prospect"
                 dataitem(PostedCommissionEntry; "EOS Commission Ledger Entry")
                 {
                     DataItemLink = "Salesperson" = FIELD("Salesperson Code");
-                    DataItemTableView = where("Table ID" = Filter(<> 18008306));
+                    DataItemTableView = sorting("Entry No.") where("Table ID" = Filter(<> 18008306));
                     column(Manual; Manual)
                     {
                     }
@@ -80,6 +81,10 @@ report 18008300 "EOS Commission Prospect"
                         IncludeCaption = true;
                     }
                     column(PayableAmountCommission; "Payable (LCY)")
+                    {
+                        IncludeCaption = true;
+                    }
+                    column(SettlementAmountCommission; "Settlement Amount (LCY)")
                     {
                         IncludeCaption = true;
                     }
@@ -154,6 +159,10 @@ report 18008300 "EOS Commission Prospect"
                         IncludeCaption = true;
                     }
                     column(PayableAmountCommission_Manual; "Payable (LCY)")
+                    {
+                        IncludeCaption = true;
+                    }
+                    column(SettlementAmountCommission_Manual; "Settlement Amount (LCY)")
                     {
                         IncludeCaption = true;
                     }
