@@ -1,0 +1,2 @@
+# What is "AddDocumentToJournalProgrammatically" 
+The purpose of the sample is to provide a way to add lines in the CDW journal and post using the flag "Posting Policy" ("No Invoice and Ledger Entries" and  "No Ledger Entries" are handled).
