@@ -1,0 +1,33 @@
+{
+  "id": "1d682ac9-c843-4c49-90fd-2903fa77e7cb",
+  "name": "AddDocumentToJournalProgrammatically",
+  "publisher": "EOS Solutions",
+  "version": "17.0.0.0",
+  "brief": "",
+  "description": "",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "",
+  "logo": "",
+  "dependencies": [
+    {
+      "id": "46acfe78-03ea-46d7-8d56-1e8c74b5c682",
+      "name": "Close Documents Without Invoicing",
+      "publisher": "EOS Solutions",
+      "version": "17.0.0.0"
+    }
+  ],
+  "screenshots": [],
+  "application": "17.0.0.0",
+  "platform": "17.0.0.0",
+  "idRanges": [
+    {
+      "from": 50100,
+      "to": 50149
+    }
+  ],
+  "contextSensitiveHelpUrl": "https://ALProject4.com/help/",
+  "showMyCode": true,
+  "runtime": "5.0"
+}
