@@ -52,6 +52,18 @@ report 70491920 "EOS055 Packing List - Print"
                 {
                     IncludeCaption = true;
                 }
+                column(LotNo; "Lot No.")
+                {
+                    IncludeCaption = true;
+                }
+                column(SerialNo; "Serial No.")
+                {
+                    IncludeCaption = true;
+                }
+                column(ExpirationDate; "Expiration Date")
+                {
+                    IncludeCaption = true;
+                }
                 column(QuantityBase; "Quantity (Base)")
                 {
                     IncludeCaption = true;

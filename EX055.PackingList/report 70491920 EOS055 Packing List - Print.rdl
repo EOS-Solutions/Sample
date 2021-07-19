@@ -1895,6 +1895,33 @@
       </DefaultValue>
       <Prompt>DescriptionCaption</Prompt>
     </ReportParameter>
+    <ReportParameter Name="LotNoCaption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>LotNoCaption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>LotNoCaption</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="SerialNoCaption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>SerialNoCaption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>SerialNoCaption</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExpirationDateCaption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>ExpirationDateCaption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>ExpirationDateCaption</Prompt>
+    </ReportParameter>
     <ReportParameter Name="QuantityBaseCaption">
       <DataType>String</DataType>
       <DefaultValue>
@@ -1908,7 +1935,7 @@
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>1</NumberOfColumns>
-      <NumberOfRows>12</NumberOfRows>
+      <NumberOfRows>15</NumberOfRows>
       <CellDefinitions>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
@@ -1968,6 +1995,21 @@
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
           <RowIndex>11</RowIndex>
+          <ParameterName>LotNoCaption</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>12</RowIndex>
+          <ParameterName>SerialNoCaption</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>13</RowIndex>
+          <ParameterName>ExpirationDateCaption</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>14</RowIndex>
           <ParameterName>QuantityBaseCaption</ParameterName>
         </CellDefinition>
       </CellDefinitions>
@@ -2053,6 +2095,15 @@ End Function</Code>
         </Field>
         <Field Name="Description">
           <DataField>Description</DataField>
+        </Field>
+        <Field Name="LotNo">
+          <DataField>LotNo</DataField>
+        </Field>
+        <Field Name="SerialNo">
+          <DataField>SerialNo</DataField>
+        </Field>
+        <Field Name="ExpirationDate">
+          <DataField>ExpirationDate</DataField>
         </Field>
         <Field Name="QuantityBase">
           <DataField>QuantityBase</DataField>
