@@ -317,7 +317,7 @@ report 18122009 "EOS Shipping Document"
                     column(Line_Style; Format("EOS Line Style", 0, 2)) { }
                     column(Line_ExtensionCode; LineLoop."EOS Extension Code") { }
                     column(Line_LineNo; LineLoop."EOS Line No.") { }
-                    column(Line_ItemNo; LineLoop."EOS No.") { }
+                    column(Line_ItemNo; LineLoop.GetItemNo()) { }
                     column(Line_Description; LineLoop."EOS Description") { }
                     column(Line_Description2; LineLoop."EOS Description 2") { }
                     column(Line_Quantity; LineLoop."EOS Quantity") { }
@@ -507,7 +507,7 @@ report 18122009 "EOS Shipping Document"
                         Caption = 'Report Setup Code';
                         TableRelation = "EOS Report Setup";
                         ApplicationArea = All;
-                          ToolTip='Specifies the value for the field Report Setup Code';
+                        ToolTip = 'Specifies the value for the field Report Setup Code';
                         trigger OnValidate()
                         begin
                             if ReportSetup.Get(ReportSetupCode) then begin
@@ -522,13 +522,13 @@ report 18122009 "EOS Shipping Document"
                         Caption = 'No. of Copies';
                         ApplicationArea = All;
                         Editable = NoofCopiesEditable;
-                        ToolTip='Specifies the value for the field No. of Copies';
+                        ToolTip = 'Specifies the value for the field No. of Copies';
                     }
                     field(LogInteractionFld; LogInteraction)
                     {
                         Caption = 'Log Interaction';
                         ApplicationArea = All;
-                        ToolTip='Specifies the value for the field Log Interaction';
+                        ToolTip = 'Specifies the value for the field Log Interaction';
                     }
                     // field(PrintVAT; PrintVAT)
                     // {
@@ -631,7 +631,7 @@ report 18122009 "EOS Shipping Document"
         HeaderLoop."EOS Log Interaction" := LogInteraction;
 
         SetupLanguage(DocVariantToPrint);
-        AdvancedReportingMngt.PrepareBuffer(DocVariantToPrint, ReportSetupCode, HeaderLoop, LineLoop, CurrReport.ObjectId(false));
+        AdvancedReportingMngt.PrepareBuffer(DocVariantToPrint, ReportSetupCode, HeaderLoop, LineLoop, CurrReport.ObjectId(false), ForcedLanguageID);
 
         OnBeforePrintingReport(HeaderLoop, LineLoop, NoOfCopies, LogInteraction, PrintVAT, StopExecution);
         if StopExecution then
@@ -659,7 +659,7 @@ report 18122009 "EOS Shipping Document"
         if ForcedLanguageID <> 0 then
             CurrReport.LANGUAGE := ForcedLanguageID
         else
-            CurrReport.LANGUAGE := AdvancedReportingMngt.GetReportLanguageID(DocVariant, CurrReport.ObjectId(false));
+            CurrReport.LANGUAGE := AdvancedReportingMngt.GetReportLanguageID(DocVariant, CurrReport.ObjectId(false), ReportSetupCode);
     end;
 
     procedure SetForcedLanguageID(LangID: Integer)
@@ -746,7 +746,7 @@ report 18122009 "EOS Shipping Document"
             HeaderLoop."EOS Log Interaction" := LogInteraction;
 
             SetupLanguage(DocVariantToPrint);
-            AdvancedReportingMngt.PrepareBuffer(DocVariantToPrint, ReportSetupCode, HeaderLoop, LineLoop, CurrReport.ObjectId(false));
+            AdvancedReportingMngt.PrepareBuffer(DocVariantToPrint, ReportSetupCode, HeaderLoop, LineLoop, CurrReport.ObjectId(false), ForcedLanguageID);
         end;
 
         ReportRBHeader.Copy(HeaderLoop, true);
