@@ -1,0 +1,24 @@
+{
+  "id": "bf0d8abb-8052-41ba-a869-a8bc2a561a1e",
+  "name": "Cross Reference Optional Feature",
+  "publisher": "Default publisher",
+  "version": "1.0.0.0",
+  "dependencies": [
+    {
+      "id": "4e2a89a2-9049-496c-8b3a-f4eee6399b0e",
+      "name": "Common Data Layer",
+      "publisher": "EOS Solutions",
+      "version": "18.0.22.0"
+    }
+  ],
+  "platform": "18.0.0.0",
+  "application": "18.0.0.0",
+  "idRanges": [
+    {
+      "from": 50100,
+      "to": 50149
+    }
+  ],
+  "showMyCode": true,
+  "runtime": "7.0"
+}
