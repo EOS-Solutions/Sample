@@ -597,7 +597,7 @@ report 18123350 "EOS Customer Aging"
         OnlyOpenPrmtr := true;
         ShowLinkedEntriesPrmtr := false;
         UseSalespersonFromCustomerPrmtr := true;
-        SubscriptionActive := SubscriptionMgt.GetSubscriptionIsActiveWithCommit();
+        SubscriptionActive := SubscriptionMgt.GetSubscriptionIsActive();
     end;
 
     trigger OnPreReport();
