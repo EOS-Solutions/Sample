@@ -38,8 +38,8 @@ report 18122011 "EOS Reminder Document"
             {
                 DataItemTableView = sorting(Number);
                 column(IsDeliveryReminder; false) { }
-                column(HeaderImage; HeaderLoop."EOS Header Image") { }
-                column(FooterImage; HeaderLoop."EOS Footer Image") { }
+                column(HeaderImage; HeaderImage.Blob) { }
+                column(FooterImage; FooterImage.Blob) { }
                 column(ReportTitle; HeaderLoop."EOS Report Title") { }
                 column(CopyNo; Number) { }
                 column(DocumentNo; HeaderLoop."EOS No.") { }
@@ -115,7 +115,7 @@ report 18122011 "EOS Reminder Document"
                     column(Line_Style; Format("EOS Line Style", 0, 2)) { }
                     column(Line_ExtensionCode; LineLoop."EOS Extension Code") { }
                     column(Line_LineNo; LineLoop."EOS Line No.") { }
-                    column(Line_ItemNo; LineLoop.GetItemNo()) { }
+                    column(Line_ItemNo; LineLoop."EOS No.") { }
                     column(Line_Description; LineLoop.GetDescription()) { }
                     column(Line_Description2; LineLoop."EOS Description 2") { }
                     column(Line_ReminderLevel; LineLoop."EOS Reminder Level") { }
@@ -130,7 +130,6 @@ report 18122011 "EOS Reminder Document"
                     column(Line_Amount; LineLoop."EOS Amount") { }
                     column(Line_LineAmount; LineLoop."EOS Line Amount") { }
                     column(Line_ReminderLineType; Format(LineLoop."EOS Reminder Line Type", 0, 2)) { }
-                    column(Line_SourceID; LineLoop."EOS Source ID") { }
                     column(Line_LineGroupID; LineLoop."EOS Line Group ID") { }
                     column(CstmLneTxt1; LineLoop.GetCustomFieldTextValue('CustomText1')) { }
                     column(CstmLneTxt2; LineLoop.GetCustomFieldTextValue('CustomText2')) { }
@@ -175,8 +174,8 @@ report 18122011 "EOS Reminder Document"
                     trigger OnAfterGetRecord()
                     begin
                         if ImagesSent then begin
-                            Clear(HeaderLoop."EOS Header Image");
-                            Clear(HeaderLoop."EOS Footer Image");
+                            Clear(HeaderImage);
+                            Clear(FooterImage);
                         end else
                             ImagesSent := true;
                     end;
@@ -280,8 +279,10 @@ report 18122011 "EOS Reminder Document"
                 if not SellToContact.Get(HeaderLoop."EOS Sell-to Contact No.") then
                     Clear(SellToContact);
 
-                if ReportSetup."EOS Print Logos" then
-                    HeaderLoop.PopulateHeaderFooterImages();
+                if ReportSetup."EOS Print Logos" then begin
+                    HeaderLoop.GetHeaderImage(HeaderImage);
+                    HeaderLoop.GetFooterImage(FooterImage);
+                end;
 
                 if not CurrReport.Preview() then
                     HeaderLoop.LogInteraction();
@@ -306,7 +307,6 @@ report 18122011 "EOS Reminder Document"
                         Caption = 'Report Setup Code';
                         TableRelation = "EOS Report Setup";
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value for the field Report Setup Code';
                         trigger OnValidate()
                         begin
                             if ReportSetup.Get(ReportSetupCode) then begin
@@ -321,13 +321,11 @@ report 18122011 "EOS Reminder Document"
                         Caption = 'No. of Copies';
                         ApplicationArea = All;
                         Editable = NoofCopiesEditable;
-                        ToolTip = 'Specifies the value for the field No. of Copies';
                     }
                     field(LogInteractionFld; LogInteraction)
                     {
                         Caption = 'Log Interaction';
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value for the field Log Interaction';
                     }
                     // field(PrintVAT; PrintVAT)
                     // {
@@ -526,6 +524,8 @@ report 18122011 "EOS Reminder Document"
     var
         BuyFromContact: Record Contact;
         Employee: Record Employee;
+        FooterImage: Record TempBlob temporary;
+        HeaderImage: Record TempBlob temporary;
         ReportSetup: Record "EOS Report Setup";
         Salesperson: Record "Salesperson/Purchaser";
         SellToContact: Record Contact;
