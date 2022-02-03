@@ -4023,9 +4023,6 @@ End Function
         <Field Name="Line_ReminderLineType">
           <DataField>Line_ReminderLineType</DataField>
         </Field>
-        <Field Name="Line_SourceID">
-          <DataField>Line_SourceID</DataField>
-        </Field>
         <Field Name="Line_LineGroupID">
           <DataField>Line_LineGroupID</DataField>
         </Field>

@@ -1,10 +1,10 @@
-report 18122011 "EOS Reminder Document"
+report 18122009 "EOS Shipping Document"
 {
     // version NP11.01
 
     DefaultLayout = RDLC;
-    RDLCLayout = '.\Source\Report\Report 18122011 - EOS Reminder Document.rdlc';
-    Caption = 'EOS Reminder Document (ADR)';
+    RDLCLayout = '.\Source\Report\Report 18122009 - EOS Shipping Document.rdlc';
+    Caption = 'EOS Shipping Document (ADR)';
     Permissions = TableData "VAT Clause" = r,
                   TableData "VAT Clause Translation" = r;
     PreviewMode = PrintLayout;
@@ -12,24 +12,203 @@ report 18122011 "EOS Reminder Document"
 
     dataset
     {
-        dataitem(FakeReminderHeader; "Reminder Header")
+        dataitem(FakeSalesHeader; "Sales Header")
         {
-            DataItemTableView = sorting("No.");
-            Description = 'Fake Reminder Header, Only for Report Selection Integration';
+            DataItemTableView = sorting("Document Type", "No.");
+            Description = 'Fake Sales Header, Only for Report Selection Integration';
             trigger OnPreDataItem()
             begin
                 CurrReport.Break();
             end;
         }
-        dataitem(FakeIssuedReminderHeader; "Issued Reminder Header")
+        dataitem(FakeSalesShipmentHeader; "Sales Shipment Header")
         {
             DataItemTableView = sorting("No.");
-            Description = 'Fake Issued Reminder Header, Only for Report Selection Integration';
+            Description = 'Fake Sales Shipment Header, Only for Report Selection Integration';
             trigger OnPreDataItem()
             begin
                 CurrReport.Break();
             end;
         }
+        dataitem(FakeReturnReceiptHeader; "Return Receipt Header")
+        {
+            DataItemTableView = sorting("No.");
+            Description = 'Fake Return Receipt Header, Only for Report Selection Integration';
+            trigger OnPreDataItem()
+            begin
+                CurrReport.Break();
+            end;
+        }
+        dataitem(FakeSalesInvoiceHeader; "Sales Invoice Header")
+        {
+            DataItemTableView = sorting("No.");
+            Description = 'Fake Sales Invoice Header, Only for Report Selection Integration';
+            trigger OnPreDataItem()
+            begin
+                CurrReport.Break();
+            end;
+        }
+        dataitem(FakeSalesCrMemoHeader; "Sales Cr.Memo Header")
+        {
+            DataItemTableView = sorting("No.");
+            Description = 'Fake Sales Credit Memo Header, Only for Report Selection Integration';
+            trigger OnPreDataItem()
+            begin
+                CurrReport.Break();
+            end;
+        }
+        dataitem(FakeSalesHeaderArchive; "Sales Header Archive")
+        {
+            DataItemTableView = sorting("Document Type", "No.", "Doc. No. Occurrence", "Version No.");
+            Description = 'Fake Sales Header Archive, Only for Report Selection Integration';
+            trigger OnPreDataItem()
+            begin
+                CurrReport.Break();
+            end;
+        }
+        dataitem(FakeServiceHeader; "Service Header")
+        {
+            DataItemTableView = sorting("Document Type", "No.");
+            Description = 'Fake Service Header, Only for Report Selection Integration';
+            trigger OnPreDataItem()
+            begin
+                CurrReport.Break();
+            end;
+        }
+        dataitem(FakeServiceShipmentHeader; "Service Shipment Header")
+        {
+            DataItemTableView = sorting("No.");
+            Description = 'Fake Service Shipment Header, Only for Report Selection Integration';
+            trigger OnPreDataItem()
+            begin
+                CurrReport.Break();
+            end;
+        }
+        dataitem(FakeServiceInvoiceHeader; "Service Invoice Header")
+        {
+            DataItemTableView = sorting("No.");
+            Description = 'Fake Service InvoiceHeader, Only for Report Selection Integration';
+            trigger OnPreDataItem()
+            begin
+                CurrReport.Break();
+            end;
+        }
+        dataitem(FakeServiceCrMemoHeader; "Service Cr.Memo Header")
+        {
+            DataItemTableView = sorting("No.");
+            Description = 'Fake Service Cr.Memo Header, Only for Report Selection Integration';
+            trigger OnPreDataItem()
+            begin
+                CurrReport.Break();
+            end;
+        }
+
+        dataitem(FakePurchaseHeader; "Purchase Header")
+        {
+            DataItemTableView = sorting("Document Type", "No.");
+            Description = 'Fake Purchase Header, Only for Report Selection Integration';
+            trigger OnPreDataItem()
+            begin
+                CurrReport.Break();
+            end;
+        }
+
+        dataitem(FakePurchRcptHeader; "Purch. Rcpt. Header")
+        {
+            DataItemTableView = sorting("No.");
+            Description = 'Fake Purch. Rcpt. Header, Only for Report Selection Integration';
+            trigger OnPreDataItem()
+            begin
+                CurrReport.Break();
+            end;
+        }
+        dataitem(FakeReturnShipmentHeader; "Return Shipment Header")
+        {
+            DataItemTableView = sorting("No.");
+            Description = 'Fake Return Shipment Header, Only for Report Selection Integration';
+            trigger OnPreDataItem()
+            begin
+                CurrReport.Break();
+            end;
+        }
+        dataitem(FakePurchInvHeader; "Purch. Inv. Header")
+        {
+            DataItemTableView = sorting("No.");
+            Description = 'Fake Purch. Inv. Header, Only for Report Selection Integration';
+            trigger OnPreDataItem()
+            begin
+                CurrReport.Break();
+            end;
+        }
+        dataitem(FakePurchCrMemoHdr; "Purch. Cr. Memo Hdr.")
+        {
+            DataItemTableView = sorting("No.");
+            Description = 'Fake Purch. Cr. Memo Hdr., Only for Report Selection Integration';
+            trigger OnPreDataItem()
+            begin
+                CurrReport.Break();
+            end;
+        }
+        dataitem(FakePurchaseHeaderArchive; "Purchase Header Archive")
+        {
+            DataItemTableView = sorting("Document Type", "No.", "Doc. No. Occurrence", "Version No.");
+            Description = 'Fake Purchase Header Archive, Only for Report Selection Integration';
+            trigger OnPreDataItem()
+            begin
+                CurrReport.Break();
+            end;
+        }
+
+        dataitem(FakeTransferHeader; "Transfer Header")
+        {
+            DataItemTableView = sorting("No.");
+            Description = 'Fake Transfer Header, Only for Report Selection Integration';
+            trigger OnPreDataItem()
+            begin
+                CurrReport.Break();
+            end;
+        }
+
+        dataitem(FakeTransferShipmentHeader; "Transfer Shipment Header")
+        {
+            DataItemTableView = sorting("No.");
+            Description = 'Fake Transfer ShipmentHeader, Only for Report Selection Integration';
+            trigger OnPreDataItem()
+            begin
+                CurrReport.Break();
+            end;
+        }
+
+        dataitem(FakeTransferReceiptHeader; "Transfer Receipt Header")
+        {
+            DataItemTableView = sorting("No.");
+            Description = 'Fake Transfer ReceiptHeader, Only for Report Selection Integration';
+            trigger OnPreDataItem()
+            begin
+                CurrReport.Break();
+            end;
+        }
+
+        dataitem(FakeWarehouseShipmentHeader; "Warehouse Shipment Header")
+        {
+            DataItemTableView = sorting("No.");
+            Description = 'Fake Warehouse Shipment, Only for Report Selection Integration';
+            trigger OnPreDataItem()
+            begin
+                CurrReport.Break();
+            end;
+        }
+
+        dataitem(FakePostedWhseShipmentHeader; "Posted Whse. Shipment Header")
+        {
+            DataItemTableView = sorting("No.");
+            Description = 'Fake Posted Whse. Shipment Header, Only for Report Selection Integration';
+            trigger OnPreDataItem()
+            begin
+                CurrReport.Break();
+            end;
+        }
+
         dataitem(HeaderLoop; "EOS Report Buffer Header")
         {
             UseTemporary = true;
@@ -37,26 +216,48 @@ report 18122011 "EOS Reminder Document"
             dataitem(CopyLoop; "Integer")
             {
                 DataItemTableView = sorting(Number);
-                column(IsDeliveryReminder; false) { }
-                column(HeaderImage; HeaderLoop."EOS Header Image") { }
-                column(FooterImage; HeaderLoop."EOS Footer Image") { }
+                column(SourceSubtype; HeaderLoop."EOS Source Subtype") { }
+                column(HeaderImage; HeaderImage.Blob) { }
+                column(FooterImage; FooterImage.Blob) { }
                 column(ReportTitle; HeaderLoop."EOS Report Title") { }
                 column(CopyNo; Number) { }
                 column(DocumentNo; HeaderLoop."EOS No.") { }
                 column(PostingDate; HeaderLoop."EOS Posting Date") { }
+                column(DocumentDate; HeaderLoop."EOS Document Date") { }
                 column(Salesperson; Salesperson.Name) { }
                 column(OperatorName; Employee.FullName()) { }
-                column(SellToCustNo; HeaderLoop."EOS Sell-to/Buy-From No.") { }
-                column(SellToAddress; HeaderLoop.GetSellToBuyFromAddr()) { }
+                column(SelltoBuyFromNo; HeaderLoop."EOS Sell-to/Buy-From No.") { }
+                column(SellToBuyFromAddr; HeaderLoop.GetSellToBuyFromAddr()) { }
                 column(BillToNo; HeaderLoop."EOS Bill-to/Pay-to No.") { }
                 column(BillToAddress; HeaderLoop.GetBillToPayToAddr()) { }
-                column(ReminderLevel; HeaderLoop."EOS Reminder Level") { }
-                column(CustomerContact; SellToContact.Name) { }
-                column(CustomerEMail; SellToContact."E-Mail") { }
+                column(ShipToAddress; HeaderLoop.GetShipToAddr()) { }
+                column(CustomerVendorContact; BuyFromContact.Name) { }
+                column(CustomerVendorEMail; BuyFromContact."E-Mail") { }
+                column(PaymentTerms; HeaderLoop.PaymentTerms_GetDescInLanguage()) { }
+                column(PaymentMethod; HeaderLoop.PaymentMethod_GetDescInLanguage()) { }
+                column(Reason; HeaderLoop.ReasonCode_GetDescInLanguage()) { }
                 column(VATRegNo; HeaderLoop."EOS VAT Registration No.") { }
                 column(FiscalCode; HeaderLoop."EOS Fiscal Code") { }
+                column(ShptMethod; HeaderLoop.ShptMethod_GetDescInLanguage()) { }
+                column(ShptBy; Format(HeaderLoop."EOS Shipment by")) { }
+                column(ShpAgent; HeaderLoop.GetShippingAgentText()) { }
+                column(GoodsAppearance; HeaderLoop."EOS Goods Appearance") { }
+                column(ShipmentStartingDateTime; StrSubstNo('%1 %2', DT2Date(HeaderLoop."EOS Shipment Starting Date"), DT2Time(HeaderLoop."EOS Shipment Starting Date"))) { }
+                column(ReturnAddress; HeaderLoop."EOS Return Address") { }
+                column(NoOfParcels; HeaderLoop."EOS No. of Parcels") { }
+                column(GrossWeight; HeaderLoop."EOS Gross Weight Dec") { }
+                column(NetWeight; HeaderLoop."EOS Net Weight Dec") { }
+                column(Volume; HeaderLoop."EOS Volume Dec") { }
+                column(NoOfPallets; HeaderLoop."EOS No. of Pallets") { }
                 column(AddressPosition; Format(ReportSetup."EOS Address Position", 0, 9)) { }
-
+                column(OurBank; HeaderLoop."EOS Bank IBAN") { }
+                column(YourReference; HeaderLoop."EOS Your Reference") { }
+                column(OrderDate; HeaderLoop."EOS Order Date") { }
+                column(ShipmentDate; HeaderLoop."EOS Shipment Date") { }
+                column(ValidTo; HeaderLoop."EOS Valid to") { }
+                column(VATExclDeclaration; HeaderLoop."EOS Footer Line") { }
+                column(VATLineAmountToPay; HeaderLoop."EOS Amount Including VAT") { }
+                column(ExternalDocumentNo; HeaderLoop."EOS External Document No.") { }
                 column(CstmHdrTxt1; HeaderLoop.GetCustomFieldTextValue('CustomText1')) { }
                 column(CstmHdrTxt2; HeaderLoop.GetCustomFieldTextValue('CustomText2')) { }
                 column(CstmHdrTxt3; HeaderLoop.GetCustomFieldTextValue('CustomText3')) { }
@@ -115,23 +316,19 @@ report 18122011 "EOS Reminder Document"
                     column(Line_Style; Format("EOS Line Style", 0, 2)) { }
                     column(Line_ExtensionCode; LineLoop."EOS Extension Code") { }
                     column(Line_LineNo; LineLoop."EOS Line No.") { }
-                    column(Line_ItemNo; LineLoop.GetItemNo()) { }
-                    column(Line_Description; LineLoop.GetDescription()) { }
+                    column(Line_ItemNo; LineLoop."EOS No.") { }
+                    column(Line_Description; LineLoop."EOS Description") { }
                     column(Line_Description2; LineLoop."EOS Description 2") { }
-                    column(Line_ReminderLevel; LineLoop."EOS Reminder Level") { }
-                    column(Line_DocumentNo; LineLoop."EOS Order No.") { }
-                    column(Line_PostingDate; LineLoop."EOS Posting Date") { }
-                    column(Line_DueDate; LineLoop."EOS Shipment Date") { }
-                    column(Line_DocDate; LineLoop."EOS Document Date") { }
-                    column(Line_OriginalAmount; LineLoop."EOS Original Amount") { }
-                    column(Line_OriginalQuantity; LineLoop."EOS Quantity") { }
-                    column(Line_RemainingAmount; LineLoop."EOS Remaining Amount") { }
-                    column(Line_RemainingQuantity; LineLoop."EOS Outstanding Quantity") { }
-                    column(Line_Amount; LineLoop."EOS Amount") { }
-                    column(Line_LineAmount; LineLoop."EOS Line Amount") { }
-                    column(Line_ReminderLineType; Format(LineLoop."EOS Reminder Line Type", 0, 2)) { }
+                    column(Line_Quantity; LineLoop."EOS Quantity") { }
+                    column(Line_UoMCode; CopyStr(LineLoop.GetUdMTraduction(HeaderLoop), 1, 4)) { }
+                    column(Line_LineDiscountPerc; LineLoop."EOS Discount Text") { }
+                    column(Line_UnitPrice; LineLoop."EOS Unit Price") { }
+                    column(Line_Amount; LineLoop."EOS Amount" + LineLoop."EOS Inv. Discount Amount") { }
+                    column(Line_VATIdentifier; LineLoop."EOS VAT Identifier") { }
+                    column(Line_ShipmentDate; LineLoop."EOS Shipment Date") { }
+                    column(Line_Type_Desc; Format(LineLoop."EOS Type")) { }
+                    column(Line_OrderQuantity; LineLoop."EOS Source Line Quantity") { }
                     column(Line_SourceID; LineLoop."EOS Source ID") { }
-                    column(Line_LineGroupID; LineLoop."EOS Line Group ID") { }
                     column(CstmLneTxt1; LineLoop.GetCustomFieldTextValue('CustomText1')) { }
                     column(CstmLneTxt2; LineLoop.GetCustomFieldTextValue('CustomText2')) { }
                     column(CstmLneTxt3; LineLoop.GetCustomFieldTextValue('CustomText3')) { }
@@ -175,8 +372,8 @@ report 18122011 "EOS Reminder Document"
                     trigger OnAfterGetRecord()
                     begin
                         if ImagesSent then begin
-                            Clear(HeaderLoop."EOS Header Image");
-                            Clear(HeaderLoop."EOS Footer Image");
+                            Clear(HeaderImage);
+                            Clear(FooterImage);
                         end else
                             ImagesSent := true;
                     end;
@@ -225,6 +422,8 @@ report 18122011 "EOS Reminder Document"
                     column(PaymentLine_Amount3; PaymentLine_Amount[3]) { }
                     column(PaymentLine_DueDate4; PaymentLine_DueDate[4]) { }
                     column(PaymentLine_Amount4; PaymentLine_Amount[4]) { }
+                    column(PaymentLine_DueDate5; PaymentLine_DueDate[5]) { }
+                    column(PaymentLine_Amount5; PaymentLine_Amount[5]) { }
                     column(VATLineCurrencyCode; HeaderLoop."EOS Currency Code") { }
                     column(VATLineTotal; VATLineTotal) { }
                     column(VATLineInvDiscTotal; VATLineInvDiscTotal) { }
@@ -280,8 +479,10 @@ report 18122011 "EOS Reminder Document"
                 if not SellToContact.Get(HeaderLoop."EOS Sell-to Contact No.") then
                     Clear(SellToContact);
 
-                if ReportSetup."EOS Print Logos" then
-                    HeaderLoop.PopulateHeaderFooterImages();
+                if ReportSetup."EOS Print Logos" then begin
+                    HeaderLoop.GetHeaderImage(HeaderImage);
+                    HeaderLoop.GetFooterImage(FooterImage);
+                end;
 
                 if not CurrReport.Preview() then
                     HeaderLoop.LogInteraction();
@@ -306,7 +507,6 @@ report 18122011 "EOS Reminder Document"
                         Caption = 'Report Setup Code';
                         TableRelation = "EOS Report Setup";
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value for the field Report Setup Code';
                         trigger OnValidate()
                         begin
                             if ReportSetup.Get(ReportSetupCode) then begin
@@ -321,13 +521,11 @@ report 18122011 "EOS Reminder Document"
                         Caption = 'No. of Copies';
                         ApplicationArea = All;
                         Editable = NoofCopiesEditable;
-                        ToolTip = 'Specifies the value for the field No. of Copies';
                     }
                     field(LogInteractionFld; LogInteraction)
                     {
                         Caption = 'Log Interaction';
                         ApplicationArea = All;
-                        ToolTip = 'Specifies the value for the field Log Interaction';
                     }
                     // field(PrintVAT; PrintVAT)
                     // {
@@ -350,33 +548,67 @@ report 18122011 "EOS Reminder Document"
 
     labels
     {
-        BillToAddr_Caption = 'Billing address';
+        BillToAddress_Caption = 'Billing address';
+        CustomerVendorContact_Caption = 'Contact';
+        CustomerVendorMail_Caption = 'E-Mail';
+        CustomerVendorNo_Caption = 'Customer No.';
         DocumentNo_Caption = 'No.';
-        PostingDate_Caption = 'Date';
-        Salesperson_Caption = 'Salesperson';
-        Purchaser_Caption = 'Purchaser';
-        Operator_Caption = 'Contact';
-        CustomerNo_Caption = 'Customer No.';
-        VendorNo_Caption = 'Vendor No.';
-        CustomerContact_Caption = 'Contact';
-        CustomerMail_Caption = 'E-Mail';
-        Reason_Caption = 'Transport reason';
-        VATRegNo_Caption = 'VAT Reg.';
         FiscalCode_Caption = 'Fiscal code';
-        Page_Caption = 'Page';
-        ReminderLevel_Caption = 'Level';
-        Line_ItemNo_Caption = 'No.';
-        Line_Description_Caption = 'Description';
-        Line_DocumentNo_Caption = 'Doc. No.';
-        Line_PostingDate_Caption = 'Doc. Date';
-        Line_TotalAmount_Caption = 'Total Amount';
-        Line_TotalQuantity_Caption = 'Total Quantity';
-        Line_RemAmount_Caption = 'Rem. Amount';
-        Line_RemQuantity_Caption = 'Rem. Quantity';
+        GoodsAppearance_Caption = 'Goods appearance';
+        GrossWeight_Caption = 'Gross weight';
         Line_Amount_Caption = 'Amount';
-        Line_ReminderLevel_Caption = 'Level';
-        Line_DueDate_Caption = 'Due Date';
-        TotalText = 'Total';
+        Line_Description_Caption = 'Description';
+        Line_ItemNo_Caption = 'No.';
+        Line_LineDiscountPerc_Caption = 'Disc. %';
+        Line_OrderQuantity_Caption = 'Order Quantity';
+        Line_Quantity_Caption = 'Quantity';
+        Line_ShipmentDate_Caption = 'Shpt. Date';
+        Line_Type_Descr_Caption = 'Type';
+        Line_UnitPrice_Caption = 'Price';
+        Line_UoM_Caption = 'U.M.';
+        Line_VATIdentifier_Caption = 'VAT';
+        NetWeightCaption = 'Net weight';
+        NoOfParcels_Caption = 'No. of Parcels';
+        OperatorName_Caption = 'Contact';
+        OrderConf_Title = 'Order Confirmation';
+        OrderDate_Caption = 'Order Date';
+        Our_Bank = 'Our Bank Account';
+        Page_Caption = 'Page';
+        Payment_Amount_Caption = 'Amount';
+        Payment_DueDate_Caption = 'Due Date';
+        PaymentMethod_Caption = 'Payment method';
+        PaymentTerms_Caption = 'Payment terms';
+        PostingDate_Caption = 'Date';
+        Reason_Caption = 'Transport reason';
+        ReturnAddr_Caption = 'Return address';
+        Salesperson_Caption = 'Salesperson';
+        ShipmentDate_Caption = 'Shpt. Date';
+        ShipToAddress_Caption = 'Shipping address';
+        ShpAgent_Caption = 'Shipping agent';
+        ShptBy_Caption = 'Shpt. by';
+        ShptMethod_Caption = 'Shipment meth.';
+        ShptStart_Caption = 'Shipment Start';
+        SigDriver_Caption = 'Signature - Driver';
+        SigRecipient_Caption = 'Signature - Recipient';
+        SigShpAgent_Caption = 'Signature - Ship. agent';
+        Total_DocumentTotalCaption = 'Document Total';
+        Total_DocumentTotalVatExclCaption = 'Document Total Vat Excl.';
+        Total_NetAmountToPayCaption = 'Net Amount To Pay';
+        Total_TotalAmountCaption = 'Total VAT';
+        Total_TotalBaseCaption = 'Total Base';
+        Total_TotalCaption = 'Total';
+        Total_TotalInvDiscCaption = 'Invoice Discount';
+        ValidTo_Caption = 'Validity';
+        VAT_InvDisc_Caption = 'Inv. Disc.';
+        VAT_Line_VATIdentifier_Caption = 'VAT Code';
+        VAT_VATAmount_Caption = 'Amount';
+        VAT_VATBase_Caption = 'Base';
+        VAT_VATPercent_Caption = 'VAT %';
+        VAT_VATText_Caption = 'Description';
+        VATClausesCaption = 'VAT Additional Info:';
+        VATRegNo_Caption = 'VAT Reg.';
+        Volume_Caption = 'Volume';
+        YourReference_Caption = 'Your reference';
     }
 
     trigger OnInitReport()
@@ -386,7 +618,6 @@ report 18122011 "EOS Reminder Document"
     trigger OnPreReport()
     var
         AdvancedReportingMngt: Codeunit "EOS Advanced Reporting Mngt";
-        AdvRptStdRemindExt: Codeunit "EOS AdvRpt Std Remind Ext";
         AdvRptDebug: Codeunit "EOS AdvRpt Debug";
         StopExecution: Boolean;
     begin
@@ -398,8 +629,6 @@ report 18122011 "EOS Reminder Document"
 
         SetupLanguage(DocVariantToPrint);
         AdvancedReportingMngt.PrepareBuffer(DocVariantToPrint, ReportSetupCode, HeaderLoop, LineLoop, CurrReport.ObjectId(false), ForcedLanguageID);
-
-        AdvRptStdRemindExt.CompressParagraph(LineLoop);
 
         OnBeforePrintingReport(HeaderLoop, LineLoop, NoOfCopies, LogInteraction, PrintVAT, StopExecution);
         if StopExecution then
@@ -464,8 +693,27 @@ report 18122011 "EOS Reminder Document"
 
         if not AdvRptSharedMemory.GetCustomReportDocument(DocVariantToPrint) then begin
             Found := false;
-            AdvRptRoutines.GetDocumentToPrint(FakeReminderHeader, DocVariantToPrint, Found);
-            AdvRptRoutines.GetDocumentToPrint(FakeIssuedReminderHeader, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakeSalesHeader, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakeSalesShipmentHeader, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakeReturnReceiptHeader, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakeSalesInvoiceHeader, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakeSalesCrMemoHeader, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakeSalesHeaderArchive, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakeServiceHeader, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakeServiceShipmentHeader, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakeServiceInvoiceHeader, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakeServiceCrMemoHeader, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakePurchaseHeader, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakePurchRcptHeader, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakeReturnShipmentHeader, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakePurchInvHeader, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakePurchCrMemoHdr, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakePurchaseHeaderArchive, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakeTransferHeader, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakeTransferReceiptHeader, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakeTransferShipmentHeader, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakeWarehouseShipmentHeader, DocVariantToPrint, Found);
+            AdvRptRoutines.GetDocumentToPrint(FakePostedWhseShipmentHeader, DocVariantToPrint, Found);
             if not Found then
                 Error(UnknowDocumentToPrintErr, CurrReport.ObjectId(false), CurrReport.ObjectId(true));
         end;
@@ -526,6 +774,8 @@ report 18122011 "EOS Reminder Document"
     var
         BuyFromContact: Record Contact;
         Employee: Record Employee;
+        FooterImage: Record TempBlob temporary;
+        HeaderImage: Record TempBlob temporary;
         ReportSetup: Record "EOS Report Setup";
         Salesperson: Record "Salesperson/Purchaser";
         SellToContact: Record Contact;
