@@ -1,0 +1,49 @@
+{
+    "id":  "6d089a6a-b409-4bc3-b34d-8898084a1744",
+    "name":  "DocSolution for Advanced Document Reporting CAL",
+    "publisher":  "EOS Solutions",
+    "brief":  "DocSolution for .AD.Repo CAL",
+    "description":  "DocSolution for Advanced Document Reporting CAL - Bridge",
+    "version":  "1.0.0.0",
+    "privacyStatement":  "https://www.eos-solutions.it/en/privacy.html",
+    "EULA":  "https://www.eos-solutions.it/en/eula.html",
+    "help":  "http://helpbc.eos-solutions.it/",
+    "url":  "https://www.eos-solutions.it/",
+    "logo":  "Images/logo-216.png",
+    "features":  [
+                     "TranslationFile"
+                 ],
+    "supportedLocales":  [
+                             "it-IT",
+                             "it-CH",
+                             "en-US",
+                             "en-CA",
+                             "en-AU",
+                             "en-NZ",
+                             "en-GB",
+                             "de-DE",
+                             "de-AT",
+                             "de-CH"
+                         ],
+    "capabilities":  [
+
+                     ],
+    "dependencies":  [
+        {
+        "appId": "b2dd1d81-3e95-46a8-94ef-8c32d872bf0c",
+        "name": "Advanced Document Reporting",
+        "publisher": "EOS Solutions",
+        "version": "1.0.72.0"
+        }
+                     ],
+    "screenshots":  [
+
+                    ],
+    "platform":  "13.0.0.0",
+    "application":  "13.0.0.0",
+    "idRange":  {
+                    "from":  50110,
+                    "to":  50111
+                },
+    "runtime":  "2.0"
+}

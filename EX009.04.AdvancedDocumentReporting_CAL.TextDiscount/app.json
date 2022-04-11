@@ -1,0 +1,49 @@
+{
+    "id": "2f6dc7df-d5d8-4b8e-b7ae-f70c653839ce",
+    "name": "Advanced Document Reporting Text Discount CAL",
+    "publisher": "EOS Solutions",
+    "brief": "Advanced Document Reporting Text Discount",
+    "description": "Advanced Document Reporting Text Discount",
+    "version": "1.0.0.0",
+    "privacyStatement": "https://www.eos-solutions.it/en/privacy.html",
+    "EULA": "https://www.eos-solutions.it/en/eula.html",
+    "help": "https://www.eos-solutions.it/en/advanced-document-reporting-text-discount-cal-en.html",
+    "url": "https://www.eos-solutions.it/",
+    "logo": "Images/logo-216.png",
+    "features": [
+        "TranslationFile"
+    ],
+    "supportedLocales": [
+        "it-IT",
+        "it-CH",
+        "en-US",
+        "de-DE",
+        "de-AT",
+        "de-CH",
+        "fr-FR",
+        "fr-BE",
+        "fr-CH",
+        "fr-CA",
+        "nl-NL",
+        "nl-BE",
+        "da-DK",
+        "es-ES"
+    ],
+    "capabilities": [],
+    "dependencies": [
+        {
+            "appId": "b2dd1d81-3e95-46a8-94ef-8c32d872bf0c",
+            "name": "Advanced Document Reporting",
+            "publisher": "EOS Solutions",
+            "version": "1.0.56.0"
+        }
+    ],
+    "screenshots": [],
+    "platform": "13.0.0.0",
+    "application": "13.0.0.0",
+    "idRange": {
+        "from": 50100,
+        "to": 50100
+    },
+    "runtime": "2.0"
+}
