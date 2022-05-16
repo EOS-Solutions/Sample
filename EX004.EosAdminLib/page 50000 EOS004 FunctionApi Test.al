@@ -1,4 +1,4 @@
-page 18122320 "EOS004 FunctionApi Test"
+page 50000 "EOS004 FunctionApi Test"
 {
     PageType = Card;
     ApplicationArea = All;
