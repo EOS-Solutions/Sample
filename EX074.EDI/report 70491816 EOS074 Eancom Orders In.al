@@ -424,7 +424,7 @@ report 70491816 "EOS074 Eancom Orders In"
                                 if EDIValues.IsEmpty() then
                                     Error(GLNCustErr, CustId);
 
-                                if not Cust.get(EDIValues."Source ID") then                                 
+                                if not Cust.get(EDIValues."Source ID") then
                                     Error(GLNCustErr, CustId);
 
                                 if SalesHeader."Sell-to Customer No." <> Cust."No." then begin
@@ -444,8 +444,8 @@ report 70491816 "EOS074 Eancom Orders In"
     procedure UpdateSalesOrderLine(EDIHeader: Record "EOS074 EDI Message Header"; EDILine: Record "EOS074 EDI Message Line"; RecordType: Text[30]; var SalesHeader: Record 36; var SalesLine: Record 37);
     var
         //AnalyzedItem: Record 27;
-        Item: Record 27;
-        ItemCrossRef: Record 5717;
+        Item: Record Item;
+        ItemReference: Record "Item Reference";
         EDIMappingValue: Record "EOS074 EDI Mapping";
         TempSalesLine: Record "Sales Line" temporary;
         //UOMMgt: Codeunit "Unit of Measure Management";
@@ -465,7 +465,7 @@ report 70491816 "EOS074 Eancom Orders In"
         ReqLineDeliveryTime: Time;
         //OldYear: Integer;
         //ProdQualified: Code[10];
-        SalesUOM: Code[10];
+        //SalesUOM: Code[10];
         //SalesQty: Decimal;
         FormatQualifier: Text[3];
         MaxLenght: text[30];
@@ -505,21 +505,20 @@ report 70491816 "EOS074 Eancom Orders In"
                         'EN':
                             begin
                                 ItemCrossReferenceCode := ProductCode;
-                                ItemCrossRef.Reset();
-                                ItemCrossRef.SETCURRENTKEY(
-                                  "Cross-Reference No.", "Cross-Reference Type", "Cross-Reference Type No.");
-                                ItemCrossRef.SetRange("Cross-Reference No.", ProductCode);
-                                ItemCrossRef.SetRange(
-                                  "Cross-Reference Type", ItemCrossRef."Cross-Reference Type"::Customer);
-                                ItemCrossRef.SetRange("Cross-Reference Type No.", SalesHeader."Sell-to Customer No.");
-                                ItemFound := ItemCrossRef.FindFirst();
+                                ItemReference.Reset();
+                                ItemReference.SETCURRENTKEY(
+                                  "Reference No.", "Reference Type", "Reference Type No.");
+                                ItemReference.SetRange("Reference No.", ProductCode);
+                                ItemReference.SetRange("Reference Type", ItemReference."Reference Type"::Customer);
+                                ItemReference.SetRange("Reference Type No.", SalesHeader."Sell-to Customer No.");
+                                ItemFound := ItemReference.FindFirst();
                                 if ItemFound then begin
-                                    ItemNo := ItemCrossRef."Item No.";
-                                    VariantCode := ItemCrossRef."Variant Code";
-                                    if (ItemCrossRef."Unit of Measure" <> '') and
+                                    ItemNo := ItemReference."Item No.";
+                                    VariantCode := ItemReference."Variant Code";
+                                    if (ItemReference."Unit of Measure" <> '') and
                                        (UnitOfMeasureCode = '')
                                     then
-                                        UnitOfMeasureCode := ItemCrossRef."Unit of Measure";
+                                        UnitOfMeasureCode := ItemReference."Unit of Measure";
 
                                     ItemCrossReferenceCode := ProductCode;
                                 end;
@@ -548,7 +547,7 @@ report 70491816 "EOS074 Eancom Orders In"
                     //THEN
                     //  SalesLine.VALIDATE("Unit of Measure Code",UnitOfMeasureCode);
                     if ItemCrossReferenceCode <> '' then begin
-                        SalesLine.Validate("Cross-Reference No.", ItemCrossReferenceCode);
+                        SalesLine.Validate("Item Reference No.", ItemCrossReferenceCode);
                         SalesLineNoOnValidate();
                     end;
 
@@ -569,7 +568,7 @@ report 70491816 "EOS074 Eancom Orders In"
                 begin
                     SalesLine.TestField("No.");
 
-                    SalesUOM := SalesLine."Unit of Measure Code";
+                    //SalesUOM := SalesLine."Unit of Measure Code";
 
                     ISOUnitOfMeasureCode := CopyStr(EDIMgt.ReadTokenField(EDILine, 2, 3, DES, CDES), 1, MaxStrLen(ISOUnitOfMeasureCode));
                     OrderQuantity :=

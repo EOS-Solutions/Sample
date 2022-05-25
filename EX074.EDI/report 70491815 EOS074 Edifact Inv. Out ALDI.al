@@ -92,12 +92,14 @@ report 70491815 "EOS074 Edifact Inv. Out ALDI"
                             repeat
                                 Ins_LIN();
                                 //Ins_PIA(SalesInvLine."No.", SalesInvLine."Cross-Reference No.",'IN');
-                                Ins_PIA(SalesInvLine."No.", SalesInvLine."Cross-Reference No.", 'IN', SalesInvHeader."Sell-to Customer No.");
+                                Ins_PIA(SalesInvLine."No.", SalesInvLine."Item Reference No.", 'IN', SalesInvHeader."Sell-to Customer No.");
                                 Ins_IMD(CopyStr(SalesInvLine.Description, 1, MaxStrLen(MaxLenght)), SalesInvLine."Description 2");
 
                                 // ORG: Ins_QTY(SalesInvLine.Quantity, SalesInvLine."Unit of Measure Code", SalesInvLine."Unit of Measure (Cross Ref.)");
-                                Ins_QTY(SalesInvLine.Quantity, SalesInvLine."Unit of Measure Code", SalesInvLine."Unit of Measure (Cross Ref.)",
-                                        SalesInvLine."Cross-Reference No.");
+                                Ins_QTY(
+                                    SalesInvLine.Quantity, SalesInvLine."Unit of Measure Code", 
+                                    SalesInvLine."Item Reference Unit of Measure",
+                                    SalesInvLine."Item Reference No.");
                                 Ins_MOA(SalesInvLine.Amount, '203');
 
                                 Ins_PRI(SalesInvLine."Unit Price", SalesInvLine.Quantity, SalesInvLine."Line Amount", 'AAA');
@@ -254,11 +256,13 @@ report 70491815 "EOS074 Edifact Inv. Out ALDI"
                             repeat
                                 Ins_LIN();
                                 // ORG: Ins_PIA(SalesCrMemoLine."No.", SalesCrMemoLine."Cross-Reference No.",'IN');
-                                Ins_PIA(SalesCrMemoLine."No.", SalesCrMemoLine."Cross-Reference No.", 'IN', SalesCrMemoHeader."Sell-to Customer No.");
+                                Ins_PIA(SalesCrMemoLine."No.", SalesCrMemoLine."Item Reference No.", 'IN', SalesCrMemoHeader."Sell-to Customer No.");
                                 Ins_IMD(CopyStr(SalesCrMemoLine.Description, 1, MaxStrLen(MaxLenght)), SalesCrMemoLine."Description 2");
                                 // ORG: Ins_QTY(SalesCrMemoLine.Quantity, SalesCrMemoLine."Unit of Measure Code", SalesCrMemoLine."Unit of Measure (Cross Ref.)");
-                                Ins_QTY(SalesCrMemoLine.Quantity, SalesCrMemoLine."Unit of Measure Code", SalesCrMemoLine."Unit of Measure (Cross Ref.)",
-                                        SalesCrMemoLine."Cross-Reference No.");
+                                Ins_QTY(
+                                    SalesCrMemoLine.Quantity, SalesCrMemoLine."Unit of Measure Code", 
+                                    SalesCrMemoLine."Item Reference Unit of Measure",
+                                    SalesCrMemoLine."Item Reference No.");
                                 Ins_MOA(SalesCrMemoLine.Amount, '203');
 
                                 Ins_PRI(SalesCrMemoLine."Unit Price", SalesCrMemoLine.Quantity, SalesCrMemoLine."Line Amount", 'AAA');
@@ -580,7 +584,6 @@ report 70491815 "EOS074 Edifact Inv. Out ALDI"
         if CountryCode in ['HU', 'SI'] then
             UpdateEDIComp('UNB.0001', 'UNOD', true, 4)
         else
-
             UpdateEDIComp('UNB.0001', 'UNOC', true, 4);
 
         UpdateEDIComp('UNB.0002', '3', true, 1);
@@ -773,12 +776,12 @@ report 70491815 "EOS074 Edifact Inv. Out ALDI"
         // ORG: UpdateEDIComp('NAD.3042',Cust.Address,FALSE,35);
         UpdateEDIComp('NAD.3042', Customer.Address, true, 35);
         UpdateEDILine(false);
-        
+
         // ORG: UpdateEDIComp('NAD.3164',Cust.City,FALSE,35);
         UpdateEDIComp('NAD.3164', Customer.City, true, 35);
         UpdateEDILine(false);
         UpdateEDILine(false);
-        
+
         // ORG: UpdateEDIComp('NAD.3251',Cust."Post Code",FALSE,35);
         UpdateEDIComp('NAD.3251', Customer."Post Code", true, 35);
         UpdateEDILine(false);
@@ -919,7 +922,7 @@ report 70491815 "EOS074 Edifact Inv. Out ALDI"
 
     local procedure Ins_PIA(ItemNo: Code[20]; CrossReferenceNo: Code[20]; Qualifier: Text[30]; CustNo: Code[20])
     var
-        CrossRef: Record "Item Cross Reference";
+        ItemRef: Record "Item Reference";
         i: Integer;
         ItemIdentifier: Text;
         MaxLenght: Text[1024];
@@ -939,12 +942,12 @@ report 70491815 "EOS074 Edifact Inv. Out ALDI"
             ItemIdentifier := CrossReferenceNo;
 
         if ItemIdentifier = '' then begin
-            CrossRef.SetRange("Cross-Reference Type", CrossRef."Cross-Reference Type"::Customer);
-            CrossRef.SetRange("Cross-Reference Type No.", CustNo);
-            CrossRef.SetRange("Item No.", ItemNo);
+            ItemRef.SetRange("Reference Type", ItemRef."Reference Type"::Customer);
+            ItemRef.SetRange("Reference Type No.", CustNo);
+            ItemRef.SetRange("Item No.", ItemNo);
             //CrossRef."Unit of Measure"
-            if CrossRef.FindFirst() then
-                ItemIdentifier := CrossRef."Cross-Reference No.";
+            if ItemRef.FindFirst() then
+                ItemIdentifier := ItemRef."Reference No.";
         end;
 
         // ORG: IF NOT (STRLEN(ItemIdentifier) IN [4,5]) THEN
