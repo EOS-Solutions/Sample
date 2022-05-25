@@ -108,7 +108,7 @@ report 70491817 "EOS074 Edifact Inv. Out Mpreis"
 
                                     Ins_IMD(CopyStr(SalesInvLine.Description, 1, MaxStrLen(MaxLenght)), SalesInvLine."Description 2");
 
-                                    Ins_QTY(SalesInvLine.Quantity, SalesInvLine."Unit of Measure Code", SalesInvLine."Unit of Measure (Cross Ref.)");
+                                    Ins_QTY(SalesInvLine.Quantity, SalesInvLine."Unit of Measure Code", SalesInvLine."Item Reference Unit of Measure");
                                     //Ins_FTX('REG','',294,''); // TAX ? todo
                                     Ins_MOA(SalesInvLine.Amount, '203');
 
@@ -263,7 +263,7 @@ report 70491817 "EOS074 Edifact Inv. Out Mpreis"
                                 Ins_LIN(SalesCrMemoLine."No.", SalesCrMemoLine."Sell-to Customer No.");
                                 Ins_IMD(CopyStr(SalesCrMemoLine.Description, 1, MaxStrLen(MaxLenght)), SalesCrMemoLine."Description 2");
 
-                                Ins_QTY(SalesCrMemoLine.Quantity, SalesCrMemoLine."Unit of Measure Code", SalesCrMemoLine."Unit of Measure (Cross Ref.)");
+                                Ins_QTY(SalesCrMemoLine.Quantity, SalesCrMemoLine."Unit of Measure Code", SalesCrMemoLine."Item Reference Unit of Measure");
                                 Ins_MOA(SalesCrMemoLine.Amount, '203');
 
                                 Ins_PRI(SalesCrMemoLine."Unit Price", SalesCrMemoLine.Quantity, SalesCrMemoLine."Line Amount", 'AAA');
@@ -1004,7 +1004,7 @@ report 70491817 "EOS074 Edifact Inv. Out Mpreis"
 
 
         Cust.Get(SellToCode);
-        
+
         EDIValues.Reset();
         EDIValues.FilterByRecord(Cust);
         if EDIValues.FindFirst() then
@@ -1076,7 +1076,7 @@ report 70491817 "EOS074 Edifact Inv. Out Mpreis"
 
     local procedure Ins_LIN(ItemNo: Code[20]; SellToCust: Code[20])
     var
-        ItemCrossReference: Record "Item Cross Reference";
+        ItemReference: Record "Item Reference";
     begin
         NumberOfSegments := NumberOfSegments + 1;
         LineNo := LineNo + 1;
@@ -1091,21 +1091,21 @@ report 70491817 "EOS074 Edifact Inv. Out Mpreis"
 
         UpdateEDILine(false);
 
-        ItemCrossReference.Reset();
-        ItemCrossReference.SetRange("Item No.", ItemNo);
-        ItemCrossReference.SetRange("Cross-Reference Type", ItemCrossReference."Cross-Reference Type"::"Bar Code");
-        ItemCrossReference.SetRange("Cross-Reference Type No.", '');
-        if not ItemCrossReference.FindFirst() then begin
-            ItemCrossReference.SetRange("Cross-Reference Type", ItemCrossReference."Cross-Reference Type"::Customer);
-            ItemCrossReference.SetRange("Cross-Reference Type No.", SellToCust);
-            if not ItemCrossReference.FindFirst() then
-                Clear(ItemCrossReference);
+        ItemReference.Reset();
+        ItemReference.SetRange("Item No.", ItemNo);
+        ItemReference.SetRange("Reference Type", ItemReference."Reference Type"::"Bar Code");
+        ItemReference.SetRange("Reference Type No.", '');
+        if not ItemReference.FindFirst() then begin
+            ItemReference.SetRange("Reference Type", ItemReference."Reference Type"::Customer);
+            ItemReference.SetRange("Reference Type No.", SellToCust);
+            if not ItemReference.FindFirst() then
+                Clear(ItemReference);
         end;
 
-        if ItemCrossReference."Cross-Reference No." = '' then
-            ItemCrossReference."Cross-Reference No." := ItemNo;
+        if ItemReference."Reference No." = '' then
+            ItemReference."Reference No." := ItemNo;
 
-        UpdateEDIComp('LIN.7140', ItemCrossReference."Cross-Reference No.", true, 35);
+        UpdateEDIComp('LIN.7140', ItemReference."Reference No.", true, 35);
         UpdateEDIComp('LIN.7143', 'EN', true, 3);
         UpdateEDILine(false);
 

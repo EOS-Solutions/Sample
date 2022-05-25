@@ -49,7 +49,7 @@ report 70491814 "EOS074 Edifact Eancom OrdersIn"
                       'MOA',
                       'CNT', // TODO
                       'UNT',
-                      'UNZ', 
+                      'UNZ',
                       'NAS',
                       'NAB'://spp
                             HandleSegment(EDIHeader, EDILine, RecordType, SalesHeader, SalesLine);
@@ -247,13 +247,13 @@ report 70491814 "EOS074 Edifact Eancom OrdersIn"
         DocumentType: Text[30];
         DocumentDate: Date;
         //ShipmentDate: Date;
-        TestDocument: Boolean;
+        //TestDocument: Boolean;
         //NextDocLineNo: Integer;
         //i: Integer;
         DocumentTime: Time;
         //_PVC_: Integer;
         ExternalOrderNo: Text[50];
-        //NAD_CustIdFound: Boolean;
+    //NAD_CustIdFound: Boolean;
     begin
         CompanyInfo.Get();
 
@@ -268,7 +268,7 @@ report 70491814 "EOS074 Edifact Eancom OrdersIn"
                     IsNewOrder := (DocumentType = '220');
                     if IsNewOrder then begin
 
-                        TestDocument := EDIHeader."Test Stage" = true;
+                        //TestDocument := EDIHeader."Test Stage" = true;
 
                         SalesHeader.SetHideValidationDialog(true);
                         SalesHeader.Init();
@@ -360,7 +360,7 @@ report 70491814 "EOS074 Edifact Eancom OrdersIn"
                                 if EDIValues.IsEmpty() then
                                     Error(GLNCustErr, CustId);
 
-                                if not Cust.get(EDIValues."Source ID") then                                   
+                                if not Cust.get(EDIValues."Source ID") then
                                     Error(GLNCustErr, CustId);
 
                                 if IsNewOrder then begin
@@ -379,55 +379,55 @@ report 70491814 "EOS074 Edifact Eancom OrdersIn"
 
                         'DP':  // deposite
                             begin
-                               // Start PV-00000-001/sdi
-                               // NAD_CustIdFound := false;
-                               // // Start PV-00000-001/sdi
-                               // EDIMappingValue.Reset();
-                               // EDIMappingValue.SetRange("EDI Group Code", EDIHeader."EDI Group Code");
-                               // EDIMappingValue.SetRange(Type, EDIMappingValue.Type::"Ship-to");
-                               // EDIMappingValue.SetRange("External Code", CustId);
-                               // if EDIMappingValue.FindFirst() then begin
-                               //     Cust.Get(EDIMappingValue."NAV-Code");
-                               //     // Start PV-00000-001/sdi
-                               //     NAD_CustIdFound := SalesHeader."Sell-to Customer No." = Cust."No.";
-                               //     if NAD_CustIdFound then begin
-                               //         // Stop PV-00000-001/sdi
+                                // Start PV-00000-001/sdi
+                                // NAD_CustIdFound := false;
+                                // // Start PV-00000-001/sdi
+                                // EDIMappingValue.Reset();
+                                // EDIMappingValue.SetRange("EDI Group Code", EDIHeader."EDI Group Code");
+                                // EDIMappingValue.SetRange(Type, EDIMappingValue.Type::"Ship-to");
+                                // EDIMappingValue.SetRange("External Code", CustId);
+                                // if EDIMappingValue.FindFirst() then begin
+                                //     Cust.Get(EDIMappingValue."NAV-Code");
+                                //     // Start PV-00000-001/sdi
+                                //     NAD_CustIdFound := SalesHeader."Sell-to Customer No." = Cust."No.";
+                                //     if NAD_CustIdFound then begin
+                                //         // Stop PV-00000-001/sdi
 
-                            //         // Start PV-00000-001/sdi
-                            //         // {
-                            //         // // Stop PV-00000-001/sdi
-                            //         // if SalesHeader."Sell-to Customer No." <> Cust."No." then
-                            //         //                         SalesHeader.Validate("Sell-to Customer No.", Cust."No.");
-                            //         // // Start PV-00000-001/sdi
-                            //         // }
-                            //         // Stop PV-00000-001/sdi
-                            //         if (EDIMappingValue."NAV-Code 2" <> '') and
-                            //            (SalesHeader."Ship-to Code" <> EDIMappingValue."NAV-Code 2")
-                            //         then
-                            //             // Start RI-TDAG12431-001/sdi
-                            //             if IsNewOrder then begin
-                            //                 // Stop RI-TDAG12431-001/sdi
-                            //                 SalesHeader.Validate("Ship-to Code", EDIMappingValue."NAV-Code 2");
-                            //                 EDIValues.Reset();
-                            //                 EDIValues.FilterByRecord(SalesHeader);
-                            //                 if EDIValues.FindFirst() then
-                            //                     EDIValues."EDI Group Code" := EDIGroup.Code;
-                            //                 // Start RI-TDAG12431-001/sdi
+                                //         // Start PV-00000-001/sdi
+                                //         // {
+                                //         // // Stop PV-00000-001/sdi
+                                //         // if SalesHeader."Sell-to Customer No." <> Cust."No." then
+                                //         //                         SalesHeader.Validate("Sell-to Customer No.", Cust."No.");
+                                //         // // Start PV-00000-001/sdi
+                                //         // }
+                                //         // Stop PV-00000-001/sdi
+                                //         if (EDIMappingValue."NAV-Code 2" <> '') and
+                                //            (SalesHeader."Ship-to Code" <> EDIMappingValue."NAV-Code 2")
+                                //         then
+                                //             // Start RI-TDAG12431-001/sdi
+                                //             if IsNewOrder then begin
+                                //                 // Stop RI-TDAG12431-001/sdi
+                                //                 SalesHeader.Validate("Ship-to Code", EDIMappingValue."NAV-Code 2");
+                                //                 EDIValues.Reset();
+                                //                 EDIValues.FilterByRecord(SalesHeader);
+                                //                 if EDIValues.FindFirst() then
+                                //                     EDIValues."EDI Group Code" := EDIGroup.Code;
+                                //                 // Start RI-TDAG12431-001/sdi
 
-                            //                 EDIValues.Modify();
-                            //             end else
-                            //                 SalesHeader.TestField("Ship-to Code", EDIMappingValue."NAV-Code 2");
-                            //         // Stop RI-TDAG12431-001/sdi
-                            //         SalesHeader.Modify();
-                            //         // Start PV-00000-001/sdi
-                            //     end;
-                            //     // Stop PV-00000-001/sdi
-                            //     // Start PV-00000-001/sdi
-                            //     // ORG: END ELSE BEGIN
-                            // end;
+                                //                 EDIValues.Modify();
+                                //             end else
+                                //                 SalesHeader.TestField("Ship-to Code", EDIMappingValue."NAV-Code 2");
+                                //         // Stop RI-TDAG12431-001/sdi
+                                //         SalesHeader.Modify();
+                                //         // Start PV-00000-001/sdi
+                                //     end;
+                                //     // Stop PV-00000-001/sdi
+                                //     // Start PV-00000-001/sdi
+                                //     // ORG: END ELSE BEGIN
+                                // end;
 
                                 // if not NAD_CustIdFound then begin
-                            
+
                                 EDIValues.Reset();
                                 EDIValues.FilterByRecord(Cust);
                                 EDIValues.SetRange("EDI Group Code", EDIHeader."EDI Group Code");
@@ -436,7 +436,7 @@ report 70491814 "EOS074 Edifact Eancom OrdersIn"
                                 if EDIValues.IsEmpty() then
                                     Error(CustFoundErr, SalesHeader."Sell-to Customer No.", CustId);
 
-                                if not Cust.get(EDIValues."Source ID") then                                 
+                                if not Cust.get(EDIValues."Source ID") then
                                     Error(GLNCustErr, CustId);
 
                                 if SalesHeader."Sell-to Customer No." <> Cust."No." then begin
@@ -513,9 +513,9 @@ report 70491814 "EOS074 Edifact Eancom OrdersIn"
     var
         //AnalyzedItem: Record "Item";
         Item: Record "Item";
-        ItemCrossRef: Record 5717;
         EDIMappingValue: Record "EOS074 EDI Mapping";
         TempSalesLine: Record "Sales Line" temporary;
+        ItemReference: Record "Item Reference";
         ProdCodeType: Code[10];
         ProductCode: Code[20];
         ItemNo: Code[20];
@@ -532,7 +532,7 @@ report 70491814 "EOS074 Edifact Eancom OrdersIn"
         //ReqLineDeliveryDate: Date;
         //OldYear: Integer;
         ProdQualified: Code[10];
-        SalesUOM: Code[10];
+        //SalesUOM: Code[10];
         //SalesQty: Decimal;
         LastLineNo: Integer;
     begin
@@ -589,29 +589,28 @@ report 70491814 "EOS074 Edifact Eancom OrdersIn"
                                 'IN':
                                     begin
                                         ItemCrossReferenceCode := ProductCode;
-                                        ItemCrossRef.Reset();
-                                        ItemCrossRef.SETCURRENTKEY(
-                                          "Cross-Reference No.", "Cross-Reference Type", "Cross-Reference Type No.");
-                                        ItemCrossRef.SetRange("Cross-Reference No.", ProductCode);
-                                        ItemCrossRef.SetRange(
-                                          "Cross-Reference Type", ItemCrossRef."Cross-Reference Type"::Customer);
-                                        ItemCrossRef.SetRange("Cross-Reference Type No.", SalesHeader."Sell-to Customer No.");
+                                        ItemReference.Reset();
+                                        ItemReference.SETCURRENTKEY(
+                                          "Reference No.", "Reference Type", "Reference Type No.");
+                                        ItemReference.SetRange("Reference No.", ProductCode);
+                                        ItemReference.SetRange("Reference Type", ItemReference."Reference Type"::Customer);
+                                        ItemReference.SetRange("Reference Type No.", SalesHeader."Sell-to Customer No.");
                                         // ORG: ItemFound := ItemCrossRef.FINDFIRST;
-                                        if ItemCrossRef.FindSet() then
+                                        if ItemReference.FindSet() then
                                             repeat
-                                                Item.Get(ItemCrossRef."Item No.");
+                                                Item.Get(ItemReference."Item No.");
                                                 ItemFound := not Item.Blocked;
                                                 if ItemFound then begin
-                                                    ItemNo := ItemCrossRef."Item No.";
-                                                    VariantCode := ItemCrossRef."Variant Code";
-                                                    if (ItemCrossRef."Unit of Measure" <> '') and
+                                                    ItemNo := ItemReference."Item No.";
+                                                    VariantCode := ItemReference."Variant Code";
+                                                    if (ItemReference."Unit of Measure" <> '') and
                                                        (UnitOfMeasureCode = '')
                                                     then
-                                                        UnitOfMeasureCode := ItemCrossRef."Unit of Measure";
+                                                        UnitOfMeasureCode := ItemReference."Unit of Measure";
 
                                                     ItemCrossReferenceCode := ProductCode;
                                                 end;
-                                            until (ItemCrossRef.Next() = 0) or ItemFound
+                                            until (ItemReference.Next() = 0) or ItemFound
                                     end;
                                 else
                                     ItemNo := '';
@@ -652,7 +651,7 @@ report 70491814 "EOS074 Edifact Eancom OrdersIn"
                     //THEN
                     //  SalesLine.VALIDATE("Unit of Measure Code",UnitOfMeasureCode);
                     if ItemCrossReferenceCode <> '' then begin
-                        SalesLine.Validate("Cross-Reference No.", ItemCrossReferenceCode);
+                        SalesLine.Validate("Item Reference No.", ItemCrossReferenceCode);
                         SalesLineNoOnValidate();
                     end;
 
@@ -668,7 +667,7 @@ report 70491814 "EOS074 Edifact Eancom OrdersIn"
                 begin
                     SalesLine.TestField("No.");
 
-                    SalesUOM := SalesLine."Unit of Measure Code";
+                    //SalesUOM := SalesLine."Unit of Measure Code";
 
                     ISOUnitOfMeasureCode := CopyStr(EDIMgt.ReadTokenField(EDILine, 2, 3, DES, CDES), 1, MaxStrLen(ISOUnitOfMeasureCode));
                     OrderQuantity :=

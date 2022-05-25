@@ -446,7 +446,7 @@ report 70491818 "EOS074 Euritmo Orders In"
     procedure LINHandle()
     var
         Item: Record Item;
-        ItemCrossReference: Record "Item Cross Reference";
+        ItemReference: Record "Item Reference";
         // ItemEquipment: Record UnknownRecord5040597;
         // ItemLabelsEquipment: Record UnknownRecord5040595;
         // UoMMgt: Codeunit "Unit of Measure Management";
@@ -463,7 +463,7 @@ report 70491818 "EOS074 Euritmo Orders In"
         CODEANTU: Text[50];
         EAN: Text[50];
         EANCustomer: Code[20];
-        Counter: Integer;
+        //Counter: Integer;
         UDMPRZUN: Text[50];
         //CheckItemEAN001Err: Label 'ITA="Non è presente nessun articolo con EAN = ''%1'' e ''%3'' = ''%4'' (nè per il cliente ''%2'', nè comune a tutti i clienti)"';
         // CheckItemEAN001Err: Label 'There is no items with EAN Code = %1 and %3 = %4 (neither for %2 customer, nor for all customers)';
@@ -493,18 +493,18 @@ report 70491818 "EOS074 Euritmo Orders In"
 
         EANCustomer := SalesHeader."Sell-to Customer No.";
 
-        ItemCrossReference.Reset();
-        ItemCrossReference.SetRange("Cross-Reference Type No.", EANCustomer);
+        ItemReference.Reset();
+        ItemReference.SetRange("Reference Type No.", EANCustomer);
 
         //spp
-        ItemCrossReference.SetRange("Cross-Reference Type", ItemCrossReference."Cross-Reference Type"::Customer);
+        ItemReference.SetRange("Reference Type", ItemReference."Reference Type"::Customer);
 
         //ORG:ItemCrossReference.SETRANGE("Cross-Reference No.", CODEANCU);
 
-        ItemCrossReference.SetRange("Cross-Reference No.", EAN);
-        ItemCrossReference.FindFirst();
+        ItemReference.SetRange("Reference No.", EAN);
+        ItemReference.FindFirst();
 
-        Counter := ItemCrossReference.Count();
+        //Counter := ItemCrossReference.Count();
 
         //spp
         // if Counter > 1 then
@@ -522,7 +522,7 @@ report 70491818 "EOS074 Euritmo Orders In"
         //         Error(CheckItemEAN001Err, CODEANCU, EANCustomer, ItemCrossReference.FIELDCAPTION("Cross-Reference Type"), ItemCrossReference."Cross-Reference Type"::EAN);
         // end;
 
-        Item.Get(ItemCrossReference."Item No.");
+        Item.Get(ItemReference."Item No.");
 
         // CheckItemDivision(Item."No.", CODEANCU);
 
@@ -701,7 +701,7 @@ report 70491818 "EOS074 Euritmo Orders In"
         QuantityPerUM := EDIManagement.ConvertQty(ItemNoV, UoMCodeV, UOMCodeNewV, Qty);
 
         if QuantityPerUM <> NRCUINTU then;
-            Error(CheckPackageNumber001Err, ItemNoV, NRCUINTU, QuantityPerUM);
+        Error(CheckPackageNumber001Err, ItemNoV, NRCUINTU, QuantityPerUM);
     end;
 }
 
