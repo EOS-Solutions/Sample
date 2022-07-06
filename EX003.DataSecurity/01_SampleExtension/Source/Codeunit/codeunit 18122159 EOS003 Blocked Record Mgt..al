@@ -13,7 +13,11 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
     var
         RecRef: RecordRef;
         Customer: Record Customer;
+        Skip: Boolean;
     begin
+        OnBeforeCheckEditCustomerBankAccount(Rec, Skip);
+        if Skip then
+            exit;
         Customer.Get(Rec."Customer No.");
         RecRef.Get(Customer.RecordId);
         CheckEditable(RecRef);
@@ -28,7 +32,11 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
     var
         RecRef: RecordRef;
         Customer: Record Customer;
+        Skip: Boolean;
     begin
+        OnBeforeCheckDeleteCustomerBankAccount(Rec, Skip);
+        if Skip then
+            exit;
         Customer.Get(Rec."Customer No.");
         RecRef.Get(Customer.RecordId);
         CheckDeletable(RecRef);
@@ -45,7 +53,11 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
     var
         RecRef: RecordRef;
         Vendor: Record Vendor;
+        Skip: Boolean;
     begin
+        OnBeforeCheckEditVendorBankAccount(Rec, Skip);
+        if Skip then
+            exit;
         Vendor.Get(Rec."Vendor No.");
         RecRef.Get(Vendor.RecordId);
         CheckEditable(RecRef);
@@ -60,7 +72,11 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
     var
         RecRef: RecordRef;
         Vendor: Record Vendor;
+        Skip: Boolean;
     begin
+        OnBeforeCheckDeleteVendorBankAccount(Rec, Skip);
+        if Skip then
+            exit;
         Vendor.Get(Rec."Vendor No.");
         RecRef.Get(Vendor.RecordId);
         CheckDeletable(RecRef);
@@ -81,7 +97,11 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
     var
         RecRef: RecordRef;
         Customer: Record Customer;
+        Skip: Boolean;
     begin
+        OnBeforeCheckEditShiptoAddress(Rec, Skip);
+        if Skip then
+            exit;
         Customer.Get(Rec."Customer No.");
         RecRef.Get(Customer.RecordId);
         CheckEditable(RecRef);
@@ -96,7 +116,11 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
     var
         RecRef: RecordRef;
         Customer: Record Customer;
+        Skip: Boolean;
     begin
+        OnBeforeCheckDeleteShiptoAddress(Rec, Skip);
+        if Skip then
+            exit;
         Customer.Get(Rec."Customer No.");
         RecRef.Get(Customer.RecordId);
         CheckDeletable(RecRef);
@@ -113,7 +137,11 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
     var
         RecRef: RecordRef;
         Vendor: Record Vendor;
+        Skip: Boolean;
     begin
+        OnBeforeCheckEditOrderAddress(Rec, Skip);
+        if Skip then
+            exit;
         Vendor.Get(Rec."Vendor No.");
         RecRef.Get(Vendor.RecordId);
         CheckEditable(RecRef);
@@ -128,7 +156,11 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
     var
         RecRef: RecordRef;
         Vendor: Record Vendor;
+        Skip: Boolean;
     begin
+        OnBeforeCheckDeleteOrderAddress(Rec, Skip);
+        if Skip then
+            exit;
         Vendor.Get(Rec."Vendor No.");
         RecRef.Get(Vendor.RecordId);
         CheckDeletable(RecRef);
@@ -150,7 +182,11 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
         RecRef: RecordRef;
         Vendor: Record Vendor;
         Customer: Record Customer;
+        Skip: Boolean;
     begin
+        OnBeforeCheckEditCommentLine(Rec, Skip);
+        if Skip then
+            exit;
         case Rec."Table Name" of
             Rec."Table Name"::Customer:
                 begin
@@ -177,7 +213,11 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
         RecRef: RecordRef;
         Vendor: Record Vendor;
         Customer: Record Customer;
+        Skip: Boolean;
     begin
+        OnBeforeCheckDeleteCommentLine(Rec, Skip);
+        if Skip then
+            exit;
         case Rec."Table Name" of
             Rec."Table Name"::Customer:
                 begin
@@ -210,7 +250,11 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
         RecRef: RecordRef;
         Vendor: Record Vendor;
         Customer: Record Customer;
+        Skip: Boolean;
     begin
+        OnBeforeCheckEditDefaultDimension(Rec, Skip);
+        if Skip then
+            exit;
         case Rec."Table ID" of
             18:
                 begin
@@ -237,7 +281,11 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
         RecRef: RecordRef;
         Vendor: Record Vendor;
         Customer: Record Customer;
+        Skip: Boolean;
     begin
+        OnBeforeCheckDeleteDefaultDimension(Rec, Skip);
+        if Skip then
+            exit;
         case Rec."Table ID" of
             18:
                 begin
@@ -274,5 +322,125 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
     begin
         if DataSecurityTableStatus.Get(RecRef.Number(), DataSecurityManagement.GetRecordPKOptionValue(RecRef), DataSecurityManagement.GetRecordStatus(RecRef)) then
             DataSecurityTableStatus.Testfield("Deletion disabled", false);
+    end;
+
+    /// <summary>
+    /// Raised before check editability of Customer Bank Account record
+    /// </summary>
+    /// <param name="Rec">Current Customer Bank Account record</param>
+    /// <param name="Skip">If it is set to true then skip the controls</param>
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeCheckEditCustomerBankAccount(Rec: Record "Customer Bank Account"; var Skip: Boolean)
+    begin
+    end;
+
+    /// <summary>
+    /// Raised before check deletable of Customer Bank Account record
+    /// </summary>
+    /// <param name="Rec">Current Customer Bank Account record</param>
+    /// <param name="Skip">If it is set to true then skip the controls</param>
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeCheckDeleteCustomerBankAccount(Rec: Record "Customer Bank Account"; var Skip: Boolean)
+    begin
+    end;
+
+    /// <summary>
+    /// Raised before check editability of Vendor Bank Account record
+    /// </summary>
+    /// <param name="Rec">Current Vendor Bank Account record</param>
+    /// <param name="Skip">If it is set to true then skip the controls</param>
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeCheckEditVendorBankAccount(Rec: Record "Vendor Bank Account"; var Skip: Boolean)
+    begin
+    end;
+
+    /// <summary>
+    /// Raised before check deletable of Vendor Bank Account record
+    /// </summary>
+    /// <param name="Rec">Current Vendor Bank Account record</param>
+    /// <param name="Skip">If it is set to true then skip the controls</param>
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeCheckDeleteVendorBankAccount(Rec: Record "Vendor Bank Account"; var Skip: Boolean)
+    begin
+    end;
+
+    /// <summary>
+    /// Raised before check editability of Ship-to Address record
+    /// </summary>
+    /// <param name="Rec">Current Ship-to Address record</param>
+    /// <param name="Skip">If it is set to true then skip the controls</param>
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeCheckEditShiptoAddress(Rec: Record "Ship-to Address"; var Skip: Boolean)
+    begin
+    end;
+
+    /// <summary>
+    /// Raised before check deletable of Ship-to Address record
+    /// </summary>
+    /// <param name="Rec">Current Ship-to Address record</param>
+    /// <param name="Skip">If it is set to true then skip the controls</param>
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeCheckDeleteShiptoAddress(Rec: Record "Ship-to Address"; var Skip: Boolean)
+    begin
+    end;
+
+    /// <summary>
+    /// Raised before check editability of Order Address record
+    /// </summary>
+    /// <param name="Rec">Current Order Address record</param>
+    /// <param name="Skip">If it is set to true then skip the controls</param>
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeCheckEditOrderAddress(Rec: Record "Order Address"; var Skip: Boolean)
+    begin
+    end;
+
+    /// <summary>
+    /// Raised before check deletable of Order Address record
+    /// </summary>
+    /// <param name="Rec">Current Order Address record</param>
+    /// <param name="Skip">If it is set to true then skip the controls</param>
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeCheckDeleteOrderAddress(Rec: Record "Order Address"; var Skip: Boolean)
+    begin
+    end;
+
+    /// <summary>
+    /// Raised before check editability of Comment Line record
+    /// </summary>
+    /// <param name="Rec">Current Comment Line record</param>
+    /// <param name="Skip">If it is set to true then skip the controls</param>
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeCheckEditCommentLine(Rec: Record "Comment Line"; var Skip: Boolean)
+    begin
+    end;
+
+    /// <summary>
+    /// Raised before check deletable of Comment Line record
+    /// </summary>
+    /// <param name="Rec">Current Comment Line record</param>
+    /// <param name="Skip">If it is set to true then skip the controls</param>
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeCheckDeleteCommentLine(Rec: Record "Comment Line"; var Skip: Boolean)
+    begin
+    end;
+
+    /// <summary>
+    /// Raised before check editability of Default Dimension record
+    /// </summary>
+    /// <param name="Rec">Current Default Dimension record</param>
+    /// <param name="Skip">If it is set to true then skip the controls</param>
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeCheckEditDefaultDimension(Rec: Record "Default Dimension"; var Skip: Boolean)
+    begin
+    end;
+
+    /// <summary>
+    /// Raised before check deletable of Default Dimension record
+    /// </summary>
+    /// <param name="Rec">Current Default Dimension record</param>
+    /// <param name="Skip">If it is set to true then skip the controls</param>
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeCheckDeleteDefaultDimension(Rec: Record "Default Dimension"; var Skip: Boolean)
+    begin
     end;
 }
