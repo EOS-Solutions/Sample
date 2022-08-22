@@ -20,7 +20,7 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
             exit;
         Customer.Get(Rec."Customer No.");
         RecRef.Get(Customer.RecordId);
-        CheckEditable(RecRef);
+        CheckEditable(RecRef, Database::"Customer Bank Account");
     end;
 
     [EventSubscriber(ObjectType::Table, Database::"Customer Bank Account", 'OnBeforeDeleteEvent', '', true, true)]
@@ -39,7 +39,7 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
             exit;
         Customer.Get(Rec."Customer No.");
         RecRef.Get(Customer.RecordId);
-        CheckDeletable(RecRef);
+        CheckDeletable(RecRef, Database::"Customer Bank Account");
     end;
 
     // Vendor Bank Account (288)
@@ -60,7 +60,7 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
             exit;
         Vendor.Get(Rec."Vendor No.");
         RecRef.Get(Vendor.RecordId);
-        CheckEditable(RecRef);
+        CheckEditable(RecRef, Database::"Vendor Bank Account");
     end;
 
     [EventSubscriber(ObjectType::Table, Database::"Vendor Bank Account", 'OnBeforeDeleteEvent', '', true, true)]
@@ -79,7 +79,7 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
             exit;
         Vendor.Get(Rec."Vendor No.");
         RecRef.Get(Vendor.RecordId);
-        CheckDeletable(RecRef);
+        CheckDeletable(RecRef, Database::"Vendor Bank Account");
     end;
 
     #endregion
@@ -104,7 +104,7 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
             exit;
         Customer.Get(Rec."Customer No.");
         RecRef.Get(Customer.RecordId);
-        CheckEditable(RecRef);
+        CheckEditable(RecRef, Database::"Ship-to Address");
     end;
 
     [EventSubscriber(ObjectType::Table, Database::"Ship-to Address", 'OnBeforeDeleteEvent', '', true, true)]
@@ -123,7 +123,7 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
             exit;
         Customer.Get(Rec."Customer No.");
         RecRef.Get(Customer.RecordId);
-        CheckDeletable(RecRef);
+        CheckDeletable(RecRef, Database::"Ship-to Address");
     end;
 
     //Order Address (224)
@@ -144,7 +144,7 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
             exit;
         Vendor.Get(Rec."Vendor No.");
         RecRef.Get(Vendor.RecordId);
-        CheckEditable(RecRef);
+        CheckEditable(RecRef, Database::"Order Address");
     end;
 
     [EventSubscriber(ObjectType::Table, Database::"Order Address", 'OnBeforeDeleteEvent', '', true, true)]
@@ -163,7 +163,7 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
             exit;
         Vendor.Get(Rec."Vendor No.");
         RecRef.Get(Vendor.RecordId);
-        CheckDeletable(RecRef);
+        CheckDeletable(RecRef, Database::"Order Address");
     end;
 
     #endregion
@@ -192,13 +192,13 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
                 begin
                     Customer.Get(Rec."No.");
                     RecRef.Get(Customer.RecordId);
-                    CheckEditable(RecRef);
+                    CheckEditable(RecRef, Database::"Comment Line");
                 end;
             Rec."Table Name"::Vendor:
                 begin
                     Vendor.Get(Rec."No.");
                     RecRef.Get(Vendor.RecordId);
-                    CheckEditable(RecRef);
+                    CheckEditable(RecRef, Database::"Comment Line");
                 end;
         end;
     end;
@@ -223,13 +223,13 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
                 begin
                     Customer.Get(Rec."No.");
                     RecRef.Get(Customer.RecordId);
-                    CheckDeletable(RecRef);
+                    CheckDeletable(RecRef, Database::"Comment Line");
                 end;
             Rec."Table Name"::Vendor:
                 begin
                     Vendor.Get(Rec."No.");
                     RecRef.Get(Vendor.RecordId);
-                    CheckDeletable(RecRef);
+                    CheckDeletable(RecRef, Database::"Comment Line");
                 end;
         end;
     end;
@@ -260,13 +260,13 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
                 begin
                     Customer.Get(Rec."No.");
                     RecRef.Get(Customer.RecordId);
-                    CheckEditable(RecRef);
+                    CheckEditable(RecRef, Database::"Default Dimension");
                 end;
             23:
                 begin
                     Vendor.Get(Rec."No.");
                     RecRef.Get(Vendor.RecordId);
-                    CheckEditable(RecRef);
+                    CheckEditable(RecRef, Database::"Default Dimension");
                 end;
         end;
     end;
@@ -291,37 +291,65 @@ codeunit 18122159 "EOS003 Blocked Record Mgt."
                 begin
                     Customer.Get(Rec."No.");
                     RecRef.Get(Customer.RecordId);
-                    CheckDeletable(RecRef);
+                    CheckDeletable(RecRef, Database::"Default Dimension");
                 end;
             23:
                 begin
                     Vendor.Get(Rec."No.");
                     RecRef.Get(Vendor.RecordId);
-                    CheckDeletable(RecRef);
+                    CheckDeletable(RecRef, Database::"Default Dimension");
                 end;
         end;
     end;
 
 
     #endregion
-
-
+    [Obsolete('Replaced by procedure CheckEditable(RecRef: RecordRef; TableIDtoCheck: Integer)"')]
     procedure CheckEditable(RecRef: RecordRef)
     var
         DataSecurityTableStatus: Record "EOS DS Table Status";
         DataSecurityManagement: Codeunit "EOS DS Management";
     begin
-        if DataSecurityTableStatus.Get(RecRef.Number(), DataSecurityManagement.GetRecordPKOptionValue(RecRef), DataSecurityManagement.GetRecordStatus(RecRef)) then
-            DataSecurityTableStatus.Testfield("Changes disabled", false);
+        CheckEditable(RecRef, 0);
     end;
 
+    [Obsolete('Replaced by procedure CheckDeletable(RecRef: RecordRef; TableIDtoCheck: Integer)"')]
     procedure CheckDeletable(RecRef: RecordRef)
     var
         DataSecurityTableStatus: Record "EOS DS Table Status";
         DataSecurityManagement: Codeunit "EOS DS Management";
     begin
-        if DataSecurityTableStatus.Get(RecRef.Number(), DataSecurityManagement.GetRecordPKOptionValue(RecRef), DataSecurityManagement.GetRecordStatus(RecRef)) then
-            DataSecurityTableStatus.Testfield("Deletion disabled", false);
+        CheckDeletable(RecRef, 0);
+    end;
+
+    procedure CheckEditable(RecRef: RecordRef; TableIDtoCheck: Integer)
+    var
+        DataSecurityTableStatus: Record "EOS DS Table Status";
+        ChildTableSetup: Record "EOS003 Child Table Setup";
+        DataSecurityManagement: Codeunit "EOS DS Management";
+    begin
+        if DataSecurityTableStatus.Get(RecRef.Number(), DataSecurityManagement.GetRecordPKOptionValue(RecRef), DataSecurityManagement.GetRecordStatus(RecRef)) then begin
+            if ChildTableSetup.Get(DataSecurityTableStatus."Table ID", DataSecurityTableStatus."Table Option Type", DataSecurityTableStatus."Status Code", TableIDtoCheck) then begin
+                if not ChildTableSetup."Disable Edit Control" then
+                    DataSecurityTableStatus.Testfield("Changes disabled", false);
+            end else
+                DataSecurityTableStatus.Testfield("Changes disabled", false);
+        end;
+    end;
+
+    procedure CheckDeletable(RecRef: RecordRef; TableIDtoCheck: Integer)
+    var
+        DataSecurityTableStatus: Record "EOS DS Table Status";
+        ChildTableSetup: Record "EOS003 Child Table Setup";
+        DataSecurityManagement: Codeunit "EOS DS Management";
+    begin
+        if DataSecurityTableStatus.Get(RecRef.Number(), DataSecurityManagement.GetRecordPKOptionValue(RecRef), DataSecurityManagement.GetRecordStatus(RecRef)) then begin
+            if ChildTableSetup.Get(DataSecurityTableStatus."Table ID", DataSecurityTableStatus."Table Option Type", DataSecurityTableStatus."Status Code", TableIDtoCheck) then begin
+                if not ChildTableSetup."Disable Delete Control" then
+                    DataSecurityTableStatus.Testfield("Deletion disabled", false);
+            end else
+                DataSecurityTableStatus.Testfield("Deletion disabled", false);
+        end;
     end;
 
     /// <summary>
