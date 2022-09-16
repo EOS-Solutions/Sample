@@ -1,0 +1,45 @@
+{
+  "id": "acb6fb82-1aff-4927-b8eb-ed6449d1d5c4",
+  "name": "02_CustomTable",
+  "publisher": "Default publisher",
+  "version": "1.0.0.0",
+  "brief": "",
+  "description": "",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "",
+  "logo": "",
+  "dependencies": [
+    {
+      "id": "4e2a89a2-9049-496c-8b3a-f4eee6399b0e",
+      "name": "Common Data Layer",
+      "publisher": "EOS Solutions",
+      "version": "20.0.61.0"
+    },
+    {
+      "id": "ef70c009-75ce-4075-9c31-463dd65c6e83",
+      "name": "Detailed Document Discounts",
+      "publisher": "EOS Solutions",
+      "version": "20.0.0.0"
+    }
+  ],
+  "screenshots": [],
+  "platform": "1.0.0.0",
+  "application": "20.0.0.0",
+  "idRanges": [
+    {
+      "from": 50100,
+      "to": 50149
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": true,
+    "includeSourceInSymbolFile": true
+  },
+  "runtime": "9.0",
+  "features": [
+    "NoImplicitWith"
+  ]
+}
