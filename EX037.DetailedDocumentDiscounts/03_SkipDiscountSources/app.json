@@ -1,0 +1,38 @@
+{
+  "id": "4cb05968-d814-4c7a-90c1-ef31ca9ccc3d",
+  "name": "03_SkipDiscountSources",
+  "publisher": "Default publisher",
+  "version": "1.0.0.0",
+  "dependencies": [
+    {
+      "id": "4e2a89a2-9049-496c-8b3a-f4eee6399b0e",
+      "name": "Common Data Layer",
+      "publisher": "EOS Solutions",
+      "version": "20.0.0.0"
+    },
+    {
+      "id": "ef70c009-75ce-4075-9c31-463dd65c6e83",
+      "name": "Detailed Document Discounts",
+      "publisher": "EOS Solutions",
+      "version": "20.0.0.0"
+    }
+  ],
+  "screenshots": [],
+  "platform": "1.0.0.0",
+  "application": "20.0.0.0",
+  "idRanges": [
+    {
+      "from": 50100,
+      "to": 50149
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": true,
+    "includeSourceInSymbolFile": true
+  },
+  "runtime": "9.0",
+  "features": [
+    "NoImplicitWith"
+  ]
+}
