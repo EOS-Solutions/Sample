@@ -355,7 +355,7 @@ page 50000 "EOS004 FunctionApi Test"
 
     local procedure Storage()
     var
-        iStorage: Interface "EOS004 iStorage";
+        iStorage: Interface "EOS004 iStorage v2";
         ServiceConfig: Record "EOS004 Service Config.";
         TempBlob: Codeunit "Temp Blob";
         Result: JsonArray;
