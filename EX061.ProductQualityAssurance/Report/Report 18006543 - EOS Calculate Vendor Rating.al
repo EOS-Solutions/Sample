@@ -22,6 +22,7 @@ report 18006565 "EOS Calculate Vendor Rating"
                 VendorGlobalServices: Record "EOS Vendor Global Services";
                 RatingDateAndQuantity: Boolean;
                 Value: Decimal;
+                IsHandled: Boolean;
             begin
                 if VendorRatingEntry.Get("Document No.", "Line No.") then
                     CurrReport.Skip();
@@ -177,47 +178,47 @@ report 18006565 "EOS Calculate Vendor Rating"
                     VendorRatingEntry."Quality Score" := Round(Value * 100, 1);
                 end;
 
-                if UseQualityCriteriainCalc then
-                    QualityCriteriaValue := VendorRatingEntry."Quality Score" / 100
-                else
-                    QualityCriteriaValue := 1;
+                IsHandled := false;
+                OnBeforeCalcVendorTotalScore(VendorRatingEntry, "Purch. Rcpt. Line", IsHandled);
+                if not IsHandled then begin
+                    if UseQualityCriteriainCalc then
+                        QualityCriteriaValue := VendorRatingEntry."Quality Score" / 100
+                    else
+                        QualityCriteriaValue := 1;
 
-                if UseQuantityCriteriainCalc then
-                    QuantityCriteriaValue := VendorRatingEntry."Quantity Score" / 100
-                else
-                    QuantityCriteriaValue := 1;
+                    if UseQuantityCriteriainCalc then
+                        QuantityCriteriaValue := VendorRatingEntry."Quantity Score" / 100
+                    else
+                        QuantityCriteriaValue := 1;
 
-                if UseDateCriteriainCalc then
-                    DateCriteriaValue := VendorRatingEntry."Delivery Date Score" / 100
-                else
-                    DateCriteriaValue := 1;
+                    if UseDateCriteriainCalc then
+                        DateCriteriaValue := VendorRatingEntry."Delivery Date Score" / 100
+                    else
+                        DateCriteriaValue := 1;
 
-                VendorRatingEntry."Total Score" := Round(DateCriteriaValue * QualityCriteriaValue * QuantityCriteriaValue * 100, 1);
+                    VendorRatingEntry."Total Score" := Round(DateCriteriaValue * QualityCriteriaValue * QuantityCriteriaValue * 100, 1);
 
-                VendorRatingEntry."Use Quality Criteria in Calc." := UseQualityCriteriainCalc;
-                VendorRatingEntry."Use Quantity Criteria in Calc." := UseQuantityCriteriainCalc;
-                VendorRatingEntry."Use Date Criteria in Calc." := UseDateCriteriainCalc;
+                    VendorRatingEntry."Use Quality Criteria in Calc." := UseQualityCriteriainCalc;
+                    VendorRatingEntry."Use Quantity Criteria in Calc." := UseQuantityCriteriainCalc;
+                    VendorRatingEntry."Use Date Criteria in Calc." := UseDateCriteriainCalc;
 
-                IF InspectionSetup."Vendor Certificazion Value" <> 0 THEN BEGIN
+                    IF InspectionSetup."Vendor Certificazion Value" <> 0 THEN BEGIN
 
-                    Vendor.GET("Purch. Rcpt. Line"."Buy-from Vendor No.");
-                    IF Vendor."EOS Certified Vendor" THEN BEGIN
-                        VendorCertValue := InspectionSetup."Vendor Certificazion Value" / 100;
-                        VendorRatingEntry."Certification Score" := ROUND(VendorCertValue * 100, 1);
+                        Vendor.GET("Purch. Rcpt. Line"."Buy-from Vendor No.");
+                        IF Vendor."EOS Certified Vendor" THEN BEGIN
+                            VendorCertValue := InspectionSetup."Vendor Certificazion Value" / 100;
+                            VendorRatingEntry."Certification Score" := ROUND(VendorCertValue * 100, 1);
+                        END;
+
+                        IF UseVendorCertinCalc THEN BEGIN
+                            VendorRatingEntry."Total Score" := ROUND(VendorRatingEntry."Total Score" * (1 + VendorCertValue), 1);
+                            IF VendorRatingEntry."Total Score" > 100 THEN
+                                VendorRatingEntry."Total Score" := 100;
+                        END;
                     END;
-
-                    IF UseVendorCertinCalc THEN BEGIN
-                        VendorRatingEntry."Total Score" := ROUND(VendorRatingEntry."Total Score" * (1 + VendorCertValue), 1);
-                        IF VendorRatingEntry."Total Score" > 100 THEN
-                            VendorRatingEntry."Total Score" := 100;
-                    END;
-                END;
+                end;
 
                 VendorRatingEntry."Use Cert. Vendor in Calc." := UseVendorCertinCalc;
-
-                //VendorRatingEntry."Total Score" := ROUND(VendorRatingEntry."Delivery Date Score" / 100 *
-                //                                      VendorRatingEntry."Quality Score" / 100 *
-                //                                      VendorRatingEntry."Quantity Score" / 100 * 100, 1);
 
                 IF not Vendor.GET("Purch. Rcpt. Line"."Buy-from Vendor No.") then
                     vendor.init();
@@ -237,7 +238,7 @@ report 18006565 "EOS Calculate Vendor Rating"
 
                 VendorRatingEntry."Use Global Service in Calc." := UseVendorGlobalServiceCalc;
 
-
+                OnBeforeInsertVendorRatingEntry(VendorRatingEntry, "Purch. Rcpt. Line");
                 VendorRatingEntry.Insert();
             end;
         }
@@ -332,5 +333,16 @@ report 18006565 "EOS Calculate Vendor Rating"
         VendorCertValue: Decimal;
         VendorGlobalServiceValue: Decimal;
         UseVendorGlobalServiceCalc: Boolean;
+
+
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeInsertVendorRatingEntry(var VendorRatingEntry: Record "EOS Vendor Rating Entry"; PurchRcptLine: Record "Purch. Rcpt. Line")
+    begin
+    end;
+
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeCalcVendorTotalScore(var VendorRatingEntry: Record "EOS Vendor Rating Entry"; PurchRcptLine: Record "Purch. Rcpt. Line"; var IsHandled: Boolean)
+    begin
+    end;
 }
 
