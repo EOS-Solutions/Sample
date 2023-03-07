@@ -73,14 +73,12 @@ pageextension 61100 "EOSPurchasing Request DTS" extends "EOS Purchase Request" /
     end;
 
     trigger OnAfterGetRecord()
-    var
-        DSUserInterface: Codeunit "EOS DS User Interface";
-    begin
-        UpdatePageWithDataSecurity(DSUserInterface.SetPageAsDSEditable(Rec))
+    begin        
+        DSStatusEditable := DSUserInterface.SetPageAsDSEditable(Rec)  
     end;
-
-    trigger OnNewRecord(BelowxRec: Boolean)
-    begin
-        UpdatePageWithDataSecurity(true);
+    
+    trigger OnNewRecord(BelowxRec: Boolean)    
+    begin        
+        DSStatusEditable := TRUE;    
     end;
 }
