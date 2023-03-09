@@ -1,8 +1,28 @@
 pageextension 61400 "EOS PageExt61400" extends "Released Production Order"//99000831
 {
+
     layout
     {
-        // Add changes to page layout here
+        addlast(General)
+        {
+
+            field(EOSEmailStatus; EOSAdvRptUserInterface.GetLastDocumentEmailStatus(Rec, EOSShowDocumentStatusField))
+            {
+                Caption = 'Sending Status';
+                ApplicationArea = All;
+                Editable = false;
+
+                trigger OnLookup(var Text: Text): Boolean
+                begin
+                    EOSAdvRptUserInterface.LookupDocumentEmailStatus(Rec);
+                end;
+
+                trigger OnDrillDown()
+                begin
+                    EOSAdvRptUserInterface.LookupDocumentEmailStatus(Rec);
+                end;
+            }
+        }
     }
 
     actions
@@ -35,5 +55,6 @@ pageextension 61400 "EOS PageExt61400" extends "Released Production Order"//9900
     }
 
     var
-        myInt: Integer;
+        EOSAdvRptUserInterface: Codeunit "EOS AdvRpt User Interface";
+
 }
