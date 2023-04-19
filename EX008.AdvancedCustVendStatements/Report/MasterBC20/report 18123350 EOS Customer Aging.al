@@ -128,7 +128,7 @@ report 18123350 "EOS Customer Aging"
                             TempGenericCustomerBuffer.Modify();
                         end else begin
                             GenericBufferEntryNo += 1;
-                            TempGenericCustomerBuffer."Dimension Set ID" := GenericBufferEntryNo;
+                            TempGenericCustomerBuffer."Reporting Group No." := GenericBufferEntryNo;
                             TempGenericCustomerBuffer.Amount += TempAssetsBufferLocal[12]."EOS Remaining Amount (LCY)";
                             TempGenericCustomerBuffer.Insert();
                         end;
@@ -142,7 +142,7 @@ report 18123350 "EOS Customer Aging"
                             TempGenericSalespersonBuffer.Modify();
                         end else begin
                             GenericBufferEntryNo += 1;
-                            TempGenericSalespersonBuffer."Dimension Set ID" := GenericBufferEntryNo;
+                            TempGenericSalespersonBuffer."Reporting Group No." := GenericBufferEntryNo;
                             TempGenericSalespersonBuffer.Amount += TempAssetsBufferLocal[12]."EOS Remaining Amount (LCY)";
                             TempGenericSalespersonBuffer.Insert();
                         end;
@@ -154,9 +154,9 @@ report 18123350 "EOS Customer Aging"
                                     TempReportingBuffer := TempAssetsBufferLocal[12];
                                     TempReportingBuffer."EOS Reporting Date 1" := TempAssetsBufferLocal[12]."EOS Due Date";
                                     TempReportingBuffer."EOS Entry No." := TempEntryNo;
-                                    TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Dimension Set ID";
+                                    TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Reporting Group No.";
                                     TempReportingBuffer."EOS Reporting Group 2" := PageGroup;
-                                    TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Dimension Set ID";
+                                    TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Reporting Group No.";
                                     TempReportingBuffer."EOS Reporting Subject Name" := Customer.Name;
                                     TempReportingBuffer."EOS Reporting SalesPerson Name" := SalespersonPurchaser.Name;
                                     TempReportingBuffer.Insert();
@@ -172,9 +172,9 @@ report 18123350 "EOS Customer Aging"
                                                 TempReportingBuffer := TempAssetsBufferLocal[3];
                                                 TempReportingBuffer."EOS Node Linked To" := Level2Node;
                                                 TempReportingBuffer."EOS Entry No." := TempEntryNo;
-                                                TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Dimension Set ID";
+                                                TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Reporting Group No.";
                                                 TempReportingBuffer."EOS Reporting Group 2" := PageGroup;
-                                                TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Dimension Set ID";
+                                                TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Reporting Group No.";
                                                 TempReportingBuffer."EOS Reporting Subject Name" := Customer.Name;
                                                 TempReportingBuffer."EOS Reporting SalesPerson Name" := SalespersonPurchaser.Name;
                                                 TempReportingBuffer."EOS Reporting Date 1" := Level2DueDate;
@@ -189,9 +189,9 @@ report 18123350 "EOS Customer Aging"
                                             TempReportingBuffer."EOS Level No." := 5;
                                             TempReportingBuffer."EOS Node Linked To" := Level2Node;
                                             TempReportingBuffer."EOS Entry No." := TempEntryNo;
-                                            TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Dimension Set ID";
+                                            TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Reporting Group No.";
                                             TempReportingBuffer."EOS Reporting Group 2" := PageGroup;
-                                            TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Dimension Set ID";
+                                            TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Reporting Group No.";
                                             TempReportingBuffer."EOS Reporting Subject Name" := Customer.Name;
                                             TempReportingBuffer."EOS Reporting SalesPerson Name" := SalespersonPurchaser.Name;
                                             TempReportingBuffer."EOS Reporting Date 1" := Level2DueDate;
@@ -261,9 +261,9 @@ report 18123350 "EOS Customer Aging"
                                         TempEntryNo += 1;
                                         TempReportingBuffer := TempAssetsBufferLocal[12];
                                         TempReportingBuffer."EOS Entry No." := TempEntryNo;
-                                        TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Dimension Set ID";
+                                        TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Reporting Group No.";
                                         TempReportingBuffer."EOS Reporting Group 2" := PageGroup;
-                                        TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Dimension Set ID";
+                                        TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Reporting Group No.";
                                         TempReportingBuffer."EOS Reporting Subject Name" := Customer.Name;
                                         TempReportingBuffer."EOS Reporting SalesPerson Name" := SalespersonPurchaser.Name;
                                         TempReportingBuffer."EOS Reporting Date 1" := TempAssetsBufferLocal[12]."EOS Due Date";
@@ -284,9 +284,9 @@ report 18123350 "EOS Customer Aging"
                                                     TempReportingBuffer := TempAssetsBufferLocal[3];
                                                     TempReportingBuffer."EOS Node Linked To" := Level2Node;
                                                     TempReportingBuffer."EOS Entry No." := TempEntryNo;
-                                                    TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Dimension Set ID";
+                                                    TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Reporting Group No.";
                                                     TempReportingBuffer."EOS Reporting Group 2" := PageGroup;
-                                                    TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Dimension Set ID";
+                                                    TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Reporting Group No.";
                                                     TempReportingBuffer."EOS Reporting Subject Name" := Customer.Name;
                                                     TempReportingBuffer."EOS Reporting SalesPerson Name" := SalespersonPurchaser.Name;
                                                     TempReportingBuffer."EOS Reporting Date 1" := Level2DueDate;
@@ -303,9 +303,9 @@ report 18123350 "EOS Customer Aging"
                                                             TempReportingBuffer := TempAssetsBufferLocal[4];
                                                             TempReportingBuffer."EOS Node Linked To" := Level3Node;
                                                             TempReportingBuffer."EOS Entry No." := TempEntryNo;
-                                                            TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Dimension Set ID";
+                                                            TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Reporting Group No.";
                                                             TempReportingBuffer."EOS Reporting Group 2" := PageGroup;
-                                                            TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Dimension Set ID";
+                                                            TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Reporting Group No.";
                                                             TempReportingBuffer."EOS Reporting Subject Name" := Customer.Name;
                                                             TempReportingBuffer."EOS Reporting SalesPerson Name" := SalespersonPurchaser.Name;
                                                             TempReportingBuffer."EOS Reporting Date 1" := Level2DueDate;
@@ -322,9 +322,9 @@ report 18123350 "EOS Customer Aging"
                                                 TempReportingBuffer."EOS Level No." := 5;
                                                 TempReportingBuffer."EOS Node Linked To" := Level2Node;
                                                 TempReportingBuffer."EOS Entry No." := TempEntryNo;
-                                                TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Dimension Set ID";
+                                                TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Reporting Group No.";
                                                 TempReportingBuffer."EOS Reporting Group 2" := PageGroup;
-                                                TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Dimension Set ID";
+                                                TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Reporting Group No.";
                                                 TempReportingBuffer."EOS Reporting Subject Name" := Customer.Name;
                                                 TempReportingBuffer."EOS Reporting SalesPerson Name" := SalespersonPurchaser.Name;
                                                 TempReportingBuffer."EOS Reporting Date 1" := Level2DueDate;
@@ -360,7 +360,7 @@ report 18123350 "EOS Customer Aging"
         {
             DataItemTableView = sorting(Number)
                                 where(Number = const(1));
-            column(CompanyName; CompanyName()) { }
+            column(CompanyName; CompanyNameText) { }
             column(ApplyedFilters; GetReportParametersText()) { }
             column(HideSalespersonTotal; HideSalespersonTotalPrmtr) { }
             column(HideMasterTotal; HideMasterTotal) { }
@@ -433,12 +433,13 @@ report 18123350 "EOS Customer Aging"
                 {
                     Caption = 'Only Open Entries';
                     ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "Only Open Entries" field.';
                 }
                 field(SortOrder; SortOrderPrmtr)
                 {
                     Caption = 'Sort Order';
                     ApplicationArea = All;
-
+                    ToolTip = 'Specifies the value of the "Sort Order" field.';
                     trigger OnValidate();
                     begin
                         UpdateReqPage();
@@ -449,7 +450,7 @@ report 18123350 "EOS Customer Aging"
                     Caption = 'Detail Level';
                     Enabled = NewPagePerCustomerEnabled;
                     ApplicationArea = All;
-
+                    ToolTip = 'Specifies the value of the "Detail Level" field.';
                     trigger OnValidate();
                     begin
                         UpdateReqPage();
@@ -460,13 +461,14 @@ report 18123350 "EOS Customer Aging"
                     Caption = 'Show Linked Entries';
                     Enabled = LinkedEntriesEnabled;
                     ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "Show Linked Entries" field.';
                 }
                 field(NewPagePerSalesperson; NewPagePerSalespersonPrmtr)
                 {
                     Caption = 'New Page Per Salesperson';
                     Editable = NewPagePerSalespersonEnabled;
                     ApplicationArea = All;
-
+                    ToolTip = 'Specifies the value of the "New Page Per Salesperson" field.';
                     trigger OnValidate();
                     begin
                         UpdateReqPage();
@@ -477,7 +479,7 @@ report 18123350 "EOS Customer Aging"
                     Caption = 'New Page Per Customer';
                     Enabled = NewPagePerCustomerEnabled;
                     ApplicationArea = All;
-
+                    ToolTip = 'Specifies the value of the "New Page Per Customer" field.';
                     trigger OnValidate();
                     begin
                         UpdateReqPage();
@@ -487,12 +489,13 @@ report 18123350 "EOS Customer Aging"
                 {
                     Caption = 'Use Salesperson from Customer';
                     ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "Use Salesperson from Customer" field.';
                 }
                 field(PostingDateFilter; PostingDateFilterPrmtr)
                 {
                     Caption = 'Posting Date Filter';
                     ApplicationArea = All;
-
+                    ToolTip = 'Specifies the value of the "Posting Date Filter" field.';
                     trigger OnValidate();
                     var
                         AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
@@ -506,7 +509,7 @@ report 18123350 "EOS Customer Aging"
                 {
                     Caption = 'Due Date Filter';
                     ApplicationArea = All;
-
+                    ToolTip = 'Specifies the value of the "Due Date Filter" field.';
                     trigger OnValidate();
                     var
                         AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
@@ -519,7 +522,7 @@ report 18123350 "EOS Customer Aging"
                 {
                     Caption = 'Payment Method Filter';
                     ApplicationArea = All;
-
+                    ToolTip = 'Specifies the value of the "Payment Method Filter" field.';
                     trigger OnLookup(var Text: Text): Boolean
                     var
                         PaymentMethod: Record "Payment Method";
@@ -532,20 +535,19 @@ report 18123350 "EOS Customer Aging"
                 {
                     Caption = 'Print Filters';
                     ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "Print Filters" field.';
                 }
                 field(HideSalespersonTotal; HideSalespersonTotalPrmtr)
                 {
                     Caption = 'Hide Salesperson Total';
                     Enabled = HideSalespersonTotalEnabled;
                     ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "Hide Salesperson Total" field.';
                 }
             }
         }
 
         trigger OnOpenPage();
-        var
-            Parameters: Record "EOS008 CVS Report Parameters";
-            AdvCustVendStatSharedMem: Codeunit "EOS AdvCustVendStat SharedMem";
         begin
             CurrReport.RequestOptionsPage.Caption := CurrReport.RequestOptionsPage.Caption() + SubscriptionMgt.GetLicenseText();
             SetReportParameters();
@@ -582,7 +584,9 @@ report 18123350 "EOS Customer Aging"
         SubscriptionActive := SubscriptionMgt.GetSubscriptionIsActive();
     end;
 
-    trigger OnPreReport();
+    trigger OnPreReport()
+    var
+        CVStatEngine: Codeunit "EOS AdvCustVendStat Engine";
     begin
         if not SubscriptionActive then
             CurrReport.quit();
@@ -591,6 +595,8 @@ report 18123350 "EOS Customer Aging"
 
         AdvCustVendStatRoutines.ResolveDateFilter(PostingDateFilterPrmtr, StartingPostingDate, EndingPostingDate);
         AdvCustVendStatRoutines.ResolveDateFilter(DueDateFilterPrmtr, StartingDueDate, EndingDueDate);
+
+        CompanyNameText := CVStatEngine.GetCompanyNameForReport(18123350);
     end;
 
     trigger OnPostReport()
@@ -607,13 +613,15 @@ report 18123350 "EOS Customer Aging"
     end;
 
     var
-        TempGenericCustomerBuffer: Record "Invoice Post. Buffer" temporary;
-        TempGenericSalespersonBuffer: Record "Invoice Post. Buffer" temporary;
+        ParametersBuffer: Record "EOS008 CVS Report Parameters";
+        TempGenericCustomerBuffer: Record "EOS008 Reporting Buffer" temporary;
+        TempGenericSalespersonBuffer: Record "EOS008 Reporting Buffer" temporary;
         TempProcessedCustomerList: Record Customer temporary;
         TempReportingBuffer: Record "EOS Statem. Assets Buffer EXT" temporary;
         AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
         AssetsEngine: Codeunit "EOS AdvCustVendStat Engine";
         SubscriptionMgt: Codeunit "EOS AdvCustVendStat Subscript";
+        CompanyNameText: Text;
         HideMasterTotal: Boolean;
         HideSalespersonTotalPrmtr: Boolean;
         NewPagePerCustomerPrmtr: Boolean;
@@ -622,7 +630,6 @@ report 18123350 "EOS Customer Aging"
         ShowFiltersPrmtr: Boolean;
         ShowLinkedEntriesPrmtr: Boolean;
         SubscriptionActive: Boolean;
-        ParametersBuffer: Record "EOS008 CVS Report Parameters";
         UseSalespersonFromCustomerPrmtr: Boolean;
         [InDataSet]
         HideSalespersonTotalEnabled: Boolean;
@@ -932,8 +939,8 @@ report 18123350 "EOS Customer Aging"
         Parameters: Record "EOS008 CVS Report Parameters";
         AdvCustVendStatSharedMem: Codeunit "EOS AdvCustVendStat SharedMem";
     begin
-        OnlyOpenPrmtr := true;
-        ShowLinkedEntriesPrmtr := false;
+        // OnlyOpenPrmtr := true;
+        // ShowLinkedEntriesPrmtr := false;
 
         UpdateReqPage();
 

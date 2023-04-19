@@ -176,7 +176,7 @@ report 18123352 "EOS Vend Aging In Column"
         {
             DataItemTableView = sorting(Number) where(Number = const(1));
 
-            column(CompanyName; COMPANYNAME()) { }
+            column(CompanyName; CompanyNameText) { }
             column(ApplyedFilters; GetReportParametersText()) { }
             column(ColumnText1; HeaderText[1]) { }
             column(ColumnText2; HeaderText[2]) { }
@@ -373,9 +373,6 @@ report 18123352 "EOS Vend Aging In Column"
             }
         }
         trigger OnOpenPage();
-        var
-            Parameters: Record "EOS008 CVS Report Parameters";
-            AdvCustVendStatSharedMem: Codeunit "EOS AdvCustVendStat SharedMem";
         begin
             CurrReport.RequestOptionsPage.Caption := CurrReport.RequestOptionsPage.Caption() + SubscriptionMgt.GetLicenseText();
             OnlyOpen := true;
@@ -415,6 +412,8 @@ report 18123352 "EOS Vend Aging In Column"
     end;
 
     trigger OnPreReport();
+    var
+        CVStatEngine: Codeunit "EOS AdvCustVendStat Engine";
     begin
         SetReportParameters();
         if Format(PeriodLengthPrmtr) = '' then
@@ -423,6 +422,8 @@ report 18123352 "EOS Vend Aging In Column"
         CalcDates();
         ResolveDateFilter(PostingDateFilterPrmtr, StartingPostingDate, EndingPostingDate);
         ResolveDateFilter(DueDateFilterPrmtr, StartingDueDate, EndingDueDate);
+
+        CompanyNameText := CVStatEngine.GetCompanyNameForReport(18123352);
     end;
 
     var
@@ -436,6 +437,7 @@ report 18123352 "EOS Vend Aging In Column"
         [InDataSet]
         LinkedEntriesEnabled: Boolean;
         ReportLineCount: Integer;
+        CompanyNameText: Text;
         PostingDateFilterPrmtr: Text;
         DueDateFilterPrmtr: Text;
         PaymentMethodFilterPrmtr: Text;
@@ -473,7 +475,8 @@ report 18123352 "EOS Vend Aging In Column"
         Text010Err: Label 'The Date Formula %1 cannot be used. Try to restate it. E.g. 1M+CM instead of CM+1M.';
         Text032Txt: Label '-%1';
         NoSalespersonTxt: Label 'Without Salesperson';
-
+        Placeholders12Lbl: Label '%1 %2', Locked = true, Comment = 'no translation';
+        Placeholders123Lbl: Label '%1 .. %2 %3', Locked = true, Comment = 'no translation';
 
     local procedure GetMiddle(): Integer;
     begin
@@ -527,9 +530,9 @@ report 18123352 "EOS Vend Aging In Column"
             end else
                 PeriodStartDate[i] := CALCDATE(PeriodLength2, PeriodEndDate[i]) + 1;
             if HeadingTypePrmtr = HeadingTypePrmtr::"Date Interval" then
-                HeaderText[i] := CopyStr(StrSubstNo('%1 %2', PeriodStartDate[i], PeriodEndDate[i]), 1, 30)
+                HeaderText[i] := CopyStr(StrSubstNo(Placeholders12Lbl, PeriodStartDate[i], PeriodEndDate[i]), 1, 30)
             else
-                HeaderText[i] := CopyStr(StrSubstNo('%1 .. %2 %3', DueDateAtPrmtr - PeriodStartDate[i] + 1, DueDateAtPrmtr - PeriodEndDate[i] + 1, Header002Txt), 1, 30);
+                HeaderText[i] := CopyStr(StrSubstNo(Placeholders123Lbl, DueDateAtPrmtr - PeriodStartDate[i] + 1, DueDateAtPrmtr - PeriodEndDate[i] + 1, Header002Txt), 1, 30);
         end;
         for i := Middle to 6 do begin
             PeriodStartDate[i] := PeriodEndDate[i - 1] + 1;
@@ -537,9 +540,9 @@ report 18123352 "EOS Vend Aging In Column"
             if DueDateAtMatchEndingPeriod then
                 PeriodEndDate[i] := CALCDATE('<CM>', PeriodEndDate[i]);
             if HeadingTypePrmtr = HeadingTypePrmtr::"Date Interval" then
-                HeaderText[i] := CopyStr(StrSubstNo('%1 %2', PeriodStartDate[i], PeriodEndDate[i]), 1, 30)
+                HeaderText[i] := CopyStr(StrSubstNo(Placeholders12Lbl, PeriodStartDate[i], PeriodEndDate[i]), 1, 30)
             else
-                HeaderText[i] := CopyStr(StrSubstNo('%1 .. %2 %3', ABS(DueDateAtPrmtr - PeriodStartDate[i] + 1), ABS(DueDateAtPrmtr - PeriodEndDate[i] + 1), Header002Txt), 1, 30);
+                HeaderText[i] := CopyStr(StrSubstNo(Placeholders123Lbl, ABS(DueDateAtPrmtr - PeriodStartDate[i] + 1), ABS(DueDateAtPrmtr - PeriodEndDate[i] + 1), Header002Txt), 1, 30);
         end;
         PeriodStartDate[1] := 0D;
         PeriodEndDate[6] := DMY2DATE(31, 12, 9999);
@@ -547,14 +550,14 @@ report 18123352 "EOS Vend Aging In Column"
         HeaderText[6] := Header003Txt + ' ' + Format(PeriodStartDate[6]);
     end;
 
-    local procedure BuildRanges();
-    begin
-    end;
+    // local procedure BuildRanges();
+    // begin
+    // end;
 
-    local procedure GetBufferGroup(var BufferAssets: Record "EOS Statem. Assets Buffer EXT" temporary): Text;
-    begin
-        exit(BufferAssets."EOS Source No.");
-    end;
+    // local procedure GetBufferGroup(var BufferAssets: Record "EOS Statem. Assets Buffer EXT" temporary): Text;
+    // begin
+    //     exit(BufferAssets."EOS Source No.");
+    // end;
 
     local procedure GetPeriodIndex(Date: Date): Integer;
     var
