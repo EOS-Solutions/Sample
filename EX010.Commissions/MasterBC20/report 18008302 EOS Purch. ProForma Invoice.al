@@ -9,7 +9,6 @@ report 18008302 "EOS Purch. ProForma Invoice"
         dataitem("Purchase Header"; "Purchase Header")
         {
             DataItemTableView = WHERE("Document Type" = CONST(Invoice));
-
             column(Purchase_Header_Document_Type; "Document Type")
             {
             }
@@ -701,9 +700,15 @@ report 18008302 "EOS Purch. ProForma Invoice"
 
             trigger OnAfterGetRecord()
             var
+                Language: Record Language;
                 TableID: array[10] of Integer;
                 No: array[10] of Code[20];
             begin
+                if "Purchase Header"."Language Code" <> '' then begin
+                    Language.get("Purchase Header"."Language Code");
+                    CurrReport.Language := Language."Windows Language ID";
+                end;
+
                 CompanyInfo.Get;
                 FormatAddr.Company(IndirizzoSocieta, CompanyInfo);
 
@@ -1019,6 +1024,7 @@ report 18008302 "EOS Purch. ProForma Invoice"
                     ShipInvoiceText := StrSubstNo(Text030, ShipInvoiceText);
                 end;
             end;
+
         }
     }
 
@@ -1042,6 +1048,7 @@ report 18008302 "EOS Purch. ProForma Invoice"
                             if (not ShowDetails) then GroupLines := false;
                         end;
                     }
+
                     field(GroupLines; GroupLines)
                     {
                         Caption = 'Grouped Lines for No.';
