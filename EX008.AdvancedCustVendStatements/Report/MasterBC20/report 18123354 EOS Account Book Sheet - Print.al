@@ -229,11 +229,11 @@ report 18123354 "EOS Account Book Sheet - Print"
                     DataItemTableView = sorting("Posting Date", "Transaction No.", "Entry No.")
                                         ORDER(Ascending)
                                         where(Amount = filter(<> 0));
-                    column(DecreasesAmnt; DecreasesAmnt)
+                    column(DecreasesAmnt; DecreasesAmounts)
                     {
                         AutoFormatType = 1;
                     }
-                    column(IcreasesAmnt; IcreasesAmnt)
+                    column(IcreasesAmnt; IncreasesAmounts)
                     {
                         AutoFormatType = 1;
                     }
@@ -252,11 +252,11 @@ report 18123354 "EOS Account Book Sheet - Print"
                     {
                         AutoFormatType = 1;
                     }
-                    column(DecreasesAmnt_Control1130070; DecreasesAmnt)
+                    column(DecreasesAmnt_Control1130070; DecreasesAmounts)
                     {
                         AutoFormatType = 1;
                     }
-                    column(IcreasesAmnt_Control1130071; IcreasesAmnt)
+                    column(IcreasesAmnt_Control1130071; IncreasesAmounts)
                     {
                         AutoFormatType = 1;
                     }
@@ -281,11 +281,11 @@ report 18123354 "EOS Account Book Sheet - Print"
                     column(GL_Book_Entry__Entry_No__; "Entry No.")
                     {
                     }
-                    column(DecreasesAmnt_Control1130079; DecreasesAmnt)
+                    column(DecreasesAmnt_Control1130079; DecreasesAmounts)
                     {
                         AutoFormatType = 1;
                     }
-                    column(IcreasesAmnt_Control1130080; IcreasesAmnt)
+                    column(IcreasesAmnt_Control1130080; IncreasesAmounts)
                     {
                         AutoFormatType = 1;
                     }
@@ -310,11 +310,11 @@ report 18123354 "EOS Account Book Sheet - Print"
                     column(GL_Book_Entry__Entry_No___Control1130087; "Entry No.")
                     {
                     }
-                    column(DecreasesAmnt_Control1130088; DecreasesAmnt)
+                    column(DecreasesAmnt_Control1130088; DecreasesAmounts)
                     {
                         AutoFormatType = 1;
                     }
-                    column(IcreasesAmnt_Control1130089; IcreasesAmnt)
+                    column(IcreasesAmnt_Control1130089; IncreasesAmounts)
                     {
                         AutoFormatType = 1;
                     }
@@ -323,19 +323,19 @@ report 18123354 "EOS Account Book Sheet - Print"
                         AutoFormatType = 1;
                         DecimalPlaces = 0 : 5;
                     }
-                    column(DecreasesAmnt_Control1130095; DecreasesAmnt)
+                    column(DecreasesAmnt_Control1130095; DecreasesAmounts)
                     {
                         AutoFormatType = 1;
                     }
-                    column(IcreasesAmnt_Control1130096; IcreasesAmnt)
+                    column(IcreasesAmnt_Control1130096; IncreasesAmounts)
                     {
                         AutoFormatType = 1;
                     }
-                    column(IcreasesAmnt_Control1130102; IcreasesAmnt)
+                    column(IcreasesAmnt_Control1130102; IncreasesAmounts)
                     {
                         AutoFormatType = 1;
                     }
-                    column(DecreasesAmnt_Control1130103; DecreasesAmnt)
+                    column(DecreasesAmnt_Control1130103; DecreasesAmounts)
                     {
                         AutoFormatType = 1;
                     }
@@ -379,10 +379,10 @@ report 18123354 "EOS Account Book Sheet - Print"
 
                         if not UseAmtsInAddCurr then begin
                             Amnt := Amnt + Amount;
-                            CalcAmounts(IcreasesAmnt, DecreasesAmnt, Amount);
+                            CalcAmounts(IncreasesAmounts, DecreasesAmounts, Amount);
                         end else begin
                             Amnt := Amnt + "Additional-Currency Amount";
-                            CalcAmounts(IcreasesAmnt, DecreasesAmnt, "Additional-Currency Amount");
+                            CalcAmounts(IncreasesAmounts, DecreasesAmounts, "Additional-Currency Amount");
                         end;
 
                         SourceText := '';
@@ -447,9 +447,11 @@ report 18123354 "EOS Account Book Sheet - Print"
             end;
 
             trigger OnPreDataItem()
+            var
+                CVSEngine: Codeunit "EOS AdvCustVendStat Engine";
             begin
                 CompanyInfo.Get();
-                CompAddr[1] := CompanyInfo.Name;
+                CompAddr[1] := CVSEngine.GetCompanyNameForReport(18123354);
                 CompAddr[2] := CompanyInfo.Address;
                 CompAddr[3] := CompanyInfo."Post Code";
                 CompAddr[4] := CompanyInfo.City;
@@ -481,17 +483,20 @@ report 18123354 "EOS Account Book Sheet - Print"
                     {
                         ApplicationArea = Basic, Suite;
                         Caption = 'Progressive Balance';
+                        ToolTip = 'Specifies the value of the "Progressive Balance" field.';
                     }
                     field(ShowAmountsInAddReportingCurrency; UseAmtsInAddCurr)
                     {
                         ApplicationArea = Basic, Suite;
                         Caption = 'Show Amounts in Add. Reporting Currency';
                         MultiLine = true;
+                        ToolTip = 'Specifies the value of the "Show Amounts in Add. Reporting Currency" field.';
                     }
                     field(ShowSource; ShowSourcePrmtr)
                     {
                         Caption = 'Show source line';
                         ApplicationArea = all;
+                        ToolTip = 'Specifies the value of the "Show source line" field.';
                     }
                 }
             }
@@ -543,8 +548,8 @@ report 18123354 "EOS Account Book Sheet - Print"
         GLDateFilter: Text;
         Amnt: Decimal;
         StartOnHand: Decimal;
-        IcreasesAmnt: Decimal;
-        DecreasesAmnt: Decimal;
+        IncreasesAmounts: Decimal;
+        DecreasesAmounts: Decimal;
         UseAmtsInAddCurr: Boolean;
         ProgressiveBalancePrmtr: Boolean;
         GLFilterNo: Text[30];
@@ -580,8 +585,8 @@ report 18123354 "EOS Account Book Sheet - Print"
         Printed_Entries_TotalCaptionLbl: Label 'Printed Entries Total';
         Printed_Entries_TotalCaption_Control1130099Lbl: Label 'Printed Entries Total';
         Printed_Entries_Total___Progressive_TotalCaptionLbl: Label 'Printed Entries Total + Progressive Total';
-        CheckSalesDocNoGaps_Text1130000Err: Label 'There are unposted sales documents with a reserved %5 (%6). Please post these before continuing.\\%1: %2\%3: %4.';
-        CheckPurchDocNoGaps_Text1130001Err: Label 'There are unposted purchase documents with a reserved %5 (%6). Please post these before continuing.\\%1: %2\%3: %4.';
+        // CheckSalesDocNoGaps_Text1130000Err: Label 'There are unposted sales documents with a reserved %5 (%6). Please post these before continuing.\\%1: %2\%3: %4.';
+        // CheckPurchDocNoGaps_Text1130001Err: Label 'There are unposted purchase documents with a reserved %5 (%6). Please post these before continuing.\\%1: %2\%3: %4.';
         SourceText: Text;
         ShowSourcePrmtr: Boolean;
         CustomerCaptionLbl: Label 'Customer: ';
@@ -598,28 +603,28 @@ report 18123354 "EOS Account Book Sheet - Print"
             DecreasesAmnt := ABS(Amount);
     end;
 
-    local procedure CheckSalesDocNoGaps(MaxDate: Date)
-    var
-        SalesHeader: Record "Sales Header";
-    begin
-        SalesHeader.SetFilter("Posting No.", '<>%1', '');
-        if MaxDate <> 0D then
-            SalesHeader.SetFilter("Posting Date", '<=%1', MaxDate);
-        if SalesHeader.Find('-') then
-            Error(CheckSalesDocNoGaps_Text1130000Err, SalesHeader.FIELDCAPTION("Document Type"), SalesHeader."Document Type", SalesHeader.FIELDCAPTION("No."),
-              SalesHeader."No.", SalesHeader.FIELDCAPTION("Posting No."), SalesHeader."Posting No.");
-    end;
+    // local procedure CheckSalesDocNoGaps(MaxDate: Date)
+    // var
+    //     SalesHeader: Record "Sales Header";
+    // begin
+    //     SalesHeader.SetFilter("Posting No.", '<>%1', '');
+    //     if MaxDate <> 0D then
+    //         SalesHeader.SetFilter("Posting Date", '<=%1', MaxDate);
+    //     if SalesHeader.Find('-') then
+    //         Error(CheckSalesDocNoGaps_Text1130000Err, SalesHeader.FIELDCAPTION("Document Type"), SalesHeader."Document Type", SalesHeader.FIELDCAPTION("No."),
+    //           SalesHeader."No.", SalesHeader.FIELDCAPTION("Posting No."), SalesHeader."Posting No.");
+    // end;
 
-    local procedure CheckPurchDocNoGaps(MaxDate: Date)
-    var
-        PurchHeader: Record "Purchase Header";
-    begin
-        PurchHeader.SetFilter("Posting No.", '<>%1', '');
-        if MaxDate <> 0D then
-            PurchHeader.SetFilter("Posting Date", '<=%1', MaxDate);
-        if PurchHeader.Find('-') then
-            Error(CheckPurchDocNoGaps_Text1130001Err, PurchHeader.FIELDCAPTION("Document Type"), PurchHeader."Document Type", PurchHeader.FIELDCAPTION("No."),
-              PurchHeader."No.", PurchHeader.FIELDCAPTION("Posting No."), PurchHeader."Posting No.");
-    end;
+    // local procedure CheckPurchDocNoGaps(MaxDate: Date)
+    // var
+    //     PurchHeader: Record "Purchase Header";
+    // begin
+    //     PurchHeader.SetFilter("Posting No.", '<>%1', '');
+    //     if MaxDate <> 0D then
+    //         PurchHeader.SetFilter("Posting Date", '<=%1', MaxDate);
+    //     if PurchHeader.Find('-') then
+    //         Error(CheckPurchDocNoGaps_Text1130001Err, PurchHeader.FIELDCAPTION("Document Type"), PurchHeader."Document Type", PurchHeader.FIELDCAPTION("No."),
+    //           PurchHeader."No.", PurchHeader.FIELDCAPTION("Posting No."), PurchHeader."Posting No.");
+    // end;
 }
 

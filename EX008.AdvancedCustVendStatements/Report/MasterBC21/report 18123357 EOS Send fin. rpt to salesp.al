@@ -126,7 +126,7 @@ report 18123357 "EOS Send fin. rpt to salesp"
                     {
                         Caption = 'Batch processing type';
                         ApplicationArea = All;
-
+                        ToolTip = 'Specifies the value of the "Batch processing type" field.';
                         trigger OnValidate();
                         begin
                             UpdateRequestPage();
@@ -141,7 +141,7 @@ report 18123357 "EOS Send fin. rpt to salesp"
                             Caption = 'Report Setup';
                             Enabled = ReportSetupEnabled;
                             ApplicationArea = All;
-
+                            ToolTip = 'Specifies the value of the "Report Setup" field.';
                             trigger OnLookup(var Text: Text): Boolean
                             begin
                                 exit(tryOpenLookupPage(Text));
@@ -152,12 +152,13 @@ report 18123357 "EOS Send fin. rpt to salesp"
                     {
                         Caption = 'One PDF per Customer';
                         ApplicationArea = All;
+                        ToolTip = 'Specifies the value of the "One PDF per Customer" field.';
                     }
                     field(ProcessLineAging; ProcessLineAgingPrmtr)
                     {
                         Caption = 'Process Line Aging';
                         ApplicationArea = All;
-
+                        ToolTip = 'Specifies the value of the "Process Line Aging" field.';
                         trigger OnValidate();
                         begin
                             UpdateRequestPage();
@@ -167,7 +168,7 @@ report 18123357 "EOS Send fin. rpt to salesp"
                     {
                         Caption = 'Process Column Aging';
                         ApplicationArea = All;
-
+                        ToolTip = 'Specifies the value of the "Process Column Aging" field.';
                         trigger OnValidate();
                         begin
                             UpdateRequestPage();
@@ -177,7 +178,7 @@ report 18123357 "EOS Send fin. rpt to salesp"
                     {
                         Caption = 'Process Account Statement';
                         ApplicationArea = All;
-
+                        ToolTip = 'Specifies the value of the "Process Account Statement" field.';
                         trigger OnValidate();
                         begin
                             UpdateRequestPage();
@@ -191,6 +192,7 @@ report 18123357 "EOS Send fin. rpt to salesp"
                     {
                         Caption = 'Only Open Entries';
                         ApplicationArea = All;
+                        ToolTip = 'Specifies the value of the "Only Open Entries" field.';
                     }
                     field(ShowCurrencySummary; ShowCurrencySummaryPrmtr)
                     {
@@ -204,7 +206,7 @@ report 18123357 "EOS Send fin. rpt to salesp"
                     {
                         Caption = 'Detail Level';
                         ApplicationArea = All;
-
+                        ToolTip = 'Specifies the value of the "Detail Level" field.';
                         trigger OnValidate();
                         begin
                             UpdateRequestPage();
@@ -215,27 +217,31 @@ report 18123357 "EOS Send fin. rpt to salesp"
                         Caption = 'Show Linked Entries';
                         Enabled = ShowLinkedEntriesEnabled;
                         ApplicationArea = All;
+                        ToolTip = 'Specifies the value of the "Show Linked Entries" field.';
                     }
                     field(UseSalespersonFromCustomer; UseSalespersonFromCustomerPrmtr)
                     {
                         Caption = 'Use Salesperson from Customer';
                         ApplicationArea = All;
+                        ToolTip = 'Specifies the value of the "Use Salesperson from Customer" field.';
                     }
                     field(PostingDateFilter; PostingDateFilterPrmtr)
                     {
                         Caption = 'Posting Date Filter';
                         ApplicationArea = All;
+                        ToolTip = 'Specifies the value of the "Posting Date Filter" field.';
                     }
                     field(DueDateFilter; DueDateFilterPrmtr)
                     {
                         Caption = 'Due Date Filter';
                         ApplicationArea = All;
+                        ToolTip = 'Specifies the value of the "Due Date Filter" field.';
                     }
                     field(PaymentMethodFilter; PaymentMethodFilterPrmtr)
                     {
                         Caption = 'Payment Method Filter';
                         ApplicationArea = All;
-
+                        ToolTip = 'Specifies the value of the "Payment Method Filter" field.';
                         trigger OnLookup(var Text: Text): Boolean
                         var
                             PaymentMethod: Record "Payment Method";
@@ -253,24 +259,28 @@ report 18123357 "EOS Send fin. rpt to salesp"
                         Caption = 'Aged As Of';
                         Enabled = ColumnFieldsEnabled;
                         ApplicationArea = All;
+                        ToolTip = 'Specifies the value of the "Aged As Of" field.';
                     }
                     field(PeriodLength; PeriodLengthPrmtr)
                     {
                         Caption = 'Period Length';
                         Enabled = ColumnFieldsEnabled;
                         ApplicationArea = All;
+                        ToolTip = 'Specifies the value of the "Period Length" field.';
                     }
                     field(PrintAmountInLCY; PrintAmountInLCYPrmtr)
                     {
                         Caption = 'Print Amounts in LCY';
                         Enabled = ColumnFieldsEnabled;
                         ApplicationArea = All;
+                        ToolTip = 'Specifies the value of the "Print Amounts in LCY" field.';
                     }
                     field(ColumnLayout; ColumnLayoutPrmtr)
                     {
                         Caption = 'Column Count due/to be due';
                         Enabled = ColumnFieldsEnabled;
                         ApplicationArea = All;
+                        ToolTip = 'Specifies the value of the "Column Count due/to be due" field.';
                     }
                 }
             }
@@ -425,14 +435,14 @@ report 18123357 "EOS Send fin. rpt to salesp"
     var
         SalespersonPurchaser2: Record "Salesperson/Purchaser";
         Customer: Record Customer;
-        ReportBlob: Codeunit "Temp Blob";
-        handled: Boolean;
         CVSReportParameters: Record "EOS008 CVS Report Parameters";
         AdvCustVendStatSetup: Record "EOS AdvCustVendStat Setup EXT";
         AdvCustVendStatSharedMem: Codeunit "EOS AdvCustVendStat SharedMem";
         DataTypeManagement: Codeunit "Data Type Management";
-        ReportLineCount: Integer;
+        ReportBlob: Codeunit "Temp Blob";
         CustRecRef: RecordRef;
+        handled: Boolean;
+        ReportLineCount: Integer;
     begin
         //        NPCustomerAging: Report "EOS Customer Aging";
         AdvCustVendStatSetup.Get();
@@ -441,16 +451,11 @@ report 18123357 "EOS Send fin. rpt to salesp"
         SalespersonPurchaser2 := "Salesperson/Purchaser";
         SalespersonPurchaser2.SETRECFILTER();
 
-        // NPCustomerAging.SetTableView(SalespersonPurchaser2);
-
         if CustomerNo <> '' then begin
             Customer.Get(CustomerNo);
             Customer.SETRECFILTER();
-            // NPCustomerAging.SetTableView(Customer);
-        end else begin
+        end else
             Customer.Reset();
-            // NPCustomerAging.SetTableView(Customer);
-        end;
 
         Handled := false;
         onBeforeCreateLineAging(Customer, EnumProcTypePrmtr, Handled);
@@ -489,11 +494,11 @@ report 18123357 "EOS Send fin. rpt to salesp"
     var
         SalespersonPurchaser2: Record "Salesperson/Purchaser";
         Customer: Record Customer;
-        ReportBlob: Codeunit "Temp Blob";
-        handled: Boolean;
         CVSReportParameters: Record "EOS008 CVS Report Parameters";
         AdvCustVendStatSetup: Record "EOS AdvCustVendStat Setup EXT";
+        ReportBlob: Codeunit "Temp Blob";
         AdvCustVendStatSharedMem: Codeunit "EOS AdvCustVendStat SharedMem";
+        handled: Boolean;
     begin
         AdvCustVendStatSetup.Get();
         AdvCustVendStatSetup.InitializeReportID(false);
@@ -519,7 +524,7 @@ report 18123357 "EOS Send fin. rpt to salesp"
 
         ReportBlob.CreateOutStream(outStreamReport);
         //NPCustomerAgingInColumn.SaveAs(Report.RunRequestPage(Report::"EOS Cust Aging In Column EXT"), ReportFormat::Pdf, outStreamReport);
-        Report.SaveAs(AdvCustVendStatSetup."Vendor Aging Col Report ID", '', ReportFormat::Pdf, outStreamReport);
+        Report.SaveAs(AdvCustVendStatSetup."Customer Aging Col Report ID", '', ReportFormat::Pdf, outStreamReport);
         ReportBlob.CreateInStream(inStreamReport);
         DataCompression.AddEntry(inStreamReport, FileName);
 
@@ -530,11 +535,11 @@ report 18123357 "EOS Send fin. rpt to salesp"
     var
         SalespersonPurchaser2: Record "Salesperson/Purchaser";
         Customer: Record Customer;
-        ReportBlob: Codeunit "Temp Blob";
-        handled: Boolean;
         CVSReportParameters: Record "EOS008 CVS Report Parameters";
         AdvCustVendStatSetup: Record "EOS AdvCustVendStat Setup EXT";
         AdvCustVendStatSharedMem: Codeunit "EOS AdvCustVendStat SharedMem";
+        ReportBlob: Codeunit "Temp Blob";
+        handled: Boolean;
     begin
         //        NPCustomerStatement: Report "EOS Customer Statement";       
         AdvCustVendStatSetup.Get();
@@ -568,65 +573,6 @@ report 18123357 "EOS Send fin. rpt to salesp"
         Report.SaveAs(AdvCustVendStatSetup."Customer Statement Report ID", '', ReportFormat::Pdf, outStreamReport);
         ReportBlob.CreateInStream(inStreamReport);
         DataCompression.AddEntry(inStreamReport, FileName);
-    end;
-
-    local procedure CreateZipFile(BasePath: Text): Text;
-    var
-    begin
-        /*FileCount := EOSLibrary.GenerateFolderFilesList(BasePath, '*.*', TRUE, TRUE);
-        if FileCount = 0 then
-            exit('');
-
-        ZipFileName := FileManagement2.CreateZipArchiveObject;
-
-        for i := 1 TO FileCount do begin
-            FileName := EOSLibrary.GetFilenameFromFileList(i);
-            FileManagement2.AddFileToZipArchive(FileName, COPYSTR(FileName, STRLEN(BasePath) + 1));
-        end;
-
-        FileManagement2.CloseZipArchive;
-        exit(ZipFileName);*/
-    end;
-
-    local procedure SendZip(VendorNo: Code[20]; ZipFileName: Text);
-    var
-    //PDFQueueMgt: Codeunit 18006528;
-    //PDFQueueRequest: Record 18004161;
-    /*Vendor: Record "Vendor";
-    TempBlob: Record 99008535;
-    WorkFile: File;
-    RecRef: RecordRef;
-    IStream: InStream;
-    OStream: OutStream;
-    AllObjWithCaption: Record 2000000058;*/
-    begin
-        /*Vendor.GET(VendorNo);
-
-        RecRef.GETTABLE(Vendor);
-        RecRef.SETRECFILTER;
-
-        WorkFile.WRITEMODE(false);
-        WorkFile.TEXTMODE(false);
-        WorkFile.OPEN(ZipFileName);
-        WorkFile.CREATEINSTREAM(IStream);
-        TempBlob.Blob.CREATEOUTSTREAM(OStream);
-        COPYSTREAM(OStream, IStream);
-        WorkFile.CLOSE;
-
-        if EVALUATE(AllObjWithCaption."Object ID", CurrReport.OBJECTID(false)) then begin
-            AllObjWithCaption."Object Type" := AllObjWithCaption."Object Type"::Report;
-            AllObjWithCaption.SETRECFILTER;
-            AllObjWithCaption.Find('=');
-        end;
-
-        PDFQueueRequest."Custom Attachment" := TempBlob.Blob;
-        PDFQueueRequest."Custom Attachment Format" := 'ZIP';
-        PDFQueueRequest."Document Description" := COPYSTR(AllObjWithCaption."Object Caption", 1, MAXSTRLEN(PDFQueueRequest."Document Description"));
-        PDFQueueMgt.CreatePDFQueueRequest(PDFQueueRequest, RecRef, PDFQueueRequest.Type::Mail, FALSE);
-
-        PDFQueueRequest.VALIDATE("Report Setup Code", ReportSetup);
-
-        PDFQueueRequest.Execute(false);*/
     end;
 
     local procedure SetGlobalReportParameter(var CVSReportParameters: Record "EOS008 CVS Report Parameters")

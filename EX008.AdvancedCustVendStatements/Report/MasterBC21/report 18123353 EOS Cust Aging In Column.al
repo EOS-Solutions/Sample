@@ -179,7 +179,7 @@ report 18123353 "EOS Cust Aging In Column"
         {
             DataItemTableView = sorting(Number) where(Number = const(1));
 
-            column(CompanyName; COMPANYNAME()) { }
+            column(CompanyName; CompanyNameText) { }
             column(ApplyedFilters; GetReportParametersText()) { }
             column(ColumnText1; HeaderText[1]) { }
             column(ColumnText2; HeaderText[2]) { }
@@ -410,6 +410,8 @@ report 18123353 "EOS Cust Aging In Column"
     end;
 
     trigger OnPreReport();
+    var
+        CVStatEngine: Codeunit "EOS AdvCustVendStat Engine";
     begin
         if not SubscriptionActiv then
             Currreport.quit();
@@ -421,6 +423,7 @@ report 18123353 "EOS Cust Aging In Column"
         CalcDates();
         ResolveDateFilter(PostingDateFilterPrmtr, StartingPostingDate, EndingPostingDate);
         ResolveDateFilter(DueDateFilterPrmtr, StartingDueDate, EndingDueDate);
+        CompanyNameText := CVStatEngine.GetCompanyNameForReport(18123353);
     end;
 
     var
@@ -434,6 +437,7 @@ report 18123353 "EOS Cust Aging In Column"
         [InDataSet]
         LinkedEntriesEnabled: Boolean;
         ReportLineCount: Integer;
+        CompanyNameText: Text;
         PostingDateFilterPrmtr: Text;
         DueDateFilterPrmtr: Text;
         PaymentMethodFilterPrmtr: Text;
@@ -547,14 +551,14 @@ report 18123353 "EOS Cust Aging In Column"
         HeaderText[7] := Header003Txt + ' ' + Format(PeriodStartDate[7]);
     end;
 
-    local procedure BuildRanges();
-    begin
-    end;
+    // local procedure BuildRanges();
+    // begin
+    // end;
 
-    local procedure GetBufferGroup(var BufferAssets: Record "EOS Statem. Assets Buffer EXT" temporary): Text;
-    begin
-        exit(BufferAssets."EOS Source No.");
-    end;
+    // local procedure GetBufferGroup(var BufferAssets: Record "EOS Statem. Assets Buffer EXT" temporary): Text;
+    // begin
+    //     exit(BufferAssets."EOS Source No.");
+    // end;
 
     local procedure GetPeriodIndex(Date: Date): Integer;
     var

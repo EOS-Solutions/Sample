@@ -232,7 +232,7 @@ report 18123356 "EOS Vendor Statement"
             column(VendorNo; "No.") { }
 
 
-            column(CompanyName; CompanyInformation.Name) { }
+            column(CompanyName; CompanyNameText) { }
             column(CompanyPicture; CompanyInformation.Picture) { }
             column(CompanyAddress; GetCompanyAddress()) { }
             column(CompanyInfoColumn1; GetCompanyInfoColumn(1)) { }
@@ -398,6 +398,7 @@ report 18123356 "EOS Vendor Statement"
                 {
                     Caption = 'Only Open Entries';
                     ApplicationArea = all;
+                    ToolTip = 'Specifies the value of the "Only Open Entries" field.';
                 }
                 // field(SortOrder; SortOrderPrmtr)
                 // {
@@ -409,12 +410,13 @@ report 18123356 "EOS Vendor Statement"
                 {
                     Caption = 'Show Linked Entries';
                     ApplicationArea = all;
+                    ToolTip = 'Specifies the value of the "Show Linked Entries" field.';
                 }
                 field(PostingDateFilter; PostingDateFilterPrmtr)
                 {
                     Caption = 'Posting Date Filter';
                     ApplicationArea = all;
-
+                    ToolTip = 'Specifies the value of the "Posting Date Filter" field.';
                     trigger OnValidate();
                     var
                         AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
@@ -427,7 +429,7 @@ report 18123356 "EOS Vendor Statement"
                 {
                     Caption = 'Due Date Filter';
                     ApplicationArea = all;
-
+                    ToolTip = 'Specifies the value of the "Due Date Filter" field.';
                     trigger OnValidate();
                     var
                         AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
@@ -440,7 +442,7 @@ report 18123356 "EOS Vendor Statement"
                 {
                     Caption = 'Payment Method Filter';
                     ApplicationArea = all;
-
+                    ToolTip = 'Specifies the value of the "Payment Method Filter" field.';
                     trigger OnLookup(var Text: Text): Boolean
                     var
                         PaymentMethod: Record "Payment Method";
@@ -453,6 +455,7 @@ report 18123356 "EOS Vendor Statement"
                 {
                     Caption = 'Use Salesperson from Vendor';
                     ApplicationArea = all;
+                    ToolTip = 'Specifies the value of the "Use Salesperson from Vendor" field.';
                 }
                 group("Output Options")
                 {
@@ -465,18 +468,21 @@ report 18123356 "EOS Vendor Statement"
                         //'Each item is a verb/action - to print, to preview, to export to Word, export to PDF, send email, export to XML for RDLC layouts only
                         Visible = false;
                         ApplicationArea = all;
-
-                        trigger OnValidate();
-                        var
-                            CustomLayoutReporting: Codeunit "Custom Layout Reporting";
-                        begin
-                            case SupportedOutputMethod of
-                                SupportedOutputMethod::Print:
-                                    ChosenOutputMethod := CustomLayoutReporting.GetPrintOption();
-                                SupportedOutputMethod::Preview:
-                                    ChosenOutputMethod := CustomLayoutReporting.GetPreviewOption();
-                            end;
-                        end;
+                        ToolTip = 'Specifies the value of the "Report Output" field.';
+                        ObsoleteReason = 'This is no longer supported.';
+                        ObsoleteState = Pending;
+                        ObsoleteTag = '21.0';
+                        // trigger OnValidate();
+                        // var
+                        //     CustomLayoutReporting: Codeunit "Custom Layout Reporting";
+                        // begin
+                        //     case SupportedOutputMethod of
+                        //         SupportedOutputMethod::Print:
+                        //             ChosenOutputMethod := CustomLayoutReporting.GetPrintOption();
+                        //         SupportedOutputMethod::Preview:
+                        //             ChosenOutputMethod := CustomLayoutReporting.GetPreviewOption();
+                        //     end;
+                        // end;
                     }
                 }
             }
@@ -542,21 +548,17 @@ report 18123356 "EOS Vendor Statement"
     }
 
     trigger OnInitReport();
-    var
-        CustomLayoutReporting: Codeunit "Custom Layout Reporting";
     begin
         OnlyOpenPrmtr := false;
         ShowLinkedEntriesPrmtr := true;
         UseSalespersonFromVendorPrmtr := true;
-
-        ChosenOutputMethod := CustomLayoutReporting.GetPreviewOption();
     end;
 
     trigger OnPreReport();
     begin
         CompanyInformation.Get();
         CompanyInformation.CalcFields(Picture);
-
+        CompanyNameText := AssetsEngine.GetCompanyNameForReport(18123356);
         AdvCustVendStatRoutines.ResolveDateFilter(PostingDateFilterPrmtr, StartingPostingDate, EndingPostingDate);
         AdvCustVendStatRoutines.ResolveDateFilter(DueDateFilterPrmtr, StartingDueDate, EndingDueDate);
     end;
@@ -568,6 +570,7 @@ report 18123356 "EOS Vendor Statement"
         AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
         AssetsEngine: Codeunit "EOS AdvCustVendStat Engine";
         SubscriptionMgt: Codeunit "EOS AdvCustVendStat Subscript";
+        CompanyNameText: Text;
         OnlyOpenPrmtr: Boolean;
         ShowLinkedEntriesPrmtr: Boolean;
         UseSalespersonFromVendorPrmtr: Boolean;
@@ -575,7 +578,6 @@ report 18123356 "EOS Vendor Statement"
         EndingPostingDate: Date;
         StartingDueDate: Date;
         StartingPostingDate: Date;
-        ChosenOutputMethod: Integer;
         [InDataSet]
         DetailLoopNo: Integer;
         SortOrderPrmtr: Option VendorNo,VendorName;
@@ -616,10 +618,10 @@ report 18123356 "EOS Vendor Statement"
         DueDateSummaryLbl: label 'Due by date summary';
     //VendorCounter: Integer;
 
-    local procedure GetBufferGroup(var BufferAssets: Record "EOS Statem. Assets Buffer EXT" temporary): Text;
-    begin
-        exit(BufferAssets."EOS Source No.");
-    end;
+    // local procedure GetBufferGroup(var BufferAssets: Record "EOS Statem. Assets Buffer EXT" temporary): Text;
+    // begin
+    //     exit(BufferAssets."EOS Source No.");
+    // end;
 
     local procedure GetCompanyInfoColumn(ColumnNo: Integer): Text;
     var
@@ -678,19 +680,19 @@ report 18123356 "EOS Vendor Statement"
         exit(CopyStr(SelectStr(DocumentType + 1, Format(AbreviationsLbl)), 1, 4));
     end;
 
-    local procedure GetAmount(AssetsBuffer: Record "EOS Statem. Assets Buffer EXT"): Text;
-    begin
-        //Se sto mostrando la contropartita allora gli importi sono quelli complessivi e non il residuo
-        if not ShowLinkedEntriesPrmtr then
-            exit(Format(AssetsBuffer."EOS Remaining Amount"))
-        else
-            case AssetsBuffer."EOS Level No." of
-                2:
-                    exit(Format(AssetsBuffer."EOS Original Amount"));
-                3, 4:
-                    exit(Format(AssetsBuffer."EOS Applied Amount"));
-            end;
-    end;
+    // local procedure GetAmount(AssetsBuffer: Record "EOS Statem. Assets Buffer EXT"): Text;
+    // begin
+    //     //Se sto mostrando la contropartita allora gli importi sono quelli complessivi e non il residuo
+    //     if not ShowLinkedEntriesPrmtr then
+    //         exit(Format(AssetsBuffer."EOS Remaining Amount"))
+    //     else
+    //         case AssetsBuffer."EOS Level No." of
+    //             2:
+    //                 exit(Format(AssetsBuffer."EOS Original Amount"));
+    //             3, 4:
+    //                 exit(Format(AssetsBuffer."EOS Applied Amount"));
+    //         end;
+    // end;
 
     local procedure GetAmountLCY(AssetsBuffer: Record "EOS Statem. Assets Buffer EXT"): Decimal;
     begin
