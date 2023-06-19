@@ -7,6 +7,7 @@
         <DataProvider>SQL</DataProvider>
         <ConnectString />
       </ConnectionProperties>
+      <rd:SecurityType>None</rd:SecurityType>
       <rd:DataSourceID>01e40bc1-52b8-4b57-986d-4d7bff31e441</rd:DataSourceID>
     </DataSource>
   </DataSources>
@@ -1136,7 +1137,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!RemainingAmount.Value</Value>
+                                  <Value>=Fields!Amount.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
                                     <Format>#,0.00</Format>
@@ -3684,6 +3685,12 @@
         </Field>
         <Field Name="AmountLCYFormat">
           <DataField>AmountLCYFormat</DataField>
+        </Field>
+        <Field Name="Amount">
+          <DataField>Amount</DataField>
+        </Field>
+        <Field Name="AmountFormat">
+          <DataField>AmountFormat</DataField>
         </Field>
         <Field Name="RemainingAmountLCY">
           <DataField>RemainingAmountLCY</DataField>
