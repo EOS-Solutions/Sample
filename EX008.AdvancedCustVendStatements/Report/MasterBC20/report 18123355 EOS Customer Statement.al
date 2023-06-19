@@ -548,10 +548,14 @@ report 18123355 "EOS Customer Statement"
         AdvCustVendStatRoutines.ResolveDateFilter(DueDateFilterPrmtr, StartingDueDate, EndingDueDate);
     end;
 
-    var
-        CompanyInformation: Record "Company Information";
+    protected var
         TempDueAmountsBuffer: array[4] of Record "EOS Statem. Assets Buffer EXT" temporary;
         TempReportingBuffer: array[4] of Record "EOS Statem. Assets Buffer EXT" temporary;
+        DueDateFilterPrmtr: Text;
+        PostingDateFilterPrmtr: Text;
+
+    var
+        CompanyInformation: Record "Company Information";
         ParametersBuffer: Record "EOS008 CVS Report Parameters";
         AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
         AssetsEngine: Codeunit "EOS AdvCustVendStat Engine";
@@ -570,9 +574,7 @@ report 18123355 "EOS Customer Statement"
         SortOrderPrmtr: Option CustomerNo,CustomerName;
         SupportedOutputMethod: Option Print,Preview;
         CustomerAddress: array[11] of Text[100];
-        DueDateFilterPrmtr: Text;
         PaymentMethodFilterPrmtr: Text;
-        PostingDateFilterPrmtr: Text;
 
         ReportTitleLbl: label 'Customer Account Statement at';
         CustomerNoLbl: label 'Customer';
