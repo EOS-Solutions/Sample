@@ -72,4 +72,31 @@ codeunit 50000 "EOS DCS Sample"
         iStorage.SetMetadata(DCSFileBuffer, TempCurrRec);
         iStorage.UploadFile(DCSFileBuffer);
     end;
+
+    local procedure TransferAttachmentsBetweenRec(SourceDocument: Variant; Document: Variant)
+    var
+        FromRecIdBuf: Record "EOS Record Ident. Buffer";
+        ToRecIdBuf: Record "EOS Record Ident. Buffer";
+        DocSolutionsManagement: Codeunit "EOS069 DocSolutions Management";
+        recRef: RecordRef;
+    begin
+        FromRecIdBuf.GetTable(SourceDocument);
+        ToRecIdBuf.GetTable(Document);
+
+        if IsNullGuid(FromRecIdBuf."Source GUID") then begin
+            recRef.GetTable(SourceDocument);
+            FromRecIdBuf."Source GUID" := recRef.Field(recRef.SystemIdNo()).Value();
+            //FromRecIdBuf.Modify();
+            recRef.Close();
+        end;
+        if IsNullGuid(ToRecIdBuf."Source GUID") then begin
+            recRef.GetTable(Document);
+            ToRecIdBuf."Source GUID" := recRef.Field(recRef.SystemIdNo()).Value();
+            // ToRecIdBuf.Modify();
+            recRef.Close();
+        end;
+
+
+        DocSolutionsManagement.TransferMetadata(FromRecIdBuf, ToRecIdBuf);
+    end;
 }
