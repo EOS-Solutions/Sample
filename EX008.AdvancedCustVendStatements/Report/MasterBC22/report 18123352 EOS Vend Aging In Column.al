@@ -426,9 +426,13 @@ report 18123352 "EOS Vend Aging In Column"
         CompanyNameText := CVStatEngine.GetCompanyNameForReport(18123352);
     end;
 
+    protected var
+        TempCurrencyBuffer: Record "EOS AdvCustVend Buffer" temporary;
+        PostingDateFilterPrmtr: Text;
+        DueDateFilterPrmtr: Text;
+
     var
         GeneralLedgerSetup: Record "General Ledger Setup";
-        TempCurrencyBuffer: Record "EOS AdvCustVend Buffer" temporary;
         ParametersBuffer: Record "EOS008 CVS Report Parameters";
         AssetsEngine: Codeunit "EOS AdvCustVendStat Engine";
         SubscriptionMgt: Codeunit "EOS AdvCustVendStat Subscript";
@@ -438,8 +442,6 @@ report 18123352 "EOS Vend Aging In Column"
         LinkedEntriesEnabled: Boolean;
         ReportLineCount: Integer;
         CompanyNameText: Text;
-        PostingDateFilterPrmtr: Text;
-        DueDateFilterPrmtr: Text;
         PaymentMethodFilterPrmtr: Text;
         DetailLevelPrmtr: Enum "EOS008 CVD Vend Detail Level";
         OnlyOpen: Boolean;

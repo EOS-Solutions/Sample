@@ -10,6 +10,7 @@ report 18123351 "EOS Vendor Aging"
     ApplicationArea = All;
 
     dataset
+
     {
         dataitem(VendorFilters; Vendor)
         {
@@ -528,9 +529,13 @@ report 18123351 "EOS Vendor Aging"
         CompanyNameText := CVStatEngine.GetCompanyNameForReport(18123351);
     end;
 
-    var
+    protected var
         TempGenericVendorBuffer: Record "EOS008 Reporting Buffer" temporary;
         TempReportingBuffer: Record "EOS Statem. Assets Buffer EXT" temporary;
+        DueDateFilterPrmtr: Text;
+        PostingDateFilterPrmtr: Text;
+
+    var
         AssetsEngine: Codeunit "EOS AdvCustVendStat Engine";
         SubscriptionMgt: Codeunit "EOS AdvCustVendStat Subscript";
         Window: Dialog;
@@ -553,9 +558,7 @@ report 18123351 "EOS Vendor Aging"
         TempEntryNo: Integer;
         DetailLevelPrmtr: Enum "EOS008 CVD Vend Detail Level";
         SortOrderPrmtr: Enum "EOS008 CVS Vend Detail Order";
-        DueDateFilterPrmtr: Text;
         PaymentMethodFilterPrmtr: Text;
-        PostingDateFilterPrmtr: Text;
         DueDateFilterTextMsg: Label 'Due Date Filter:';
         ExcludingBalanceTextMsg: Label 'without';
         IncludingBalanceTextMsg: Label 'with';

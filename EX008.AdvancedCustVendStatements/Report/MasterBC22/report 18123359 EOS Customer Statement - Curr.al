@@ -342,6 +342,10 @@ report 18123359 "EOS Customer Statement - Curr."
                 {
                     DecimalPlaces = 2 : 2;
                 }
+                column(Amount; GetAmount(TempReportingBuffer[1]))
+                {
+                    DecimalPlaces = 2 : 2;
+                }
                 column(RemainingAmountLCY; GetRemainingAmountLCY(TempReportingBuffer[1]))
                 {
                     DecimalPlaces = 2 : 2;
@@ -800,6 +804,20 @@ report 18123359 "EOS Customer Statement - Curr."
                     exit(AssetsBuffer."EOS Original Amount (LCY)");
                 3, 4:
                     exit(AssetsBuffer."EOS Applied Amount (LCY)");
+            end;
+    end;
+
+    local procedure GetAmount(AssetsBuffer: Record "EOS Statem. Assets Buffer EXT"): Decimal;
+    begin
+        //Se sto mostrando la contropartita allora gli importi sono quelli complessivi e non il residuo
+        if not ShowLinkedEntriesPrmtr then
+            exit(TempReportingBuffer[1]."EOS Remaining Amount")
+        else
+            case AssetsBuffer."EOS Level No." of
+                2:
+                    exit(AssetsBuffer."EOS Original Amount");
+                3, 4:
+                    exit(AssetsBuffer."EOS Applied Amount");
             end;
     end;
 

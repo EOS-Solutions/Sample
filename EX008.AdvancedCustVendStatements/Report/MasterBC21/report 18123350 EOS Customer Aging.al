@@ -612,12 +612,16 @@ report 18123350 "EOS Customer Aging"
             until TempProcessedCustomerList.Next() = 0;
     end;
 
+    protected var
+        TempReportingBuffer: Record "EOS Statem. Assets Buffer EXT" temporary;
+        PostingDateFilterPrmtr: Text;
+        DueDateFilterPrmtr: Text;
+
     var
         ParametersBuffer: Record "EOS008 CVS Report Parameters";
         TempGenericCustomerBuffer: Record "EOS008 Reporting Buffer" temporary;
         TempGenericSalespersonBuffer: Record "EOS008 Reporting Buffer" temporary;
         TempProcessedCustomerList: Record Customer temporary;
-        TempReportingBuffer: Record "EOS Statem. Assets Buffer EXT" temporary;
         AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
         AssetsEngine: Codeunit "EOS AdvCustVendStat Engine";
         SubscriptionMgt: Codeunit "EOS AdvCustVendStat Subscript";
@@ -651,9 +655,7 @@ report 18123350 "EOS Customer Aging"
         TempEntryNo: Integer;
         DetailLevelPrmtr: Enum "EOS008 CVD Cust Detail Level";
         SortOrderPrmtr: Enum "EOS008 CVS Cust Detail Order";
-        DueDateFilterPrmtr: Text;
         PaymentMethodFilterPrmtr: Text;
-        PostingDateFilterPrmtr: Text;
         CustomerFilterTextTxt: Label 'Customer Filters:';
         DueDateFilterTextTxt: Label 'Due Date Filter:';
         ExcludingBalanceTxt: Label 'without';
