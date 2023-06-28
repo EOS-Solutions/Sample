@@ -594,11 +594,15 @@ report 18123360 "EOS Vendor Statement - Curr."
         AdvCustVendStatRoutines.ResolveDateFilter(DueDateFilterPrmtr, StartingDueDate, EndingDueDate);
     end;
 
+    protected var
+        TempDueAmountsBuffer: array[4] of Record "EOS Statem. Assets Buffer EXT" temporary;
+        TempReportingBuffer: array[4] of Record "EOS Statem. Assets Buffer EXT" temporary;
+        PostingDateFilterPrmtr: Text;
+        DueDateFilterPrmtr: Text;
+
     var
         CompanyInformation: Record "Company Information";
         // TempAmountSummaryBuffer: array[4] of Record "EOS Statem. Assets Buffer EXT" temporary;
-        TempDueAmountsBuffer: array[4] of Record "EOS Statem. Assets Buffer EXT" temporary;
-        TempReportingBuffer: array[4] of Record "EOS Statem. Assets Buffer EXT" temporary;
         AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
         AssetsEngine: Codeunit "EOS AdvCustVendStat Engine";
         SubscriptionMgt: Codeunit "EOS AdvCustVendStat Subscript";
@@ -615,9 +619,7 @@ report 18123360 "EOS Vendor Statement - Curr."
         DetailLoopNo: Integer;
         SortOrderPrmtr: Option VendorNo,VendorName;
         SupportedOutputMethod: Option Print,Preview;
-        DueDateFilterPrmtr: Text;
         PaymentMethodFilterPrmtr: Text;
-        PostingDateFilterPrmtr: Text;
         VendorAddress: array[11] of Text[100];
 
 

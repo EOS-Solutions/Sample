@@ -616,6 +616,7 @@ report 18123350 "EOS Customer Aging"
         TempReportingBuffer: Record "EOS Statem. Assets Buffer EXT" temporary;
         PostingDateFilterPrmtr: Text;
         DueDateFilterPrmtr: Text;
+        DetailLevelPrmtr: Enum "EOS008 CVD Cust Detail Level";
 
     var
         ParametersBuffer: Record "EOS008 CVS Report Parameters";
@@ -653,7 +654,6 @@ report 18123350 "EOS Customer Aging"
         PrevSalespersonGroup: Integer;
         ReportLineCount: Integer;
         TempEntryNo: Integer;
-        DetailLevelPrmtr: Enum "EOS008 CVD Cust Detail Level";
         SortOrderPrmtr: Enum "EOS008 CVS Cust Detail Order";
         PaymentMethodFilterPrmtr: Text;
         CustomerFilterTextTxt: Label 'Customer Filters:';

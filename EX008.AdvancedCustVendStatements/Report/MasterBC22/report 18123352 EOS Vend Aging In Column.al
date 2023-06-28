@@ -430,6 +430,7 @@ report 18123352 "EOS Vend Aging In Column"
         TempCurrencyBuffer: Record "EOS AdvCustVend Buffer" temporary;
         PostingDateFilterPrmtr: Text;
         DueDateFilterPrmtr: Text;
+        DetailLevelPrmtr: Enum "EOS008 CVD Vend Detail Level";
 
     var
         GeneralLedgerSetup: Record "General Ledger Setup";
@@ -443,7 +444,6 @@ report 18123352 "EOS Vend Aging In Column"
         ReportLineCount: Integer;
         CompanyNameText: Text;
         PaymentMethodFilterPrmtr: Text;
-        DetailLevelPrmtr: Enum "EOS008 CVD Vend Detail Level";
         OnlyOpen: Boolean;
         DueDateAtPrmtr: Date;
         ColumnLayoutPrmtr: Enum "EOS008 CVD Vend Column setup";
