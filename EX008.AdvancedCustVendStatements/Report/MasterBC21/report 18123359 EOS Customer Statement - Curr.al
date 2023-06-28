@@ -642,7 +642,6 @@ report 18123359 "EOS Customer Statement - Curr."
         OnlyOpenPrmtr := false;
         ShowLinkedEntriesPrmtr := true;
         UseSalespersonFromCustomerPrmtr := true;
-
         SubscriptionActive := SubscriptionMgt.GetSubscriptionIsActive();
     end;
 
@@ -659,11 +658,15 @@ report 18123359 "EOS Customer Statement - Curr."
         AdvCustVendStatRoutines.ResolveDateFilter(DueDateFilterPrmtr, StartingDueDate, EndingDueDate);
     end;
 
-    var
-        CompanyInformation: Record "Company Information";
+    protected var
         TempAmountbyCurrBuffer: array[4] of Record "EOS Statem. Assets Buffer EXT" temporary;
         TempDueAmountsBuffer: array[4] of Record "EOS Statem. Assets Buffer EXT" temporary;
         TempReportingBuffer: array[4] of Record "EOS Statem. Assets Buffer EXT" temporary;
+        PostingDateFilterPrmtr: Text;
+        DueDateFilterPrmtr: Text;
+
+    var
+        CompanyInformation: Record "Company Information";
         ParametersBuffer: Record "EOS008 CVS Report Parameters";
         AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
         AssetsEngine: Codeunit "EOS AdvCustVendStat Engine";
@@ -683,10 +686,7 @@ report 18123359 "EOS Customer Statement - Curr."
         SortOrderPrmtr: Option CustomerNo,CustomerName;
         SupportedOutputMethod: Option Print,Preview;
         CustomerAddress: array[11] of Text[100];
-        DueDateFilterPrmtr: Text;
         PaymentMethodFilterPrmtr: Text;
-        PostingDateFilterPrmtr: Text;
-
         ReportTitleLbl: label 'Customer Account Statement at';
         CustomerNoLbl: label 'Customer';
         SalesPersonLbl: label 'Salesperson';

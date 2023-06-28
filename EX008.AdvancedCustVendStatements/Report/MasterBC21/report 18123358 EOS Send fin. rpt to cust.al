@@ -300,14 +300,14 @@ report 18123358 "EOS Send fin. rpt to cust"
 
     trigger OnInitReport()
     begin
-        SubscriptionActiv := SubscriptionMgt.GetSubscriptionIsActive();
         DataCompression.CreateZipArchive();
+        SubscriptionActive := SubscriptionMgt.GetSubscriptionIsActive();
     end;
 
     trigger OnPreReport();
     begin
-        if not SubscriptionActiv then
-            Currreport.quit();
+        if not SubscriptionActive then
+            CurrReport.Quit();
 
         ValidateParameters();
 
@@ -339,7 +339,7 @@ report 18123358 "EOS Send fin. rpt to cust"
         ProcessStatementPrmtr: Boolean;
         ShowCurrencySummaryPrmtr: Boolean;
         ShowLinkedEntriesPrmtr: Boolean;
-        SubscriptionActiv: Boolean;
+        SubscriptionActive: Boolean;
         UseSalespersonFromCustomerPrmtr: Boolean;
         [InDataSet]
         ColumnFieldsEnabled: Boolean;
