@@ -532,7 +532,6 @@ report 18123355 "EOS Customer Statement"
         OnlyOpenPrmtr := false;
         ShowLinkedEntriesPrmtr := true;
         UseSalespersonFromCustomerPrmtr := true;
-
         SubscriptionActive := SubscriptionMgt.GetSubscriptionIsActive();
     end;
 

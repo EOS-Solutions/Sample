@@ -533,6 +533,7 @@ report 18123351 "EOS Vendor Aging"
         TempReportingBuffer: Record "EOS Statem. Assets Buffer EXT" temporary;
         DueDateFilterPrmtr: Text;
         PostingDateFilterPrmtr: Text;
+        DetailLevelPrmtr: Enum "EOS008 CVD Vend Detail Level";
 
     var
         AssetsEngine: Codeunit "EOS AdvCustVendStat Engine";
@@ -555,7 +556,6 @@ report 18123351 "EOS Vendor Aging"
         PageGroup: Integer;
         PrevGroup: Integer;
         TempEntryNo: Integer;
-        DetailLevelPrmtr: Enum "EOS008 CVD Vend Detail Level";
         SortOrderPrmtr: Enum "EOS008 CVS Vend Detail Order";
         PaymentMethodFilterPrmtr: Text;
         DueDateFilterTextMsg: Label 'Due Date Filter:';
