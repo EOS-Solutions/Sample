@@ -168,6 +168,8 @@ page 50100 "EOS004 DB TestPage"
         // Configure the client using the service connection
         cl.Initialize(ServiceConfigCode);
         // Create a DB connection using the selected DB connection setup
+        // The connection may be subject to a certificate chain validaton issue and you might run into the issue described here:
+        // https://learn.microsoft.com/en-us/troubleshoot/sql/database-engine/connect/certificate-chain-not-trusted
         cl.CreateConnection(DbConnSetup, ConnectionId);
         // Execute a query that creates a resultset for reading date
         cl.ExecuteReader(ConnectionId, CommandText, ResultSet);
@@ -213,6 +215,8 @@ page 50100 "EOS004 DB TestPage"
         // Note that we are not explicitly calling "Initialize" here.
         // That's because if your "DB Connection Setup" has specified a "Service Config. Code", 'CreateConnection' will do that 
         // for you using the service config. code on the DB connection before creating the connection.
+        // The connection may be subject to a certificate chain validaton issue and you might run into the issue described here:
+        // https://learn.microsoft.com/en-us/troubleshoot/sql/database-engine/connect/certificate-chain-not-trusted
         cl.CreateConnection(DbConnSetup, ConnectionId);
 
         // Run the query as one with no resultset.
