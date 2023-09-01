@@ -1,0 +1,51 @@
+{
+  "id": "28bec9f6-ae9b-4db0-929b-6613cf42e03e",
+  "name": "ALProject4",
+  "publisher": "Default publisher",
+  "version": "1.0.0.0",
+  "brief": "",
+  "description": "",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "",
+  "logo": "",
+  "dependencies": [
+    {
+      "id": "de912bec-70b4-427d-a57c-c68e3907a6f4",
+      "name": "DocSolutions common library",
+      "publisher": "EOS Solutions",
+      "version": "22.0.2.0"
+    },
+    {
+      "id": "f2d14c8d-6f8a-45a6-8c0e-5b3db46aa59e",
+      "name": "Purchase Request",
+      "publisher": "EOS Solutions",
+      "version": "22.0.7.2"
+    },
+    {
+      "id": "8bb96677-5112-4566-b742-12eebbb9a058",
+      "name": "EOS Administration Library",
+      "publisher": "EOS Solutions",
+      "version": "22.0.10.0"
+    }
+  ],
+  "screenshots": [],
+  "platform": "1.0.0.0",
+  "application": "21.0.0.0",
+  "idRanges": [
+    {
+      "from": 50100,
+      "to": 50149
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": true,
+    "includeSourceInSymbolFile": true
+  },
+  "runtime": "10.0",
+  "features": [
+    "NoImplicitWith"
+  ]
+}
