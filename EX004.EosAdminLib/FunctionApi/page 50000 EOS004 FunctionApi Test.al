@@ -22,35 +22,6 @@ page 50000 "EOS004 FunctionApi Test"
                     ApplicationArea = all;
                 }
             }
-            group("iStorage")
-            {
-                field("Storage Type"; StorageType)
-                {
-                    ApplicationArea = all;
-                }
-
-                field(Path1; Path)
-                {
-                    ApplicationArea = All;
-                }
-                field(Path2; Path2)
-                {
-                    ApplicationArea = All;
-                }
-                field("Force"; force)
-                {
-                    ApplicationArea = All;
-                }
-                field("Storage Function"; StorageFunction)
-                {
-                    ApplicationArea = all;
-                }
-                field(data; data)
-                {
-                    ApplicationArea = All;
-                }
-
-            }
             group(Barcodes)
             {
                 field("Select Function"; BarcodeFunction)
@@ -170,11 +141,6 @@ page 50000 "EOS004 FunctionApi Test"
             group(ResultGrp)
             {
                 Caption = 'Result';
-                field("Response code"; ResponseCode)
-                {
-                    ApplicationArea = all;
-                    Editable = false;
-                }
                 field(result; ResultTxt)
                 {
                     MultiLine = true;
@@ -199,8 +165,6 @@ page 50000 "EOS004 FunctionApi Test"
                     case Which of
                         Which::Barcode:
                             Barcode();
-                        Which::Storage:
-                            Storage();
                         Which::PDF:
                             PDF();
                         Which::P7M:
@@ -224,13 +188,12 @@ page 50000 "EOS004 FunctionApi Test"
         BarcodeFunction: Option " ",Encoders,Encode;
         Which: Option Storage,Barcode,PDF,P7M;
         PdfFunction: Option metadata,split,combine,setbackground,protect;
-        StorageType: Enum "EOS004 iStorage Type";
-        ResponseCode: Enum "EOS004 Storage Response Status";
         ServiceConfigCode, ProtectPDFCode : Code[20];
         force, skipVerification : Boolean;
         Path, Path2, data, EncoderName, ResultTxt, P7mFilename, PdfFilename, PdfFilename2 : Text;
         Encoders: List of [Text];
-        OutputDpi, OutputTargetWidthInMm, OutputTargetHeightInMm, OutputAspectRatio, OutputFormatQualtity, BackgroundPageNo : Integer;
+        OutputDpi, OutputTargetWidthInMm, OutputTargetHeightInMm, OutputAspectRatio, OutputFormatQualtity : Decimal;
+        BackgroundPageNo: Integer;
         OutputFormat: Enum "EOS004 Barcode Output Format";
         PdfFile, PdfFile2, P7mFile : Codeunit "Temp Blob";
 
@@ -353,63 +316,4 @@ page 50000 "EOS004 FunctionApi Test"
         end;
     end;
 
-    local procedure Storage()
-    var
-        iStorage: Interface "EOS004 iStorage v2";
-        ServiceConfig: Record "EOS004 Service Config.";
-        TempBlob: Codeunit "Temp Blob";
-        Result: JsonArray;
-        os: OutStream;
-    begin
-        ServiceConfig.get(ServiceConfigCode);
-        iStorage := StorageType;
-        iStorage.iStorageInit(ServiceConfig);
-        case StorageFunction of
-            StorageFunction::" ":
-                Message('select a function');
-            StorageFunction::UploadFile:
-                begin
-                    TempBlob.CreateOutStream(os);
-                    os.WriteText(data);
-                    ResponseCode := iStorage.UploadFile(Path, TempBlob);
-                end;
-            StorageFunction::ReadFile:
-                begin
-                    ResponseCode := iStorage.ReadFile(Path, ResultTxt);
-                end;
-            StorageFunction::DeleteFile:
-                begin
-                    ResponseCode := iStorage.DeleteFile(Path);
-                end;
-            StorageFunction::RenameFile:
-                begin
-                    ResponseCode := iStorage.RenameFile(Path, Path2);
-                end;
-            StorageFunction::CopyFile:
-                begin
-                    ResponseCode := iStorage.CopyFile(Path, Path2);
-                end;
-            StorageFunction::MoveFile:
-                begin
-                    ResponseCode := iStorage.MoveFile(Path, Path2);
-                end;
-            StorageFunction::GetFiles:
-                begin
-                    ResponseCode := iStorage.GetFiles(Path, Result);
-                    Result.WriteTo(ResultTxt);
-                end;
-            StorageFunction::CreateFolder:
-                begin
-                    ResponseCode := iStorage.CreateFolder(Path);
-                end;
-            StorageFunction::DeleteFolder:
-                begin
-                    ResponseCode := iStorage.DeleteFolder(Path, force);
-                end;
-            StorageFunction::MoveFolder:
-                begin
-                    ResponseCode := iStorage.MoveFolder(Path, Path2);
-                end;
-        end;
-    end;
 }
