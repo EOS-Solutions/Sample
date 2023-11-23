@@ -10,7 +10,6 @@ report 18123351 "EOS Vendor Aging"
     ApplicationArea = All;
 
     dataset
-
     {
         dataitem(VendorFilters; Vendor)
         {
