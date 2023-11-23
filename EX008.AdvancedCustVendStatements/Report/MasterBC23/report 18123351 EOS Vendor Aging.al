@@ -544,9 +544,7 @@ report 18123351 "EOS Vendor Aging"
         OnlyOpenPrmtr: Boolean;
         ShowFiltersPrmtr: Boolean;
         ShowLinkedEntriesPrmtr: Boolean;
-        [InDataSet]
         LinkedEntriesEnabled: Boolean;
-        [InDataSet]
         NewPagePerVendorEnabled: Boolean;
         EndingDueDate: Date;
         EndingPostingDate: Date;

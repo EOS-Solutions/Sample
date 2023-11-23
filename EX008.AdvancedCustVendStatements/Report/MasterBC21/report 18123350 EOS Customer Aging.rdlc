@@ -8,6 +8,7 @@
         <ConnectString />
       </ConnectionProperties>
       <rd:SecurityType>None</rd:SecurityType>
+      <rd:DataSourceID>de323bbc-604f-4ba3-93e1-a127f926a7e7</rd:DataSourceID>
     </DataSource>
   </DataSources>
   <ReportSections>
@@ -2298,7 +2299,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!AmountToPrintLCY.Value</Value>
+                                  <Value>=Fields!AmountToPrint.Value</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
                                     <FontSize>8pt</FontSize>
@@ -2328,6 +2329,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -2339,7 +2341,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!AmountToPrint.Value</Value>
+                                  <Value>=Fields!AmountToPrintLCY.Value</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
                                     <FontSize>8pt</FontSize>

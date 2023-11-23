@@ -1,23 +1,33 @@
-report 18123351 "EOS Vendor Aging"
+report 18123350 "EOS Customer Aging"
 {
-    // version NP11.01
-
     DefaultLayout = RDLC;
-    RDLCLayout = './source/Report/report 18123351 EOS Vendor Aging.rdlc';
-    Caption = 'Payable aging (CVS)';
+    RDLCLayout = './source/Report/report 18123350 EOS Customer Aging.rdlc';
+    Caption = 'Customer Aging (CVS)';
     PreviewMode = PrintLayout;
     UsageCategory = ReportsAndAnalysis;
     ApplicationArea = All;
 
     dataset
     {
-        dataitem(VendorFilters; Vendor)
+        dataitem(CustomerFilters; Customer)
         {
             DataItemTableView = sorting("No.");
             RequestFilterFields = "No.", Name, "Country/Region Code";
 
             trigger OnPreDataItem();
             begin
+                SetReportParameters();
+                CurrReport.Break();
+            end;
+        }
+        dataitem(SalespersonFilters; "Salesperson/Purchaser")
+        {
+            DataItemTableView = sorting(Code);
+            RequestFilterFields = "Code";
+
+            trigger OnPreDataItem();
+            begin
+                SetReportParameters();
                 CurrReport.Break();
             end;
         }
@@ -28,40 +38,58 @@ report 18123351 "EOS Vendor Aging"
 
             trigger OnPreDataItem();
             var
+                Customer: Record Customer;
                 SalespersonPurchaser: Record "Salesperson/Purchaser";
                 TempAssetsBufferLocal: array[12] of Record "EOS Statem. Assets Buffer EXT" temporary;
-                Vendor: Record "Vendor";
                 Language: Codeunit Language;
                 CurrentLanguageCode: Code[10];
-                LastVendor: Code[20];
+                LastCustomer: Code[20];
+                LastSalesperson: Code[20];
                 Level2DueDate: Date;
                 Level2Node: Integer;
                 Level3Node: Integer;
+                SalespersonFilter: Text;
             begin
                 CurrentLanguageCode := Language.GetUserLanguageCode();
 
-                AssetsEngine.BuildMultiSourceTreeView(1, VendorFilters.GETVIEW(false), 0, StartingPostingDate, EndingPostingDate,
+                if UseSalespersonFromCustomerPrmtr then
+                    if SalespersonFilters.GetFilters() <> '' then begin
+                        SalespersonFilter := GetSelectionFilterForSalesperson(SalespersonFilters);
+                        CustomerFilters.SetFilter("Salesperson Code", SalespersonFilter);
+                    end;
+
+                AssetsEngine.SetForceCustomerSalesperson(UseSalespersonFromCustomerPrmtr);
+                AssetsEngine.BuildMultiSourceTreeView(0, CustomerFilters.GETVIEW(false), 0, StartingPostingDate, EndingPostingDate,
                                                          StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', TempAssetsBufferLocal[1]);
 
-                OnAfterBuildMultiSourceTreeView(VendorFilters.GETVIEW(false), 0, StartingPostingDate, EndingPostingDate,
+                OnAfterBuildMultiSourceTreeView(CustomerFilters.GETVIEW(false), 0, StartingPostingDate, EndingPostingDate,
                                                          StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', TempAssetsBufferLocal[1]);
 
                 if ShowLinkedEntriesPrmtr then
                     AssetsEngine.MergeMultipleLevel3Items(TempAssetsBufferLocal[1]);
 
-                Clear(TempReportingBuffer);
-
-                AssetsEngine.ReverseSigns(TempAssetsBufferLocal[1]);
-
                 Clear(TempAssetsBufferLocal);
                 case SortOrderPrmtr of
-                    SortOrderPrmtr::Vendor:
+                    SortOrderPrmtr::SalesPerson:
+                        TempAssetsBufferLocal[2].SetCurrentKey("EOS Salesperson Code", "EOS Source No.");
+                    SortOrderPrmtr::Customer:
                         TempAssetsBufferLocal[2].SetCurrentKey("EOS Source No.");
                     SortOrderPrmtr::DueDate:
                         TempAssetsBufferLocal[2].SetCurrentKey("EOS Due Date");
                 end;
 
-                VendorFilters.CopyFilter("Currency Filter", TempAssetsBufferLocal[2]."EOS Currency Code");
+                if not UseSalespersonFromCustomerPrmtr then
+                    if SalespersonFilters.GetFilters() <> '' then begin
+                        SalespersonFilter := GetSelectionFilterForSalesperson(SalespersonFilters);
+                        TempAssetsBufferLocal[2].SetFilter("EOS Salesperson Code", SalespersonFilter);
+                    end;
+
+                if SortOrderPrmtr <> SortOrderPrmtr::SalesPerson then
+                    TempAssetsBufferLocal[2].ModifyAll("EOS Salesperson Code", '');
+
+                LastSalesperson := 'XYZ123';
+
+                CustomerFilters.CopyFilter("Currency Filter", TempAssetsBufferLocal[2]."EOS Currency Code");
                 TempAssetsBufferLocal[2].SetRange("EOS Level No.", 2);
                 TempAssetsBufferLocal[2].SetFilter("EOS Payment Method", PaymentMethodFilterPrmtr);
                 if TempAssetsBufferLocal[2].FindSet() then
@@ -69,28 +97,54 @@ report 18123351 "EOS Vendor Aging"
                         TempAssetsBufferLocal[2]."EOS Language Code" := CurrentLanguageCode;
 
                         TempAssetsBufferLocal[12] := TempAssetsBufferLocal[2];
-                        if LastVendor <> TempAssetsBufferLocal[12]."EOS Source No." then begin
-                            LastVendor := TempAssetsBufferLocal[12]."EOS Source No.";
-                            Vendor.Get(TempAssetsBufferLocal[12]."EOS Source No.");
-                            if (SortOrderPrmtr in [SortOrderPrmtr::Vendor]) and NewPagePerVendorPrmtr then
+                        if LastCustomer <> TempAssetsBufferLocal[12]."EOS Source No." then begin
+                            LastCustomer := TempAssetsBufferLocal[12]."EOS Source No.";
+                            Customer.Get(TempAssetsBufferLocal[12]."EOS Source No.");
+                            if (SortOrderPrmtr in [SortOrderPrmtr::SalesPerson, SortOrderPrmtr::Customer]) and NewPagePerCustomerPrmtr then
+                                PageGroup += 1;
+                            TempProcessedCustomerList := Customer;
+                            if TempProcessedCustomerList.Insert() then;
+                        end;
+
+                        if LastSalesperson <> TempAssetsBufferLocal[12]."EOS Salesperson Code" then begin
+                            LastSalesperson := TempAssetsBufferLocal[12]."EOS Salesperson Code";
+                            if not SalespersonPurchaser.Get(TempAssetsBufferLocal[12]."EOS Salesperson Code") then begin
+                                Clear(SalespersonPurchaser);
+                                SalespersonPurchaser.Name := CopyStr(NoSalespersonTxt, 1, MaxStrLen(SalespersonPurchaser.Name));
+                            end;
+                            if (SortOrderPrmtr in [SortOrderPrmtr::SalesPerson]) and NewPagePerSalespersonPrmtr then
                                 PageGroup += 1;
                         end;
 
                         if TempAssetsBufferLocal[12]."EOS Level No." > 3 then
                             TempAssetsBufferLocal[12]."EOS Level No." := 3;
 
-                        //definisco un raggruppamento/spaccatura in base al sorting e al dettaglio richiesto. *Vendor
-                        Clear(TempGenericVendorBuffer);
+                        //definisco un raggruppamento/spaccatura in base al sorting e al dettaglio richiesto. *Customer
+                        Clear(TempGenericCustomerBuffer);
                         TempAssetsBufferLocal[12]."EOS Reporting Date 1" := TempAssetsBufferLocal[12]."EOS Due Date";
-                        TempGenericVendorBuffer."Primary Key" := CopyStr(GetVendorBufferGroup(TempAssetsBufferLocal[12]), 1, 250);
-                        if TempGenericVendorBuffer.Find('=') then begin
-                            TempGenericVendorBuffer.Amount += TempAssetsBufferLocal[12]."EOS Remaining Amount (LCY)";
-                            TempGenericVendorBuffer.Modify();
+                        TempGenericCustomerBuffer."Primary Key" := CopyStr(GetCustomerBufferGroup(TempAssetsBufferLocal[12]), 1, 250);
+                        if TempGenericCustomerBuffer.Find('=') then begin
+                            TempGenericCustomerBuffer.Amount += TempAssetsBufferLocal[12]."EOS Remaining Amount (LCY)";
+                            TempGenericCustomerBuffer.Modify();
                         end else begin
                             GenericBufferEntryNo += 1;
-                            TempGenericVendorBuffer."Reporting Group No." := GenericBufferEntryNo;
-                            TempGenericVendorBuffer.Amount += TempAssetsBufferLocal[12]."EOS Remaining Amount (LCY)";
-                            TempGenericVendorBuffer.Insert();
+                            TempGenericCustomerBuffer."Reporting Group No." := GenericBufferEntryNo;
+                            TempGenericCustomerBuffer.Amount += TempAssetsBufferLocal[12]."EOS Remaining Amount (LCY)";
+                            TempGenericCustomerBuffer.Insert();
+                        end;
+
+                        //definisco un raggruppamento/spaccatura in base al sorting e al dettaglio richiesto. *Customer
+                        Clear(TempGenericSalespersonBuffer);
+                        TempAssetsBufferLocal[12]."EOS Reporting Date 1" := TempAssetsBufferLocal[12]."EOS Due Date";
+                        TempGenericSalespersonBuffer."Primary Key" := CopyStr(GetSalespersonBufferGroup(TempAssetsBufferLocal[12]), 1, 250);
+                        if TempGenericSalespersonBuffer.Find('=') then begin
+                            TempGenericSalespersonBuffer.Amount += TempAssetsBufferLocal[12]."EOS Remaining Amount (LCY)";
+                            TempGenericSalespersonBuffer.Modify();
+                        end else begin
+                            GenericBufferEntryNo += 1;
+                            TempGenericSalespersonBuffer."Reporting Group No." := GenericBufferEntryNo;
+                            TempGenericSalespersonBuffer.Amount += TempAssetsBufferLocal[12]."EOS Remaining Amount (LCY)";
+                            TempGenericSalespersonBuffer.Insert();
                         end;
 
                         case SortOrderPrmtr of
@@ -100,10 +154,10 @@ report 18123351 "EOS Vendor Aging"
                                     TempReportingBuffer := TempAssetsBufferLocal[12];
                                     TempReportingBuffer."EOS Reporting Date 1" := TempAssetsBufferLocal[12]."EOS Due Date";
                                     TempReportingBuffer."EOS Entry No." := TempEntryNo;
-                                    TempReportingBuffer."EOS Reporting Group 1" := TempGenericVendorBuffer."Reporting Group No.";
+                                    TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Reporting Group No.";
                                     TempReportingBuffer."EOS Reporting Group 2" := PageGroup;
-                                    TempReportingBuffer."EOS Reporting Group 3" := 0;
-                                    TempReportingBuffer."EOS Reporting Subject Name" := Vendor.Name;
+                                    TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Reporting Group No.";
+                                    TempReportingBuffer."EOS Reporting Subject Name" := Customer.Name;
                                     TempReportingBuffer."EOS Reporting SalesPerson Name" := SalespersonPurchaser.Name;
                                     TempReportingBuffer.Insert();
                                     if ShowLinkedEntriesPrmtr then begin
@@ -118,10 +172,10 @@ report 18123351 "EOS Vendor Aging"
                                                 TempReportingBuffer := TempAssetsBufferLocal[3];
                                                 TempReportingBuffer."EOS Node Linked To" := Level2Node;
                                                 TempReportingBuffer."EOS Entry No." := TempEntryNo;
-                                                TempReportingBuffer."EOS Reporting Group 1" := TempGenericVendorBuffer."Reporting Group No.";
+                                                TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Reporting Group No.";
                                                 TempReportingBuffer."EOS Reporting Group 2" := PageGroup;
-                                                TempReportingBuffer."EOS Reporting Group 3" := 0;
-                                                TempReportingBuffer."EOS Reporting Subject Name" := Vendor.Name;
+                                                TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Reporting Group No.";
+                                                TempReportingBuffer."EOS Reporting Subject Name" := Customer.Name;
                                                 TempReportingBuffer."EOS Reporting SalesPerson Name" := SalespersonPurchaser.Name;
                                                 TempReportingBuffer."EOS Reporting Date 1" := Level2DueDate;
                                                 TempReportingBuffer."EOS Remaining Amount (LCY)" := 0;
@@ -135,10 +189,10 @@ report 18123351 "EOS Vendor Aging"
                                             TempReportingBuffer."EOS Level No." := 5;
                                             TempReportingBuffer."EOS Node Linked To" := Level2Node;
                                             TempReportingBuffer."EOS Entry No." := TempEntryNo;
-                                            TempReportingBuffer."EOS Reporting Group 1" := TempGenericVendorBuffer."Reporting Group No.";
+                                            TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Reporting Group No.";
                                             TempReportingBuffer."EOS Reporting Group 2" := PageGroup;
-                                            TempReportingBuffer."EOS Reporting Group 3" := 0;
-                                            TempReportingBuffer."EOS Reporting Subject Name" := Vendor.Name;
+                                            TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Reporting Group No.";
+                                            TempReportingBuffer."EOS Reporting Subject Name" := Customer.Name;
                                             TempReportingBuffer."EOS Reporting SalesPerson Name" := SalespersonPurchaser.Name;
                                             TempReportingBuffer."EOS Reporting Date 1" := Level2DueDate;
                                             TempReportingBuffer."EOS Exposure (LCY)" := 0;
@@ -146,10 +200,11 @@ report 18123351 "EOS Vendor Aging"
                                         end;
                                     end;
                                 end;
-                            SortOrderPrmtr::Vendor:
+                            SortOrderPrmtr::SalesPerson,
+                            SortOrderPrmtr::Customer:
                                 begin
                                     case DetailLevelPrmtr of
-                                        DetailLevelPrmtr::Vendor:
+                                        DetailLevelPrmtr::Customer:
                                             begin
                                                 Clear(TempReportingBuffer);
                                                 TempReportingBuffer.SetRange("EOS Salesperson Code", TempAssetsBufferLocal[12]."EOS Salesperson Code");
@@ -206,10 +261,10 @@ report 18123351 "EOS Vendor Aging"
                                         TempEntryNo += 1;
                                         TempReportingBuffer := TempAssetsBufferLocal[12];
                                         TempReportingBuffer."EOS Entry No." := TempEntryNo;
-                                        TempReportingBuffer."EOS Reporting Group 1" := TempGenericVendorBuffer."Reporting Group No.";
+                                        TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Reporting Group No.";
                                         TempReportingBuffer."EOS Reporting Group 2" := PageGroup;
-                                        TempReportingBuffer."EOS Reporting Group 3" := 0;
-                                        TempReportingBuffer."EOS Reporting Subject Name" := Vendor.Name;
+                                        TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Reporting Group No.";
+                                        TempReportingBuffer."EOS Reporting Subject Name" := Customer.Name;
                                         TempReportingBuffer."EOS Reporting SalesPerson Name" := SalespersonPurchaser.Name;
                                         TempReportingBuffer."EOS Reporting Date 1" := TempAssetsBufferLocal[12]."EOS Due Date";
                                         TempReportingBuffer."EOS Reporting Boolean 1" := false;
@@ -229,10 +284,10 @@ report 18123351 "EOS Vendor Aging"
                                                     TempReportingBuffer := TempAssetsBufferLocal[3];
                                                     TempReportingBuffer."EOS Node Linked To" := Level2Node;
                                                     TempReportingBuffer."EOS Entry No." := TempEntryNo;
-                                                    TempReportingBuffer."EOS Reporting Group 1" := TempGenericVendorBuffer."Reporting Group No.";
+                                                    TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Reporting Group No.";
                                                     TempReportingBuffer."EOS Reporting Group 2" := PageGroup;
-                                                    TempReportingBuffer."EOS Reporting Group 3" := 0;
-                                                    TempReportingBuffer."EOS Reporting Subject Name" := Vendor.Name;
+                                                    TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Reporting Group No.";
+                                                    TempReportingBuffer."EOS Reporting Subject Name" := Customer.Name;
                                                     TempReportingBuffer."EOS Reporting SalesPerson Name" := SalespersonPurchaser.Name;
                                                     TempReportingBuffer."EOS Reporting Date 1" := Level2DueDate;
                                                     TempReportingBuffer."EOS Remaining Amount (LCY)" := 0;
@@ -248,10 +303,10 @@ report 18123351 "EOS Vendor Aging"
                                                             TempReportingBuffer := TempAssetsBufferLocal[4];
                                                             TempReportingBuffer."EOS Node Linked To" := Level3Node;
                                                             TempReportingBuffer."EOS Entry No." := TempEntryNo;
-                                                            TempReportingBuffer."EOS Reporting Group 1" := TempGenericVendorBuffer."Reporting Group No.";
+                                                            TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Reporting Group No.";
                                                             TempReportingBuffer."EOS Reporting Group 2" := PageGroup;
-                                                            TempReportingBuffer."EOS Reporting Group 3" := 0;
-                                                            TempReportingBuffer."EOS Reporting Subject Name" := Vendor.Name;
+                                                            TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Reporting Group No.";
+                                                            TempReportingBuffer."EOS Reporting Subject Name" := Customer.Name;
                                                             TempReportingBuffer."EOS Reporting SalesPerson Name" := SalespersonPurchaser.Name;
                                                             TempReportingBuffer."EOS Reporting Date 1" := Level2DueDate;
                                                             TempReportingBuffer."EOS Remaining Amount (LCY)" := 0;
@@ -267,10 +322,10 @@ report 18123351 "EOS Vendor Aging"
                                                 TempReportingBuffer."EOS Level No." := 5;
                                                 TempReportingBuffer."EOS Node Linked To" := Level2Node;
                                                 TempReportingBuffer."EOS Entry No." := TempEntryNo;
-                                                TempReportingBuffer."EOS Reporting Group 1" := TempGenericVendorBuffer."Reporting Group No.";
+                                                TempReportingBuffer."EOS Reporting Group 1" := TempGenericCustomerBuffer."Reporting Group No.";
                                                 TempReportingBuffer."EOS Reporting Group 2" := PageGroup;
-                                                TempReportingBuffer."EOS Reporting Group 3" := 0;
-                                                TempReportingBuffer."EOS Reporting Subject Name" := Vendor.Name;
+                                                TempReportingBuffer."EOS Reporting Group 3" := TempGenericSalespersonBuffer."Reporting Group No.";
+                                                TempReportingBuffer."EOS Reporting Subject Name" := Customer.Name;
                                                 TempReportingBuffer."EOS Reporting SalesPerson Name" := SalespersonPurchaser.Name;
                                                 TempReportingBuffer."EOS Reporting Date 1" := Level2DueDate;
                                                 TempReportingBuffer."EOS Exposure (LCY)" := 0;
@@ -296,9 +351,9 @@ report 18123351 "EOS Vendor Aging"
                 end;
                 Clear(TempReportingBuffer);
 
-                OnAfterBuildReportingDataset(VendorFilters.GETVIEW(false), 0, StartingPostingDate, EndingPostingDate,
-                                             StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', TempAssetsBufferLocal[1],
-                                             TempReportingBuffer)
+                OnAfterBuildReportingDataset(CustomerFilters.GETVIEW(false), 0, StartingPostingDate, EndingPostingDate,
+                                                StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', TempAssetsBufferLocal[1],
+                                                TempReportingBuffer)
             end;
         }
         dataitem(ReportHeaderValues; Integer)
@@ -307,31 +362,39 @@ report 18123351 "EOS Vendor Aging"
                                 where(Number = const(1));
             column(CompanyName; CompanyNameText) { }
             column(ApplyedFilters; GetReportParametersText()) { }
+            column(HideSalespersonTotal; HideSalespersonTotalPrmtr) { }
+            column(HideMasterTotal; HideMasterTotal) { }
         }
         dataitem(Detail; Integer)
         {
             DataItemTableView = sorting(Number)
                                 where(Number = filter(1 ..));
+            column(CustomerDetailGroup; TempReportingBuffer."EOS Reporting Group 1") { }
             column(PageGroup; TempReportingBuffer."EOS Reporting Group 2") { }
-            column(DetailGroup; TempReportingBuffer."EOS Reporting Group 1") { }
+            column(SalesPersonDetailGroup; TempReportingBuffer."EOS Reporting Group 3") { }
             column(LineTypeFormat; GetLineTypeFormat()) { }
             column(AddLineSpaceBefore; TempReportingBuffer."EOS Reporting Boolean 1") { }
             column(Level; TempReportingBuffer."EOS Level No.") { }
-            column(VendorNo; TempReportingBuffer."EOS Source No.") { }
-            column(VendorName; TempReportingBuffer."EOS Reporting Subject Name") { }
+            column(SalespersonCode; TempReportingBuffer."EOS Salesperson Code") { }
+            column(SalespersonName; TempReportingBuffer."EOS Reporting SalesPerson Name") { }
+            column(CustomerNo; TempReportingBuffer."EOS Source No.") { }
+            column(CustomerName; TempReportingBuffer."EOS Reporting Subject Name") { }
             column(PostingDate; Format(TempReportingBuffer."EOS Posting Date")) { }
             column(DocumentType; GetDocumentTypeAbbreviation(TempReportingBuffer."EOS Document Type")) { }
             column(DocumentNo; TempReportingBuffer."EOS Document No.") { }
-            column(ExternalDocumentNo; TempReportingBuffer."EOS External Document No.") { }
-            column(PaymentMethod; TempReportingBuffer."EOS Payment Method") { }
+            column(PaymentMethod; GetPaymentMethod(TempReportingBuffer."EOS Language Code")) { }
             column(DueDate; Format(TempReportingBuffer."EOS Due Date")) { }
             column(CurrencyCode; TempReportingBuffer."EOS Currency Code") { }
             column(RemainingAmount; GetRemainingAmount()) { }
             column(RemainingAmountLCY; GetRemainingAmountLCY()) { }
             column(AmountToPrint; GetAmount()) { }
             column(AmountToPrintLCY; GetAmountLCY()) { }
-            column(ShowGroupTotal; GetShowGroupTotal()) { }
-            column(GroupTotalText; GetGroupTotalText()) { }
+            column(ExposureLCY; TempReportingBuffer."EOS Exposure (LCY)") { }
+            column(BankReceiptStatus; GetBankReceiptAbbreviation()) { }
+            column(ShowCustomerGroupTotal; GetShowCustomerGroupTotal()) { }
+            column(CustomerGroupTotalText; GetCustomerGroupTotalText()) { }
+            column(ShowSalespersonGroupTotal; GetShowSalespersonGroupTotal()) { }
+            column(SalespersonGroupTotalText; GetSalespersonGroupTotalText()) { }
             column(AmountLabelType; GetAmountLabelType()) { }
             column(CustomBoolean1; TempReportingBuffer."EOS Custom Boolean 1") { }
             column(CustomBoolean2; TempReportingBuffer."EOS Custom Boolean 2") { }
@@ -339,12 +402,13 @@ report 18123351 "EOS Vendor Aging"
             column(CustomDate2; Format(TempReportingBuffer."EOS Custom Date 2")) { }
             column(CustomText1; TempReportingBuffer."EOS Custom Text 1") { }
             column(CustomText2; TempReportingBuffer."EOS Custom Text 2") { }
-
             trigger OnAfterGetRecord();
             begin
                 if Number > 1 then
                     if TempReportingBuffer.Next() = 0 then
-                        CurrReport.BREAK();
+                        CurrReport.Break();
+
+                ReportLineCount += 1;
             end;
 
             trigger OnPreDataItem();
@@ -352,7 +416,7 @@ report 18123351 "EOS Vendor Aging"
                 Clear(TempReportingBuffer);
                 TempReportingBuffer.SetCurrentKey("EOS Reporting Group 3", "EOS Reporting Group 1", "EOS Reporting Date 1", "EOS Entry No.");
                 if not TempReportingBuffer.Find('-') then
-                    CurrReport.BREAK();
+                    CurrReport.Break();
             end;
         }
     }
@@ -384,7 +448,7 @@ report 18123351 "EOS Vendor Aging"
                 field(DetailLevel; DetailLevelPrmtr)
                 {
                     Caption = 'Detail Level';
-                    Enabled = NewPagePerVendorEnabled;
+                    Enabled = NewPagePerCustomerEnabled;
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the "Detail Level" field.';
                     trigger OnValidate();
@@ -399,12 +463,33 @@ report 18123351 "EOS Vendor Aging"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the "Show Linked Entries" field.';
                 }
-                field(NewPagePerVendor; NewPagePerVendorPrmtr)
+                field(NewPagePerSalesperson; NewPagePerSalespersonPrmtr)
                 {
-                    Caption = 'New Page Per Vendor';
-                    Enabled = NewPagePerVendorEnabled;
+                    Caption = 'New Page Per Salesperson';
+                    Editable = NewPagePerSalespersonEnabled;
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the "New Page Per Vendor" field.';
+                    ToolTip = 'Specifies the value of the "New Page Per Salesperson" field.';
+                    trigger OnValidate();
+                    begin
+                        UpdateReqPage();
+                    end;
+                }
+                field(NewPagePerCustomer; NewPagePerCustomerPrmtr)
+                {
+                    Caption = 'New Page Per Customer';
+                    Enabled = NewPagePerCustomerEnabled;
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "New Page Per Customer" field.';
+                    trigger OnValidate();
+                    begin
+                        UpdateReqPage();
+                    end;
+                }
+                field(UseSalespersonFromCustomer; UseSalespersonFromCustomerPrmtr)
+                {
+                    Caption = 'Use Salesperson from Customer';
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "Use Salesperson from Customer" field.';
                 }
                 field(PostingDateFilter; PostingDateFilterPrmtr)
                 {
@@ -452,56 +537,42 @@ report 18123351 "EOS Vendor Aging"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the "Print Filters" field.';
                 }
+                field(HideSalespersonTotal; HideSalespersonTotalPrmtr)
+                {
+                    Caption = 'Hide Salesperson Total';
+                    Enabled = HideSalespersonTotalEnabled;
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the "Hide Salesperson Total" field.';
+                }
             }
         }
 
         trigger OnOpenPage();
-        var
-            Parameters: Record "EOS008 CVS Report Parameters";
-            AdvCustVendStatSharedMem: Codeunit "EOS AdvCustVendStat SharedMem";
         begin
             CurrReport.RequestOptionsPage.Caption := CurrReport.RequestOptionsPage.Caption() + SubscriptionMgt.GetLicenseText();
-            OnlyOpenPrmtr := true;
-            ShowLinkedEntriesPrmtr := false;
-            UpdateReqPage();
-            if AdvCustVendStatSharedMem.GetReportParameter(Parameters) then begin
-                OnlyOpenPrmtr := Parameters."Only Open";
-                SortOrderPrmtr := Parameters."Vendor Detail Order";
-                DetailLevelPrmtr := Parameters."Vendor Detail Level";
-                ShowLinkedEntriesPrmtr := Parameters."Show Linked Entries";
-                NewPagePerVendorPrmtr := Parameters."New Page Per Vendor";
-                PostingDateFilterPrmtr := Parameters."Posting Date Filter";
-                DueDateFilterPrmtr := Parameters."Due Date Filter";
-                PaymentMethodFilterPrmtr := Parameters."Payment Method Filter";
-                ShowFiltersPrmtr := Parameters."Print Filters";
-
-                if Parameters."Customer Vendor Table Filter 1" <> '' then begin
-                    VendorFilters.Reset();
-                    VendorFilters.SetView(Parameters."Customer Vendor Table Filter 1");
-                end;
-            end;
+            SetReportParameters();
         end;
     }
 
     labels
     {
-        ReportTitle = 'Payable aging';
-
-        VendorNoLabel = 'Vendor';
-        VendorNameLabel = 'Name';
+        ReportTitle = 'Customer Aging';
+        CustomerNoLabel = 'Customer';
+        CustomerNameLabel = 'Name';
         PostingDateLabel = 'Posting Date';
         DueDateLabel = 'Due Date';
-        VendorTotalLabel = 'Vendor Total';
+        CustomerTotalLabel = 'Customer Total';
         PageNoLabel = 'Page';
         DocumentTypeLabel = 'Type';
         DocumentNoLabel = 'Document';
-        ExternalDocumentNoLabel = 'External Document No.';
+        ExternalDocumentNo = 'External Document No.';
         PaymentMethodLabel = 'Pmt.';
         RemainingAmountLCYLabel = 'Remaining Amt. (LCY)';
         RemainingAmountLabel = 'Remaining Amount';
         AmountLCYLabel = 'Amount (LCY)';
         AmountLabel = 'Amount';
         CurrencyCodeLabel = 'Curr';
+        BankReceiptStatusLabel = 'Bank Rec. (Exposition)';
         TotalAmountLabel = 'Total Report Amount';
     }
 
@@ -509,70 +580,102 @@ report 18123351 "EOS Vendor Aging"
     begin
         OnlyOpenPrmtr := true;
         ShowLinkedEntriesPrmtr := false;
+        UseSalespersonFromCustomerPrmtr := true;
+        SubscriptionActive := SubscriptionMgt.GetSubscriptionIsActive();
     end;
 
-    trigger OnPostReport();
-    begin
-        Window.Close();
-    end;
-
-    trigger OnPreReport();
+    trigger OnPreReport()
     var
-        AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
         CVStatEngine: Codeunit "EOS AdvCustVendStat Engine";
     begin
+        if not SubscriptionActive then
+            CurrReport.quit();
+
+        FixParameters();
+
         AdvCustVendStatRoutines.ResolveDateFilter(PostingDateFilterPrmtr, StartingPostingDate, EndingPostingDate);
         AdvCustVendStatRoutines.ResolveDateFilter(DueDateFilterPrmtr, StartingDueDate, EndingDueDate);
 
-        Window.Open(TextDialog001Msg);
-        CompanyNameText := CVStatEngine.GetCompanyNameForReport(18123351);
+        CompanyNameText := CVStatEngine.GetCompanyNameForReport(18123350);
+    end;
+
+    trigger OnPostReport()
+    var
+        AdvCustVendStatSharedMem: Codeunit "EOS AdvCustVendStat SharedMem";
+    begin
+        AdvCustVendStatSharedMem.SetReportLineCount(ReportLineCount);
+        AdvCustVendStatSharedMem.ClearProcessedCustomerList();
+        Clear(TempProcessedCustomerList);
+        if TempProcessedCustomerList.FindSet() then
+            repeat
+                AdvCustVendStatSharedMem.AddCustomerCode(TempProcessedCustomerList."No.");
+            until TempProcessedCustomerList.Next() = 0;
     end;
 
     protected var
-        TempGenericVendorBuffer: Record "EOS008 Reporting Buffer" temporary;
         TempReportingBuffer: Record "EOS Statem. Assets Buffer EXT" temporary;
-        DueDateFilterPrmtr: Text;
         PostingDateFilterPrmtr: Text;
-        DetailLevelPrmtr: Enum "EOS008 CVD Vend Detail Level";
+        DueDateFilterPrmtr: Text;
+        DetailLevelPrmtr: Enum "EOS008 CVD Cust Detail Level";
 
     var
+        ParametersBuffer: Record "EOS008 CVS Report Parameters";
+        TempGenericCustomerBuffer: Record "EOS008 Reporting Buffer" temporary;
+        TempGenericSalespersonBuffer: Record "EOS008 Reporting Buffer" temporary;
+        TempProcessedCustomerList: Record Customer temporary;
+        AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
         AssetsEngine: Codeunit "EOS AdvCustVendStat Engine";
         SubscriptionMgt: Codeunit "EOS AdvCustVendStat Subscript";
-        Window: Dialog;
         CompanyNameText: Text;
-        NewPagePerVendorPrmtr: Boolean;
+        HideMasterTotal: Boolean;
+        HideSalespersonTotalPrmtr: Boolean;
+        NewPagePerCustomerPrmtr: Boolean;
+        NewPagePerSalespersonPrmtr: Boolean;
         OnlyOpenPrmtr: Boolean;
         ShowFiltersPrmtr: Boolean;
         ShowLinkedEntriesPrmtr: Boolean;
-        [InDataSet]
+        SubscriptionActive: Boolean;
+        UseSalespersonFromCustomerPrmtr: Boolean;
+        HideSalespersonTotalEnabled: Boolean;
         LinkedEntriesEnabled: Boolean;
-        [InDataSet]
-        NewPagePerVendorEnabled: Boolean;
+        NewPagePerCustomerEnabled: Boolean;
+        NewPagePerSalespersonEnabled: Boolean;
         EndingDueDate: Date;
         EndingPostingDate: Date;
         StartingDueDate: Date;
         StartingPostingDate: Date;
         GenericBufferEntryNo: Integer;
         PageGroup: Integer;
-        PrevGroup: Integer;
+        PrevCustomerGroup: Integer;
+        PrevSalespersonGroup: Integer;
+        ReportLineCount: Integer;
         TempEntryNo: Integer;
-        SortOrderPrmtr: Enum "EOS008 CVS Vend Detail Order";
+        SortOrderPrmtr: Enum "EOS008 CVS Cust Detail Order";
         PaymentMethodFilterPrmtr: Text;
-        DueDateFilterTextMsg: Label 'Due Date Filter:';
-        ExcludingBalanceTextMsg: Label 'without';
-        IncludingBalanceTextMsg: Label 'with';
-        OnlyOpenTextMsg: Label ' only open entries';
-        PaymentFilterTextMsg: Label 'Payment Filter:';
-        PostingDateFilterTextMsg: Label 'Posting Date Filter:';
-        ReportSortTextMsg: Label 'Sorted By %1 with %2 detail level %3 linked entries';
-        TextDialog001Msg: Label 'Vendor #1#######';
-        TextTotalTxt: Label 'Total for %1 %2';
-        VendorFilterTextMsg: Label 'Vendor Filters:';
+        CustomerFilterTextTxt: Label 'Customer Filters:';
+        DueDateFilterTextTxt: Label 'Due Date Filter:';
+        ExcludingBalanceTxt: Label 'without';
+        IncludingBalanceTextTxt: Label 'with';
+        NoSalespersonTxt: Label 'Without Salesperson';
+        OnlyOpenTxt: Label ' only open entries';
+        PaymentFilterTextTxt: Label 'Payment Filter:';
+        PostingDateFilterTextTxt: Label 'Posting Date Filter:';
+        ReportSortTextTxt: Label 'Sorted By %1 with %2 detail level %3 linked entries';
+        TotalTxt: Label 'Total for %1 %2';
 
-    local procedure GetVendorBufferGroup(var BufferAssets: Record "EOS Statem. Assets Buffer EXT" temporary): Text;
+    local procedure GetSalespersonBufferGroup(var BufferAssets: Record "EOS Statem. Assets Buffer EXT" temporary): Text;
     begin
         case SortOrderPrmtr of
-            SortOrderPrmtr::Vendor:
+            SortOrderPrmtr::SalesPerson:
+                exit(BufferAssets."EOS Salesperson Code");
+        end;
+    end;
+
+    local procedure GetCustomerBufferGroup(var BufferAssets: Record "EOS Statem. Assets Buffer EXT" temporary): Text;
+    begin
+        case SortOrderPrmtr of
+            SortOrderPrmtr::SalesPerson,
+          SortOrderPrmtr::Customer:
                 exit(BufferAssets."EOS Source No.");
             SortOrderPrmtr::DueDate:
                 exit(Format(BufferAssets."EOS Reporting Date 1", 0, 9));
@@ -581,17 +684,32 @@ report 18123351 "EOS Vendor Aging"
 
     local procedure GetDocumentTypeAbbreviation(DocumentType: Integer): Text;
     var
-        AbreviationsMsg: Label ' ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder,Refund,,,,Dishonored';
+        AbreviationsTxt: Label ' ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder,Refund,,,,Dishonored';
     begin
-        exit(CopyStr(SelectStr(DocumentType + 1, Format(AbreviationsMsg)), 1, 4));
+        exit(CopyStr(SelectStr(DocumentType + 1, Format(AbreviationsTxt)), 1, 4));
     end;
 
-    local procedure GetShowGroupTotal(): Text;
+    local procedure GetBankReceiptAbbreviation() Result: Text;
+    var
+        CustLedgerEntry: Record "Cust. Ledger Entry";
+        StatusAbreviationsTxt: Label ' ,Not Extracted,Extracted,Bill,Issued';
     begin
-        if (SortOrderPrmtr <> SortOrderPrmtr::Vendor) or
-           ((SortOrderPrmtr = SortOrderPrmtr::Vendor) and
-            (DetailLevelPrmtr <> DetailLevelPrmtr::Vendor)) then
-            exit(Format(true));
+        if (SortOrderPrmtr = SortOrderPrmtr::Customer) and
+           (DetailLevelPrmtr in [DetailLevelPrmtr::Customer, DetailLevelPrmtr::Document]) then
+            if TempReportingBuffer."EOS Exposure (LCY)" <> 0 then
+                exit(Format(TempReportingBuffer."EOS Exposure (LCY)"))
+            else
+                exit('');
+
+        Result := SelectStr(TempReportingBuffer."EOS Bank Receipt Status" + 1, Format(StatusAbreviationsTxt));
+
+        if TempReportingBuffer."EOS Bank Receipt Status" in [TempReportingBuffer."EOS Bank Receipt Status"::Extracted .. TempReportingBuffer."EOS Bank Receipt Status"::"Issued Bill"] then
+            Result += ' ' + TempReportingBuffer."EOS Customer Bill No.";
+
+        if TempReportingBuffer."EOS Dishonored Entry No." <> 0 then begin
+            CustLedgerEntry."Document Type" := CustLedgerEntry."Document Type"::Dishonored;
+            Result := Format(CustLedgerEntry."Document Type");
+        end;
     end;
 
     local procedure GetAmount(): Text;
@@ -603,7 +721,7 @@ report 18123351 "EOS Vendor Aging"
             case TempReportingBuffer."EOS Level No." of
                 2:
                     exit(FormatAmount(TempReportingBuffer."EOS Original Amount"));
-                3:
+                3, 4:
                     exit(FormatAmount(TempReportingBuffer."EOS Applied Amount"));
                 5:
                     exit(FormatAmount(TempReportingBuffer."EOS Remaining Amount"));
@@ -619,7 +737,7 @@ report 18123351 "EOS Vendor Aging"
             case TempReportingBuffer."EOS Level No." of
                 2:
                     exit(FormatAmount(TempReportingBuffer."EOS Original Amount (LCY)"));
-                3:
+                3, 4:
                     exit(FormatAmount(TempReportingBuffer."EOS Applied Amount (LCY)"));
                 5:
                     exit(FormatAmount(TempReportingBuffer."EOS Remaining Amount (LCY)"));
@@ -631,7 +749,7 @@ report 18123351 "EOS Vendor Aging"
         if ShowLinkedEntriesPrmtr and (TempReportingBuffer."EOS Level No." = 5) then
             exit(0);
 
-        exit(TempReportingBuffer."EOS Remaining Amount" + TempReportingBuffer."EOS Exposure (LCY)");
+        exit(TempReportingBuffer."EOS Remaining Amount");
     end;
 
     local procedure GetRemainingAmountLCY(): Decimal;
@@ -639,13 +757,20 @@ report 18123351 "EOS Vendor Aging"
         if ShowLinkedEntriesPrmtr and (TempReportingBuffer."EOS Level No." = 5) then
             exit(0);
 
-        exit(TempReportingBuffer."EOS Remaining Amount (LCY)" + TempReportingBuffer."EOS Exposure (LCY)");
+        exit(TempReportingBuffer."EOS Remaining Amount (LCY)");
+    end;
+
+    local procedure GetPaymentMethod(LanguageCode: Code[10]) Result: Text;
+    begin
+        Result := AdvCustVendStatRoutines.GetPaymentMethodDescription(TempReportingBuffer."EOS Payment Method", LanguageCode);
+        if TempReportingBuffer."EOS Dishonored Entry No." <> 0 then
+            Result := '*' + Result;
     end;
 
     local procedure GetReportParametersText() Result: Text;
     var
-        Vendor2: Record "Vendor";
-        VendorLedgerEntry: Record "Vendor Ledger Entry";
+        CustLedgerEntry: Record "Cust. Ledger Entry";
+        Customer2: Record Customer;
         EOSLibraryEXT: Codeunit "EOS Library EXT";
         DetailText: Text;
         SortText: Text;
@@ -654,42 +779,42 @@ report 18123351 "EOS Vendor Aging"
         if not ShowFiltersPrmtr then
             exit('');
 
-        Vendor2 := VendorFilters;
+        Customer2 := CustomerFilters;
         if OnlyOpenPrmtr then
-            Vendor2.SetRange("Balance (LCY)");
-        if Vendor2.GetFilters() <> '' then
-            Result := VendorFilterTextMsg + VendorFilters.GetFilters() + EOSLibraryEXT.NewLine();
+            Customer2.SetRange("Balance (LCY)");
+        if Customer2.GetFilters() <> '' then
+            Result := CustomerFilterTextTxt + CustomerFilters.GetFilters() + EOSLibraryEXT.NewLine();
 
         if PostingDateFilterPrmtr <> '' then
-            Result += PostingDateFilterTextMsg + PostingDateFilterPrmtr + EOSLibraryEXT.NewLine();
+            Result += PostingDateFilterTextTxt + PostingDateFilterPrmtr + EOSLibraryEXT.NewLine();
 
         if DueDateFilterPrmtr <> '' then
-            Result += DueDateFilterTextMsg + DueDateFilterPrmtr + EOSLibraryEXT.NewLine();
+            Result += DueDateFilterTextTxt + DueDateFilterPrmtr + EOSLibraryEXT.NewLine();
 
         if PaymentMethodFilterPrmtr <> '' then
-            Result += PaymentFilterTextMsg + PaymentMethodFilterPrmtr + EOSLibraryEXT.NewLine();
+            Result += PaymentFilterTextTxt + PaymentMethodFilterPrmtr + EOSLibraryEXT.NewLine();
 
         case SortOrderPrmtr of
-            SortOrderPrmtr::Vendor:
-                SortText := VendorLedgerEntry.FIELDCAPTION("Vendor No.");
+            SortOrderPrmtr::Customer:
+                SortText := CustLedgerEntry.FIELDCAPTION("Customer No.");
             SortOrderPrmtr::DueDate:
-                SortText := VendorLedgerEntry.FIELDCAPTION("Due Date");
+                SortText := CustLedgerEntry.FIELDCAPTION("Due Date");
         end;
         case DetailLevelPrmtr of
-            DetailLevelPrmtr::Vendor:
-                DetailText := VendorLedgerEntry.FIELDCAPTION("Vendor No.");
+            DetailLevelPrmtr::Customer:
+                DetailText := CustLedgerEntry.FIELDCAPTION("Customer No.");
             DetailLevelPrmtr::Document:
-                DetailText := VendorLedgerEntry.FIELDCAPTION("Document No.");
+                DetailText := CustLedgerEntry.FIELDCAPTION("Document No.");
             DetailLevelPrmtr::Duedates:
-                DetailText := VendorLedgerEntry.FIELDCAPTION("Due Date");
+                DetailText := CustLedgerEntry.FIELDCAPTION("Due Date");
         end;
         if ShowLinkedEntriesPrmtr then
-            WithWithoutText := IncludingBalanceTextMsg
+            WithWithoutText := IncludingBalanceTextTxt
         else
-            WithWithoutText := ExcludingBalanceTextMsg;
-        Result += StrSubstNo(ReportSortTextMsg, SortText, DetailText, WithWithoutText);
+            WithWithoutText := ExcludingBalanceTxt;
+        Result += StrSubstNo(ReportSortTextTxt, SortText, DetailText, WithWithoutText);
         if OnlyOpenPrmtr then
-            Result += OnlyOpenTextMsg;
+            Result += OnlyOpenTxt;
     end;
 
     local procedure GetAmountLabelType(): Text;
@@ -698,17 +823,50 @@ report 18123351 "EOS Vendor Aging"
             exit('AMOUNT');
     end;
 
-    local procedure GetGroupTotalText(): Text;
-    var
-        VendorLedgerEntry: Record "Vendor Ledger Entry";
+    local procedure GetShowCustomerGroupTotal(): Text;
     begin
-        if PrevGroup <> TempReportingBuffer."EOS Reporting Group 1" then begin
-            PrevGroup := TempReportingBuffer."EOS Reporting Group 1";
+        if not (SortOrderPrmtr in [SortOrderPrmtr::SalesPerson, SortOrderPrmtr::Customer]) then
+            exit(Format(true));
+
+        if (SortOrderPrmtr in [SortOrderPrmtr::SalesPerson, SortOrderPrmtr::Customer]) and
+           (DetailLevelPrmtr <> DetailLevelPrmtr::Customer) then
+            exit(Format(true));
+    end;
+
+    local procedure GetCustomerGroupTotalText(): Text;
+    var
+        CustLedgerEntry: Record "Cust. Ledger Entry";
+    begin
+        if PrevCustomerGroup <> TempReportingBuffer."EOS Reporting Group 1" then begin
+            PrevCustomerGroup := TempReportingBuffer."EOS Reporting Group 1";
             case SortOrderPrmtr of
-                SortOrderPrmtr::Vendor:
-                    exit(StrSubstNo(TextTotalTxt, TempReportingBuffer."EOS Source No.", TempReportingBuffer."EOS Reporting Subject Name"));
+                SortOrderPrmtr::SalesPerson,
+              SortOrderPrmtr::Customer:
+                    exit(StrSubstNo(TotalTxt, TempReportingBuffer."EOS Source No.", TempReportingBuffer."EOS Reporting Subject Name"));
                 SortOrderPrmtr::DueDate:
-                    exit(StrSubstNo(TextTotalTxt, VendorLedgerEntry.FIELDCAPTION("Due Date"), TempReportingBuffer."EOS Due Date"));
+                    exit(StrSubstNo(TotalTxt, CustLedgerEntry.FIELDCAPTION("Due Date"), TempReportingBuffer."EOS Due Date"));
+            end;
+        end;
+    end;
+
+    local procedure GetShowSalespersonGroupTotal(): Text;
+    begin
+        if (SortOrderPrmtr in [SortOrderPrmtr::SalesPerson]) then
+            exit(Format(true));
+    end;
+
+    local procedure GetSalespersonGroupTotalText(): Text;
+    begin
+        if HideSalespersonTotalPrmtr then
+            exit('');
+
+        if PrevSalespersonGroup <> TempReportingBuffer."EOS Reporting Group 3" then begin
+            PrevSalespersonGroup := TempReportingBuffer."EOS Reporting Group 3";
+            case SortOrderPrmtr of
+                SortOrderPrmtr::SalesPerson:
+                    exit(StrSubstNo(TotalTxt, TempReportingBuffer."EOS Salesperson Code", TempReportingBuffer."EOS Reporting SalesPerson Name"));
+                SortOrderPrmtr::DueDate:
+                    exit('');
             end;
         end;
     end;
@@ -717,21 +875,19 @@ report 18123351 "EOS Vendor Aging"
     begin
         // 10 -> main asset (unused)
         // 20 -> asset level 2
-        // 21 -> asset level 2 (Vendorname expanded)
-        // 30 -> asset level 3 (Payment)
+        // 21 -> asset level 2 (customername expanded)
+        // 30 -> asset level 3 (Payment) and 4 (Dishonored)
         // 50 -> asset level 5 (Document Total)
 
         case TempReportingBuffer."EOS Level No." of
             1:
                 exit('10');
             2:
-
-                if (SortOrderPrmtr = SortOrderPrmtr::Vendor) and (DetailLevelPrmtr = DetailLevelPrmtr::Vendor) then
+                if (SortOrderPrmtr in [SortOrderPrmtr::SalesPerson, SortOrderPrmtr::Customer]) and (DetailLevelPrmtr = DetailLevelPrmtr::Customer) then
                     exit('21')
                 else
                     exit('20');
-
-            3:
+            3, 4:
                 exit('30');
             5:
                 exit('50');
@@ -745,12 +901,178 @@ report 18123351 "EOS Vendor Aging"
 
     local procedure UpdateReqPage();
     begin
-        NewPagePerVendorEnabled := SortOrderPrmtr = SortOrderPrmtr::Vendor;
-        LinkedEntriesEnabled := ((SortOrderPrmtr = SortOrderPrmtr::Vendor) and (DetailLevelPrmtr = DetailLevelPrmtr::Duedates)) or
+        NewPagePerCustomerEnabled := SortOrderPrmtr in [SortOrderPrmtr::SalesPerson, SortOrderPrmtr::Customer];
+        NewPagePerSalespersonEnabled := SortOrderPrmtr = SortOrderPrmtr::SalesPerson;
+        LinkedEntriesEnabled := ((SortOrderPrmtr in [SortOrderPrmtr::SalesPerson, SortOrderPrmtr::Customer]) and (DetailLevelPrmtr = DetailLevelPrmtr::Duedates)) or
                                 (SortOrderPrmtr = SortOrderPrmtr::DueDate);
 
         if not LinkedEntriesEnabled then
             ShowLinkedEntriesPrmtr := false;
+
+        if NewPagePerSalespersonPrmtr and NewPagePerCustomerPrmtr and (SortOrderPrmtr = SortOrderPrmtr::SalesPerson) then
+            HideSalespersonTotalEnabled := false
+        else
+            HideSalespersonTotalEnabled := true;
+    end;
+
+    local procedure FixParameters();
+    begin
+        if SortOrderPrmtr <> SortOrderPrmtr::SalesPerson then
+            NewPagePerSalespersonPrmtr := false;
+
+        if not (SortOrderPrmtr in [SortOrderPrmtr::SalesPerson, SortOrderPrmtr::Customer]) then
+            NewPagePerCustomerPrmtr := false;
+
+        if DetailLevelPrmtr <> DetailLevelPrmtr::Duedates then
+            ShowLinkedEntriesPrmtr := false;
+
+        if NewPagePerSalespersonPrmtr and NewPagePerCustomerPrmtr and (SortOrderPrmtr = SortOrderPrmtr::SalesPerson) then
+            HideSalespersonTotalPrmtr := true;
+
+        HideMasterTotal := NewPagePerSalespersonPrmtr or NewPagePerCustomerPrmtr or HideSalespersonTotalPrmtr;
+    end;
+
+    local procedure SetReportParameters()
+    var
+        Parameters: Record "EOS008 CVS Report Parameters";
+        AdvCustVendStatSharedMem: Codeunit "EOS AdvCustVendStat SharedMem";
+    begin
+        // OnlyOpenPrmtr := true;
+        // ShowLinkedEntriesPrmtr := false;
+
+        UpdateReqPage();
+
+        if (ParametersBuffer."Customer Vendor Table Filter 1" <> '') or (ParametersBuffer."SalesPerson Table Filter 1" <> '') then
+            AdvCustVendStatSharedMem.SetReportParameter(ParametersBuffer); //allows more than 1 parameters assignation
+        if AdvCustVendStatSharedMem.GetReportParameter(Parameters) then begin
+            OnlyOpenPrmtr := Parameters."Only Open";
+            SortOrderPrmtr := Parameters."Customer Detail Order";
+            DetailLevelPrmtr := Parameters."Customer Detail Level";
+            ShowLinkedEntriesPrmtr := Parameters."Show Linked Entries";
+            NewPagePerSalespersonPrmtr := Parameters."New Page Per Salesperson";
+            NewPagePerCustomerPrmtr := Parameters."New Page Per Customer";
+            UseSalespersonFromCustomerPrmtr := Parameters."Use Salesperson from Customer";
+            PostingDateFilterPrmtr := Parameters."Posting Date Filter";
+            DueDateFilterPrmtr := Parameters."Due Date Filter";
+            PaymentMethodFilterPrmtr := Parameters."Payment Method Filter";
+            ShowFiltersPrmtr := Parameters."Print Filters";
+            HideSalespersonTotalPrmtr := Parameters."Hide Salesperson Total";
+
+            if Parameters."Customer Vendor Table Filter 1" <> '' then begin
+                CustomerFilters.Reset();
+                CustomerFilters.SetView(Parameters."Customer Vendor Table Filter 1");
+            end;
+            if Parameters."SalesPerson Table Filter 1" <> '' then begin
+                SalespersonFilters.Reset();
+                SalespersonFilters.SetView(Parameters."SalesPerson Table Filter 1");
+            end;
+            ParametersBuffer := Parameters;
+        end;
+    end;
+
+    procedure SetOnlyOpenEntries(Set: Boolean);
+    begin
+        OnlyOpenPrmtr := Set;
+    end;
+
+    procedure SetSortingBySalesPerson();
+    begin
+        SortOrderPrmtr := SortOrderPrmtr::SalesPerson;
+    end;
+
+    procedure SetSortingBySalesCustomer();
+    begin
+        SortOrderPrmtr := SortOrderPrmtr::Customer;
+    end;
+
+    procedure SetSortingBySalesDueDate();
+    begin
+        SortOrderPrmtr := SortOrderPrmtr::DueDate;
+    end;
+
+    procedure SetDetailByCustomer();
+    begin
+        DetailLevelPrmtr := DetailLevelPrmtr::Customer;
+    end;
+
+    procedure SetDetailByDocument();
+    begin
+        DetailLevelPrmtr := DetailLevelPrmtr::Document;
+    end;
+
+    procedure SetDetailByDueDate();
+    begin
+        DetailLevelPrmtr := DetailLevelPrmtr::Duedates;
+    end;
+
+    procedure SetShowLinkedEntries(Set: Boolean);
+    begin
+        ShowLinkedEntriesPrmtr := Set;
+    end;
+
+    procedure SetNewPagePerSalesperson(Set: Boolean);
+    begin
+        NewPagePerSalespersonEnabled := Set;
+    end;
+
+    procedure SetNewPagePerCustomer(Set: Boolean);
+    begin
+        NewPagePerCustomerPrmtr := Set;
+    end;
+
+    procedure SetUseCustomerSalesperson(Set: Boolean);
+    begin
+        UseSalespersonFromCustomerPrmtr := Set;
+    end;
+
+    procedure SetPostingDateFilter(Set: Text);
+    begin
+        PostingDateFilterPrmtr := Set;
+    end;
+
+    procedure SetDueDateFilter(Set: Text);
+    begin
+        DueDateFilterPrmtr := Set;
+    end;
+
+    procedure SetPaymentMethodFilter(Set: Text);
+    begin
+        PaymentMethodFilterPrmtr := Set;
+    end;
+
+    procedure SetPrintFilters(Set: Boolean);
+    begin
+        ShowFiltersPrmtr := Set;
+    end;
+
+    procedure SetHideTotals(Set: Boolean);
+    begin
+        HideSalespersonTotalPrmtr := Set;
+    end;
+
+    procedure GetReportLineCount(): Integer;
+    begin
+        exit(ReportLineCount);
+    end;
+
+    procedure GetProcessedCustomerList(var List: Record Customer);
+    begin
+        Clear(List);
+        Clear(TempProcessedCustomerList);
+        if TempProcessedCustomerList.FindSet() then
+            repeat
+                List := TempProcessedCustomerList;
+                List.Insert();
+            until TempProcessedCustomerList.Next() = 0;
+    end;
+
+    local procedure GetSelectionFilterForSalesperson(var SalespersonPurchaser: Record "Salesperson/Purchaser"): Text
+    var
+        SelectionFilterManagement: Codeunit SelectionFilterManagement;
+        RecRef: RecordRef;
+    begin
+        RecRef.GETTABLE(SalespersonPurchaser);
+        exit(SelectionFilterManagement.GetSelectionFilter(RecRef, SalespersonPurchaser.FIELDNO(Code)));
     end;
 
     [IntegrationEvent(false, false)]
