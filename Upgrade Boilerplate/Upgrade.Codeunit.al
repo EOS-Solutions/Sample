@@ -33,9 +33,9 @@ codeunit 9999990 "EOSxxx Upgrade" // replace xxx with your 3 digit extension cod
     begin
         InitCodeunit();
 
-        UpgTag.SetUpgradeTagIfNotExists(<workitem-id-1>); // work item ID for 'RunUpgradeProcedureOne'
-        UpgTag.SetUpgradeTagIfNotExists(<workitem-id-1>); // work item ID for 'RunUpgradeProcedureTwo'
-        UpgTag.SetUpgradeTagIfNotExists(<workitem-id-1>); // work item ID for 'RunUpgradeProcedureThree'
+        UpgTag.SetUpgradeTagIfNotExists(<workitem-id-1>); // work item ID for 'RunUpgradeProcedure_One'
+        UpgTag.SetUpgradeTagIfNotExists(<workitem-id-2>); // work item ID for 'RunUpgradeProcedure_Two'
+        UpgTag.SetUpgradeTagIfNotExists(<workitem-id-3>); // work item ID for 'RunUpgradeProcedure_Three'
         // ...
     end;
 
@@ -44,31 +44,31 @@ codeunit 9999990 "EOSxxx Upgrade" // replace xxx with your 3 digit extension cod
     begin
         InitCodeunit();
 
-        RunUpgradeProcedureOne(<workitem-id-1>); // work item ID for 'RunUpgradeProcedureOne'
-        RunUpgradeProcedureTwo(<workitem-id-1>); // work item ID for 'RunUpgradeProcedureTwo'
-        RunUpgradeProcedureThree(<workitem-id-1>); // work item ID for 'RunUpgradeProcedureThree'
+        RunUpgradeProcedure_One(); // work item ID for 'RunUpgradeProcedureOne'
+        RunUpgradeProcedure_Two(); // work item ID for 'RunUpgradeProcedureTwo'
+        RunUpgradeProcedure_Three(); // work item ID for 'RunUpgradeProcedureThree'
         // ...
     end;
 
-    local procedure RunUpgradeProcedureOne(WorkItemID: Integer)
+    local procedure RunUpgradeProcedureOne()
     begin
-        if (not UpgTag.SetUpgradeTagIfNotExists(WorkItemID)) then exit;
-
+        if (not UpgTag.BeginUpgrade(<workitem-id-1>)) then exit;
         // do stuff
+        UpgTag.EndUpgrade();
     end;
 
-    local procedure RunUpgradeProcedureTwo(WorkItemID: Integer)
+    local procedure RunUpgradeProcedureTwo()
     begin
-        if (not UpgTag.SetUpgradeTagIfNotExists(WorkItemID)) then exit;
-
+        if (not UpgTag.BeginUpgrade(<workitem-id-2>)) then exit;
         // do stuff
+        UpgTag.EndUpgrade();
     end;
 
-    local procedure RunUpgradeProcedureThree(WorkItemID: Integer)
+    local procedure RunUpgradeProcedureThree()
     begin
-        if (not UpgTag.SetUpgradeTagIfNotExists(WorkItemID)) then exit;
-
+        if (not UpgTag.BeginUpgrade(<workitem-id-3>)) then exit;
         // do stuff
+        UpgTag.EndUpgrade();
     end;
 
 }
