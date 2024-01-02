@@ -7,6 +7,7 @@
         <DataProvider>SQL</DataProvider>
         <ConnectString />
       </ConnectionProperties>
+      <rd:SecurityType>None</rd:SecurityType>
       <rd:DataSourceID>27c01b25-3903-4f36-8a95-ce226a59df32</rd:DataSourceID>
     </DataSource>
   </DataSources>
@@ -784,7 +785,6 @@
                                               <PaddingRight>2pt</PaddingRight>
                                             </Style>
                                           </Textbox>
-                                          <rd:Selected>true</rd:Selected>
                                         </CellContents>
                                       </TablixCell>
                                       <TablixCell>
@@ -1044,7 +1044,7 @@
                                     </TablixCells>
                                   </TablixRow>
                                   <TablixRow>
-                                    <Height>0.11811in</Height>
+                                    <Height>0.16011in</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
@@ -1117,7 +1117,7 @@
                                                   <TextRun>
                                                     <Value>=Fields!Line_Description.Value</Value>
                                                     <Style>
-                                                      <FontSize>6pt</FontSize>
+                                                      <FontSize>8pt</FontSize>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -1138,16 +1138,16 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Line_Quantity1">
+                                          <Textbox Name="Textbox1">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>=Fields!Line_Quantity.Value</Value>
+                                                    <Value />
                                                     <Style>
-                                                      <FontSize>6pt</FontSize>
+                                                      <FontSize>8pt</FontSize>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -1156,7 +1156,7 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Line_Quantity1</rd:DefaultName>
+                                            <rd:DefaultName>Textbox1</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
@@ -2350,26 +2350,22 @@
                                     <TablixMembers>
                                       <TablixMember>
                                         <Visibility>
-                                          <Hidden>=(Fields!Line_Type.Value = 0) or (Fields!Line_LineType.Value &lt;&gt; 0)</Hidden>
+                                          <Hidden>=(Fields!Line_Type.Value = 0)</Hidden>
                                         </Visibility>
                                       </TablixMember>
                                       <TablixMember>
                                         <Visibility>
-                                          <Hidden>=Fields!Line_LineType.Value &lt;&gt; 1</Hidden>
+                                          <Hidden>=Fields!Line_Type.Value &lt;&gt; 0</Hidden>
                                         </Visibility>
                                       </TablixMember>
                                       <TablixMember>
                                         <Visibility>
-                                          <Hidden>=Iif(Fields!Line_LineType.Value = 4, false, true)</Hidden>
+                                          <Hidden>true</Hidden>
                                         </Visibility>
                                       </TablixMember>
                                       <TablixMember>
                                         <Visibility>
-                                          <Hidden>=(Fields!Line_Type.Value &gt; 0) or
-  ((Fields!Line_LineType.Value &lt;&gt; 0) and
-   (Fields!Line_LineType.Value &lt;&gt; 3) and
-   (Fields!Line_LineType.Value &lt;&gt; 2) and
-   (Fields!Line_LineType.Value &lt;&gt; 5))</Hidden>
+                                          <Hidden>true</Hidden>
                                         </Visibility>
                                       </TablixMember>
                                     </TablixMembers>
@@ -2382,7 +2378,7 @@
                               <RepeatColumnHeaders>true</RepeatColumnHeaders>
                               <RepeatRowHeaders>true</RepeatRowHeaders>
                               <DataSetName>DataSet_Result</DataSetName>
-                              <Height>1.30151in</Height>
+                              <Height>1.34351in</Height>
                               <Width>7.27559in</Width>
                               <Style>
                                 <Border>
@@ -2510,7 +2506,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>ReportTitle</rd:DefaultName>
-              <Top>266.4567pt</Top>
+              <Top>265.4568pt</Top>
               <Left>0.02cm</Left>
               <Height>18.8pt</Height>
               <Width>3.56927in</Width>
@@ -3172,7 +3168,7 @@
                     </Paragraph>
                   </Paragraphs>
                   <rd:DefaultName>Textbox13</rd:DefaultName>
-                  <Top>11pt</Top>
+                  <Top>13.19997pt</Top>
                   <Height>11pt</Height>
                   <Width>0.94199in</Width>
                   <Style>
@@ -3236,7 +3232,7 @@
                       </Style>
                     </Paragraph>
                   </Paragraphs>
-                  <Top>0.38806cm</Top>
+                  <Top>0.46567cm</Top>
                   <Left>2.39265cm</Left>
                   <Height>11pt</Height>
                   <Width>0.68277in</Width>
@@ -3294,7 +3290,7 @@
                         <TextRun>
                           <Value>=Fields!VendorContact.Value</Value>
                           <Style>
-                            <FontSize>8pt</FontSize>
+                            <FontSize>7pt</FontSize>
                           </Style>
                         </TextRun>
                       </TextRuns>
@@ -3304,7 +3300,7 @@
                     </Paragraph>
                   </Paragraphs>
                   <Left>116.98212pt</Left>
-                  <Height>0.38806cm</Height>
+                  <Height>0.39864cm</Height>
                   <Width>1.77603in</Width>
                   <ZIndex>4</ZIndex>
                   <Style>
@@ -3326,7 +3322,7 @@
                         <TextRun>
                           <Value>=Fields!VendorEMail.Value</Value>
                           <Style>
-                            <FontSize>8pt</FontSize>
+                            <FontSize>7pt</FontSize>
                           </Style>
                         </TextRun>
                       </TextRuns>
@@ -3335,7 +3331,7 @@
                       </Style>
                     </Paragraph>
                   </Paragraphs>
-                  <Top>0.15278in</Top>
+                  <Top>0.18333in</Top>
                   <Left>116.98212pt</Left>
                   <Height>0.38806cm</Height>
                   <Width>1.77603in</Width>
@@ -3405,7 +3401,7 @@
                       </Style>
                     </Paragraph>
                   </Paragraphs>
-                  <Top>0.15694in</Top>
+                  <Top>0.1875in</Top>
                   <Left>309.79293pt</Left>
                   <Height>0.40137cm</Height>
                   <Width>2.95902in</Width>
@@ -3472,7 +3468,7 @@
                       </Style>
                     </Paragraph>
                   </Paragraphs>
-                  <Top>0.39864cm</Top>
+                  <Top>0.47625cm</Top>
                   <Left>8.63798cm</Left>
                   <Height>11.37731pt</Height>
                   <Width>0.9019in</Width>
@@ -3526,7 +3522,7 @@
               <KeepTogether>true</KeepTogether>
               <Top>10.83934cm</Top>
               <Left>0.02cm</Left>
-              <Height>22.67739pt</Height>
+              <Height>26.41228pt</Height>
               <Width>18.50315cm</Width>
               <ZIndex>3</ZIndex>
               <Style>
@@ -3544,36 +3540,9 @@
             </Border>
           </Style>
         </PageHeader>
-        <PageFooter>
-          <Height>1.60497cm</Height>
-          <PrintOnFirstPage>true</PrintOnFirstPage>
-          <PrintOnLastPage>true</PrintOnLastPage>
-          <ReportItems>
-            <Image Name="Image2">
-              <Source>Database</Source>
-              <Value>=First(Fields!FooterImage.Value, "DataSet_Result")</Value>
-              <MIMEType>image/bmp</MIMEType>
-              <Sizing>FitProportional</Sizing>
-              <Top>0.10597cm</Top>
-              <Height>14.99mm</Height>
-              <Width>184.99999mm</Width>
-              <Style>
-                <Border>
-                  <Style>None</Style>
-                </Border>
-              </Style>
-            </Image>
-          </ReportItems>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-          </Style>
-        </PageFooter>
         <PageHeight>29.7cm</PageHeight>
         <PageWidth>21cm</PageWidth>
         <LeftMargin>1cm</LeftMargin>
-        <RightMargin>0cm</RightMargin>
         <TopMargin>0.5cm</TopMargin>
         <BottomMargin>0.5cm</BottomMargin>
         <ColumnSpacing>1.27cm</ColumnSpacing>

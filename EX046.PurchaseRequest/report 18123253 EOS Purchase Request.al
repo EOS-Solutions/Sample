@@ -111,7 +111,7 @@ report 18123253 "EOS Purchase Request"
                 column(Line_UnitPrice; "EOS Direct Unit Cost")
                 {
                 }
-                column(Line_Amount; CalcLineAmount())
+                column(Line_Amount; "Line Amount")
                 {
                 }
                 column(Line_Type_Desc; Format("EOS Type"))
@@ -330,7 +330,7 @@ report 18123253 "EOS Purchase Request"
         Page_Caption = 'Page';
         Payment_DueDate_Caption = 'Due Date';
         Payment_Amount_Caption = 'Amount';
-        YourReference_Caption = 'Your reference';
+        YourReference_Caption = 'Description';
         OrderDate_Caption = 'Order Date';
         ShipmentDate_Caption = 'Shpt. Date';
         Line_ItemNo_Caption = 'No.';
@@ -363,7 +363,6 @@ report 18123253 "EOS Purchase Request"
         PaymentLine: array[4] of Text;
         DimValue1Code: code[20];
         DimValue2Code: Code[20];
-        [InDataSet]
         DocNo: Code[20];
         Dim1Name: Text;
         Dim2Name: Text;
@@ -391,15 +390,10 @@ report 18123253 "EOS Purchase Request"
         TmpPaymentLine.Open(12171, true);
     end;
 
-    local procedure CalcShipDate(): Date
-    begin
-        exit(0D);
-    end;
-
     local procedure BuyFromAddress(): Text
     var
         FormatAddr: Codeunit "EOS Format Address";
-        AddrArray: Array[8] of Text[50];
+        AddrArray: array[8] of Text[50];
     begin
         FormatAddr.FormatAddr(
         AddrArray, Vendor.Name, Vendor."Name 2", Vendor.Contact, Vendor.Address,
