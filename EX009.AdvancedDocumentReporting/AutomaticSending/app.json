@@ -1,0 +1,39 @@
+﻿{
+  "id": "e7250f22-799a-4205-bf74-16218aa4b33e",
+  "name": "AutomaticSending",
+  "publisher": "Default Publisher",
+  "version": "1.0.0.0",
+  "brief": "",
+  "description": "",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "",
+  "logo": "",
+  "dependencies": [
+    {
+      "id": "b2dd1d81-3e95-46a8-94ef-8c32d872bf0c",
+      "name": "Advanced Document Reporting",
+      "publisher": "EOS Solutions",
+      "version": "23.0.7.0"
+    }
+  ],
+  "screenshots": [],
+  "platform": "1.0.0.0",
+  "application": "23.0.0.0",
+  "idRanges": [
+    {
+      "from": 50100,
+      "to": 50149
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": true,
+    "includeSourceInSymbolFile": true
+  },
+  "runtime": "12.0",
+  "features": [
+    "NoImplicitWith"
+  ]
+}
