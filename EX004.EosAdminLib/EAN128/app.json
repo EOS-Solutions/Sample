@@ -1,0 +1,39 @@
+﻿{
+  "id": "45ffbf77-a055-4661-9e23-b5d776f42c85",
+  "name": "EAN128 Test Project",
+  "publisher": "EOS Solutions",
+  "version": "1.0.0.0",
+  "brief": "",
+  "description": "",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "",
+  "logo": "",
+  "dependencies": [
+    {
+      "id": "8bb96677-5112-4566-b742-12eebbb9a058",
+      "name": "EOS Administration Library",
+      "publisher": "EOS Solutions",
+      "version": "22.0.15.28"
+    }
+  ],
+  "screenshots": [],
+  "platform": "1.0.0.0",
+  "application": "22.0.0.0",
+  "idRanges": [
+    {
+      "from": 50100,
+      "to": 50149
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": true,
+    "includeSourceInSymbolFile": true
+  },
+  "runtime": "11.0",
+  "features": [
+    "NoImplicitWith"
+  ]
+}
