@@ -34,6 +34,7 @@ pageextension 61101 "EOSPurch. Request List DTS" extends "EOS Purchase Request L
                 ApplicationArea = All;
                 Visible = DSEnabledSystemId;
                 Enabled = DSEnabled;
+                UpdatePropagation = Both;
             }
             part("EOS003 Status Log Factbox"; "EOS003 Status Log Factbox")
             {
@@ -42,6 +43,7 @@ pageextension 61101 "EOSPurch. Request List DTS" extends "EOS Purchase Request L
                 ApplicationArea = All;
                 Visible = DSEnabledSystemId;
                 Enabled = DSEnabled;
+                UpdatePropagation = Both;
             }
             part("EOS DTS Status Factbox"; "EOS DS Record Status FactBox")
             {
@@ -54,6 +56,7 @@ pageextension 61101 "EOSPurch. Request List DTS" extends "EOS Purchase Request L
                   "No." = FIELD("EOS No.");
                 SubPageView = SORTING("Table ID", "Document Type", "No.", "Line No.", "Factbox Line No.");
                 Visible = DSEnabledNoSystemId;
+                UpdatePropagation = Both;
             }
             part("EOS DTS Status Log Factbox"; "EOS DS Status Log Factbox")
             {
@@ -66,6 +69,7 @@ pageextension 61101 "EOSPurch. Request List DTS" extends "EOS Purchase Request L
                   "No." = FIELD("EOS No.");
                 SubPageView = SORTING("Table ID", "Document Type", "No.", "Line No.", "Factbox Line No.");
                 Visible = DSEnabledNoSystemId;
+                UpdatePropagation = Both;
             }
         }
     }
