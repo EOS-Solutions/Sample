@@ -25,7 +25,12 @@ report 18006565 "EOS Calculate Vendor Rating"
                 IsHandled: Boolean;
             begin
                 if VendorRatingEntry.Get("Document No.", "Line No.") then
-                    CurrReport.Skip();
+                    if UseRecalcVendorRating then begin
+                        VendorRatingEntry.Delete();
+                        VendorRatingEntry.Init();
+                    end
+                    else
+                        CurrReport.Skip();
 
                 if Type <> Type::Item then
                     CurrReport.Skip();
@@ -77,8 +82,12 @@ report 18006565 "EOS Calculate Vendor Rating"
                 VendorRatingEntry."Arrival Date" := PurchRcptHeader."Posting Date";
 
                 if RatingDateAndQuantity then begin
-                    if ("Promised Receipt Date" <> 0D) then begin
-                        Value := VendorRatingEntry."Arrival Date" - "Promised Receipt Date";
+                    if (("Promised Receipt Date" <> 0D) or ("Expected Receipt Date" <> 0D)) then begin
+                        IF ("Promised Receipt Date" <> 0D) then
+                            Value := VendorRatingEntry."Arrival Date" - "Promised Receipt Date"
+                        else
+                            Value := VendorRatingEntry."Arrival Date" - "Expected Receipt Date";
+
                         if Type = Type::Item then begin
                             VendorRatingParam.Reset();
                             VendorRatingParam.SetRange(Type, VendorRatingParam.Type::"Appointed Time");
@@ -203,7 +212,6 @@ report 18006565 "EOS Calculate Vendor Rating"
                     VendorRatingEntry."Use Date Criteria in Calc." := UseDateCriteriainCalc;
 
                     IF InspectionSetup."Vendor Certificazion Value" <> 0 THEN BEGIN
-
                         Vendor.GET("Purch. Rcpt. Line"."Buy-from Vendor No.");
                         IF Vendor."EOS Certified Vendor" THEN BEGIN
                             VendorCertValue := InspectionSetup."Vendor Certificazion Value" / 100;
@@ -287,13 +295,15 @@ report 18006565 "EOS Calculate Vendor Rating"
                             ToolTip = ' ';
                             Caption = 'Use Cert. Vendor in Calc.';
                         }
+                        field(UseRecalcVendorRating; UseRecalcVendorRating)
+                        {
+                            ApplicationArea = All;
+                            ToolTip = 'Recalculate Vendor Rating and delete previous rating.';
+                            Caption = 'Recalculate Vendor Rating';
+                        }
                     }
                 }
             }
-        }
-
-        actions
-        {
         }
     }
 
@@ -318,6 +328,27 @@ report 18006565 "EOS Calculate Vendor Rating"
             Message(Text001Msg);
     end;
 
+    /// <summary>
+    /// Raised before creating the Vendor Rating Entry.
+    /// </summary>
+    /// <param name="VendorRatingEntry">Vendor Rating Entry to insert</param>
+    /// <param name="PurchRcptLine">Current Purch. Rcpt. Line</param>
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeInsertVendorRatingEntry(var VendorRatingEntry: Record "EOS Vendor Rating Entry"; PurchRcptLine: Record "Purch. Rcpt. Line")
+    begin
+    end;
+
+    /// <summary>
+    /// Raised before calculating the Vendor Total Score and before creating the Vendor Rating Entry.
+    /// </summary>
+    /// <param name="VendorRatingEntry">Vendor Rating Entry to modify</param>
+    /// <param name="PurchRcptLine">Current Purch. Rcpt. Line</param>
+    /// <param name="IsHandled">if true, skip the standard calculation method.</param>
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeCalcVendorTotalScore(var VendorRatingEntry: Record "EOS Vendor Rating Entry"; PurchRcptLine: Record "Purch. Rcpt. Line"; var IsHandled: Boolean)
+    begin
+    end;
+
     var
         InspectionSetup: Record "EOS Inspection Setup";
         Vendor: Record Vendor;
@@ -326,6 +357,7 @@ report 18006565 "EOS Calculate Vendor Rating"
         UseQuantityCriteriainCalc: Boolean;
         UseDateCriteriainCalc: Boolean;
         UseVendorCertinCalc: Boolean;
+        UseRecalcVendorRating: Boolean;
         QualityCriteriaValue: Decimal;
         QuantityCriteriaValue: Decimal;
         DateCriteriaValue: Decimal;
@@ -333,16 +365,5 @@ report 18006565 "EOS Calculate Vendor Rating"
         VendorCertValue: Decimal;
         VendorGlobalServiceValue: Decimal;
         UseVendorGlobalServiceCalc: Boolean;
-
-
-    [IntegrationEvent(false, false)]
-    local procedure OnBeforeInsertVendorRatingEntry(var VendorRatingEntry: Record "EOS Vendor Rating Entry"; PurchRcptLine: Record "Purch. Rcpt. Line")
-    begin
-    end;
-
-    [IntegrationEvent(false, false)]
-    local procedure OnBeforeCalcVendorTotalScore(var VendorRatingEntry: Record "EOS Vendor Rating Entry"; PurchRcptLine: Record "Purch. Rcpt. Line"; var IsHandled: Boolean)
-    begin
-    end;
 }
 

@@ -8,6 +8,7 @@
         <ConnectString />
       </ConnectionProperties>
       <rd:SecurityType>None</rd:SecurityType>
+      <rd:DataSourceID>ee162a2d-0ce6-4c99-a792-873367185807</rd:DataSourceID>
     </DataSource>
   </DataSources>
   <ReportSections>
@@ -18,39 +19,39 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>0.59055in</Width>
+                  <Width>1.5cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.64961in</Width>
+                  <Width>1.65001cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.72834in</Width>
+                  <Width>1.84998cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.45669in</Width>
+                  <Width>3.69999cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.59055in</Width>
+                  <Width>1.5cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.47244in</Width>
+                  <Width>1.2cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.70866in</Width>
+                  <Width>1.8cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.64961in</Width>
+                  <Width>1.65001cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.70866in</Width>
+                  <Width>1.8cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.76772in</Width>
+                  <Width>1.95001cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>0.16654in</Height>
+                  <Height>0.42301cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -285,7 +286,7 @@
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.16654in</Height>
+                  <Height>0.42301cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -516,7 +517,7 @@
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.16654in</Height>
+                  <Height>0.42301cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -550,6 +551,7 @@
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="Inspection_Plan_Header_Description">
+                          <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
@@ -720,7 +722,7 @@
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.16654in</Height>
+                  <Height>0.42301cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -754,6 +756,7 @@
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="Inspection_Plan_Header__Description_2_">
+                          <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
@@ -935,7 +938,7 @@
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.33307in</Height>
+                  <Height>0.846cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -1266,7 +1269,7 @@
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.16654in</Height>
+                  <Height>0.42301cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -1329,6 +1332,7 @@
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="Inspection_Plan_Line__Inspection_Plan_Line__Description">
+                          <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
@@ -1601,7 +1605,6 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>DataSet_Result</DataSetName>
-            <Top>0cm</Top>
             <Height>2.96106cm</Height>
             <Width>18.59999cm</Width>
             <Style />
@@ -1633,7 +1636,6 @@
                 </Paragraph>
               </Paragraphs>
               <Top>0.423cm</Top>
-              <Left>0cm</Left>
               <Height>0.423cm</Height>
               <Width>7.5cm</Width>
               <Style>
@@ -1656,8 +1658,6 @@
                   <Style />
                 </Paragraph>
               </Paragraphs>
-              <Top>0cm</Top>
-              <Left>0cm</Left>
               <Height>0.423cm</Height>
               <Width>7.5cm</Width>
               <ZIndex>1</ZIndex>
@@ -1759,7 +1759,6 @@
                   </Style>
                 </Paragraph>
               </Paragraphs>
-              <Top>0cm</Top>
               <Left>15.45cm</Left>
               <Height>0.423cm</Height>
               <Width>3.15cm</Width>
@@ -1775,7 +1774,6 @@
         <PageHeight>29.7cm</PageHeight>
         <PageWidth>21cm</PageWidth>
         <LeftMargin>2.1cm</LeftMargin>
-        <RightMargin>0cm</RightMargin>
         <TopMargin>2cm</TopMargin>
         <BottomMargin>2cm</BottomMargin>
         <Style />
@@ -1955,6 +1953,7 @@ End Function
 </Code>
   <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>2cf9cb78-2ada-413d-8923-a362cd308a25</rd:ReportID>
   <DataSets>
     <DataSet Name="DataSet_Result">
       <Fields>
