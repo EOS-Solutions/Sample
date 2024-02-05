@@ -7,6 +7,7 @@
         <DataProvider>SQL</DataProvider>
         <ConnectString />
       </ConnectionProperties>
+      <rd:SecurityType>None</rd:SecurityType>
       <rd:DataSourceID>2e1cb131-4401-4db4-adec-57e3478fca20</rd:DataSourceID>
     </DataSource>
   </DataSources>
@@ -24,7 +25,7 @@
                   <Width>5.69999cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.25001cm</Width>
+                  <Width>2.8cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>2.25001cm</Width>
@@ -1431,8 +1432,6 @@
                           </Paragraphs>
                           <Style>
                             <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingLeft>0.3cm</PaddingLeft>
-                            <PaddingRight>0.2515cm</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
@@ -2202,14 +2201,14 @@
             </TablixRowHierarchy>
             <DataSetName>DataSet_Result</DataSetName>
             <Height>3.29753cm</Height>
-            <Width>28.34375cm</Width>
+            <Width>28.89374cm</Width>
             <Style />
           </Tablix>
         </ReportItems>
         <Height>3.66619cm</Height>
         <Style />
       </Body>
-      <Width>28.34375cm</Width>
+      <Width>28.89374cm</Width>
       <Page>
         <PageHeader>
           <Height>3.0665cm</Height>
@@ -2526,9 +2525,7 @@
         <PageHeight>21cm</PageHeight>
         <PageWidth>29.7cm</PageWidth>
         <LeftMargin>0.5cm</LeftMargin>
-        <RightMargin>0.5cm</RightMargin>
         <TopMargin>2.1cm</TopMargin>
-        <BottomMargin>0cm</BottomMargin>
         <Style />
       </Page>
     </ReportSection>
