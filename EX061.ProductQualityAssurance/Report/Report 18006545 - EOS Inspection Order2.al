@@ -11,7 +11,7 @@ report 18006545 "EOS Inspection Order2"
     {
         dataitem("Inspection Order Header"; "EOS Inspection Order Header")
         {
-            DataItemTableView = SORTING("Inspection Type", "Item No.", "Customer/Vendor No.", "Date of Inspection Result") ORDER(Ascending);
+            DataItemTableView = sorting("Inspection Type", "Item No.", "Customer/Vendor No.", "Date of Inspection Result") order(ascending);
             PrintOnlyIfDetail = true;
             RequestFilterFields = "No.";
             column(Title; Title)
@@ -175,7 +175,7 @@ report 18006545 "EOS Inspection Order2"
             {
 
             }
-            column(HeaderComment; GetCommentString(TRUE))
+            column(HeaderComment; GetCommentString(true))
             {
             }
             column(NonComplianceNo_InspectionOrderHeader; "Inspection Order Header"."Non-Compliance No.")
@@ -202,8 +202,8 @@ report 18006545 "EOS Inspection Order2"
             }
             dataitem("Inspection Order Line"; "EOS Inspection Order Line")
             {
-                DataItemLink = "Inspection Order No." = FIELD("No.");
-                DataItemTableView = SORTING("Inspection Order No.", "Line No.");
+                DataItemLink = "Inspection Order No." = field("No.");
+                DataItemTableView = sorting("Inspection Order No.", "Line No.");
                 column(Inspection_Order_Line__Inspection_Order_Line__Position; "Inspection Order Line".Position)
                 {
                 }
@@ -309,7 +309,7 @@ report 18006545 "EOS Inspection Order2"
                 column(LastActualValue; LastActualValue)
                 {
                 }
-                column(LineComment; GetCommentString(FALSE))
+                column(LineComment; GetCommentString(false))
                 {
                 }
                 column(LineOperator; GetLastOperator())
@@ -318,7 +318,7 @@ report 18006545 "EOS Inspection Order2"
 
                 trigger OnAfterGetRecord()
                 begin
-                    IF NOT "Inspection Device".GET("Inspection Order Line"."Inspection Device No.") THEN
+                    if not "Inspection Device".GET("Inspection Order Line"."Inspection Device No.") then
                         "Inspection Device".INIT();
 
                     LastActualValue := 0;
@@ -327,20 +327,18 @@ report 18006545 "EOS Inspection Order2"
             }
 
             trigger OnAfterGetRecord()
-            // var
-                // PurchaseHeader: Record "Purchase Header";
             begin
 
-                IF NOT Location.GET("Inspection Order Header"."Location Code") THEN
+                if not Location.GET("Inspection Order Header"."Location Code") then
                     CLEAR(Location);
-                IF NOT Item.GET("Inspection Order Header"."Item No.") THEN
+                if not Item.GET("Inspection Order Header"."Item No.") then
                     CLEAR(Item);
-                IF NOT Vendor.GET("Inspection Order Header"."Customer/Vendor No.") THEN
+                if not Vendor.GET("Inspection Order Header"."Customer/Vendor No.") then
                     CLEAR(Vendor);
 
-                IF "Inspection Order Header"."Inspection Order Type" = "Inspection Order Header"."Inspection Order Type"::"Inspection Order" THEN
+                if "Inspection Order Header"."Inspection Order Type" = "Inspection Order Header"."Inspection Order Type"::"Inspection Order" then
                     Title := Text001Lbl
-                ELSE
+                else
                     Title := Text002Lbl;
 
             end;
@@ -449,44 +447,41 @@ report 18006545 "EOS Inspection Order2"
     var
         InspectionCommentLine: Record "EOS Inspection Comment Line";
         EOSLibraryEXT: Codeunit "EOS Library EXT";
-        AddrArray: array[8] of Text[50];
         ResText: Text;
-        i: Integer;
     begin
-        IF IsHeader THEN BEGIN
+        if IsHeader then begin
             InspectionCommentLine.SETRANGE("Source Table", InspectionCommentLine."Source Table"::Order);
             InspectionCommentLine.SETRANGE("Source No.", "Inspection Order Header"."No.");
             InspectionCommentLine.SETRANGE("Source Line No.", 0);
-        END ELSE BEGIN
+        end else begin
             InspectionCommentLine.SETRANGE("Source Table", InspectionCommentLine."Source Table"::Order);
             InspectionCommentLine.SETRANGE("Source No.", "Inspection Order Line"."Inspection Order No.");
             InspectionCommentLine.SETRANGE("Source Line No.", "Inspection Order Line"."Line No.");
-        END;
-        IF InspectionCommentLine.FINDSET(FALSE, FALSE) THEN
-            REPEAT
-                i += 1;
-                IF ResText = '' THEN
+        end;
+        if InspectionCommentLine.FINDSET(false) then
+            repeat
+                if ResText = '' then
                     ResText := InspectionCommentLine.Comment
-                ELSE
+                else
                     ResText := ResText + EOSLibraryEXT.NewLine() + InspectionCommentLine.Comment;
-            UNTIL InspectionCommentLine.NEXT() = 0;
+            until InspectionCommentLine.NEXT() = 0;
 
-        EXIT(ResText);
+        exit(ResText);
     end;
 
     procedure GetLastOperator(): Code[35]
     var
         InspResult: Record "EOS Inspection Result";
     begin
-        IF "Inspection Order Line".Attribute THEN BEGIN
-            EXIT("Inspection Order Line"."Last Modified By");
-        END ELSE BEGIN
+        if "Inspection Order Line".Attribute then
+            exit(CopyStr("Inspection Order Line"."Last Modified By", 1, 35))
+        else begin
             InspResult.SETRANGE("Inspection Order No.", "Inspection Order Line"."Inspection Order No.");
             InspResult.SETRANGE("Inspection Order Line No.", "Inspection Order Line"."Line No.");
             InspResult.SETCURRENTKEY(Creation);
-            IF InspResult.FINDLAST() THEN
-                EXIT(InspResult."Creation By");
-        END;
+            if InspResult.FINDLAST() then
+                exit(CopyStr(InspResult."Creation By", 1, 35));
+        end;
     end;
 
     local procedure GetActualQuantity(): Decimal
@@ -495,31 +490,26 @@ report 18006545 "EOS Inspection Order2"
         WarehouseReceiptLine: Record "Warehouse Receipt Line";
         PostWhseRcptLine: Record "Posted Whse. Receipt Line";
     begin
-        CASE "Inspection Order Header"."Ref. Type" OF
+        case "Inspection Order Header"."Ref. Type" of
 
             DATABASE::"Purch. Rcpt. Line":
-                BEGIN
-                    IF PurchRcptLine.GET("Inspection Order Header"."Ref. Document No.", "Inspection Order Header"."Ref. Line No.") THEN
-                        EXIT(PurchRcptLine.Quantity);
-                END;
-
+                if PurchRcptLine.GET("Inspection Order Header"."Ref. Document No.", "Inspection Order Header"."Ref. Line No.") then
+                    exit(PurchRcptLine.Quantity);
             DATABASE::"Warehouse Receipt Line":
-                BEGIN
+                begin
                     PostWhseRcptLine.SETRANGE("Posted Source Document", PostWhseRcptLine."Posted Source Document"::"Posted Receipt");
                     PostWhseRcptLine.SETRANGE("Whse. Receipt No.", "Inspection Order Header"."Ref. Document No.");
                     PostWhseRcptLine.SETRANGE("Whse Receipt Line No.", "Inspection Order Header"."Ref. Line No.");
                     PostWhseRcptLine.SETFILTER(Quantity, '<>%1', 0);
-                    IF PostWhseRcptLine.FINDFIRST() THEN
-                        IF PurchRcptLine.GET(PostWhseRcptLine."Posted Source No.", "Inspection Order Header"."Ref. Line No.") THEN
-                            EXIT(PurchRcptLine.Quantity)
-                        ELSE BEGIN
-                        END
-                    ELSE
-                        IF WarehouseReceiptLine.GET("Inspection Order Header"."Ref. Document No.", "Inspection Order Header"."Ref. Line No.") THEN
-                            EXIT(WarehouseReceiptLine."Qty. to Receive");
-                END;
+                    if PostWhseRcptLine.FINDFIRST() then
+                        if PurchRcptLine.GET(PostWhseRcptLine."Posted Source No.", "Inspection Order Header"."Ref. Line No.") then
+                            exit(PurchRcptLine.Quantity)
+                        else
+                            if WarehouseReceiptLine.GET("Inspection Order Header"."Ref. Document No.", "Inspection Order Header"."Ref. Line No.") then
+                                exit(WarehouseReceiptLine."Qty. to Receive");
+                end;
 
-        END;
+        end;
     end;
 }
 

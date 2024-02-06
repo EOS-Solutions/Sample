@@ -165,6 +165,7 @@ report 18006566 "EOS Vendor Rating"
                     gCountQuantity += 1;
                     gTotalScoreQuality += "Quality Score";
                     gCountQuality += 1;
+                    gTotalScoreHard += "Total Score";
                     /*
                                         "Total Score" := Round(("Delivery Date Score" / 100 * "Quality Score" / 100 * "Quantity Score" / 100)
                                                                * 100, 1);
@@ -203,6 +204,7 @@ report 18006566 "EOS Vendor Rating"
                     gCountQuality := 0;
                     gExistCritHard := false;
                     gCritHard := 0;
+                    gTotalScoreHard := 0;
 
                     "Vendor Rating Entry".SetRange("Arrival Date", gPlanRcptDateFrom, gPlanRcptDateTo);
                 end;
@@ -227,20 +229,8 @@ report 18006566 "EOS Vendor Rating"
                 end;
             }
 
-            trigger OnAfterGetRecord()
-            begin
-                if gCountVendor > 1 then
-                    CurrReport.PageNo := 0;
-
-                if (gCountVendor > 1) then
-                    CurrReport.NewPage();
-
-                gCountVendor += 1;
-            end;
-
             trigger OnPreDataItem()
             begin
-                gCountVendor := 1;
                 if (gPlanRcptDateTo = 0D) then
                     Error(gctxErr0001Err);
             end;
@@ -338,11 +328,11 @@ report 18006566 "EOS Vendor Rating"
         gTotalScoreDate: Integer;
         gTotalScoreQuality: Integer;
         gTotalScoreQuantity: Integer;
+        gTotalScoreHard: Integer;
         gCountRatProp: Integer;
         gCountDate: Integer;
         gCountQuality: Integer;
         gCountQuantity: Integer;
-        gCountVendor: Integer;
         gRatingHard: Decimal;
         gExistCritHard: Boolean;
         Vendor_RatingCaptionLbl: Label 'Vendor Rating';
@@ -369,14 +359,14 @@ report 18006566 "EOS Vendor Rating"
             RatingProposal.Init();
             RatingProposal."Vendor No." := Vendor."No.";
             RatingProposal."Rating Date" := WorkDate();
-            RatingProposal."Total Rating" := Round(gCritHard, 1);
-            RatingProposal."New Classification" := gCategorisationCode.GetCategorisationCodeForScore(gCritHard);
-            RatingProposal."Delivery Date Adherence" := gCritHardDate;
-            RatingProposal."Quantity Rating" := gCritHardQuantity;
-            RatingProposal."Quality Rating" := gCritHardQuality;
+            RatingProposal."Total Rating" := Round(gTotalScoreHard / gCountDate, 1);
+            RatingProposal."New Classification" := gCategorisationCode.GetCategorisationCodeForScore(Round(gTotalScoreHard / gCountDate, 1));
+            RatingProposal."Delivery Date Adherence" := Round(gTotalScoreDate / gCountDate, 1);
+            RatingProposal."Quantity Rating" := Round(gTotalScoreQuantity / gCountQuantity, 1);
+            RatingProposal."Quality Rating" := Round(gTotalScoreQuality / gCountQuality, 1);
             RatingProposal.Insert();
             if UpdateVendor then begin
-                Vendor."EOS Classification Code" := RatingProposal."New Classification";
+                Vendor.Validate("EOS Classification Code", RatingProposal."New Classification");
                 Vendor.Modify();
             end;
             gCountRatProp += 1;
