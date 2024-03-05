@@ -82,9 +82,6 @@ report 18123350 "EOS Customer Aging"
                         TempAssetsBufferLocal[2].SetFilter("EOS Salesperson Code", SalespersonFilter);
                     end;
 
-                if SortOrderPrmtr <> SortOrderPrmtr::SalesPerson then
-                    TempAssetsBufferLocal[2].ModifyAll("EOS Salesperson Code", '');
-
                 LastSalesperson := 'XYZ123';
 
                 CustomerFilters.CopyFilter("Currency Filter", TempAssetsBufferLocal[2]."EOS Currency Code");
@@ -104,15 +101,16 @@ report 18123350 "EOS Customer Aging"
                             if TempProcessedCustomerList.Insert() then;
                         end;
 
-                        if LastSalesperson <> TempAssetsBufferLocal[12]."EOS Salesperson Code" then begin
-                            LastSalesperson := TempAssetsBufferLocal[12]."EOS Salesperson Code";
-                            if not SalespersonPurchaser.Get(TempAssetsBufferLocal[12]."EOS Salesperson Code") then begin
-                                Clear(SalespersonPurchaser);
-                                SalespersonPurchaser.Name := CopyStr(NoSalespersonTxt, 1, MaxStrLen(SalespersonPurchaser.Name));
+                        if SortOrderPrmtr <> SortOrderPrmtr::SalesPerson then
+                            if LastSalesperson <> TempAssetsBufferLocal[12]."EOS Salesperson Code" then begin
+                                LastSalesperson := TempAssetsBufferLocal[12]."EOS Salesperson Code";
+                                if not SalespersonPurchaser.Get(TempAssetsBufferLocal[12]."EOS Salesperson Code") then begin
+                                    Clear(SalespersonPurchaser);
+                                    SalespersonPurchaser.Name := CopyStr(NoSalespersonTxt, 1, MaxStrLen(SalespersonPurchaser.Name));
+                                end;
+                                if (SortOrderPrmtr in [SortOrderPrmtr::SalesPerson]) and NewPagePerSalespersonPrmtr then
+                                    PageGroup += 1;
                             end;
-                            if (SortOrderPrmtr in [SortOrderPrmtr::SalesPerson]) and NewPagePerSalespersonPrmtr then
-                                PageGroup += 1;
-                        end;
 
                         if TempAssetsBufferLocal[12]."EOS Level No." > 3 then
                             TempAssetsBufferLocal[12]."EOS Level No." := 3;
