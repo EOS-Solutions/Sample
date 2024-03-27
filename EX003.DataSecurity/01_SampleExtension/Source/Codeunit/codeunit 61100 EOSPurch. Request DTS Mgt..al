@@ -63,20 +63,4 @@ codeunit 61100 "EOSPurch. Request DTS Mgt."
 
         ContinueExecution := true;
     end;
-
-
-    [EventSubscriber(ObjectType::Table, DATABASE::"EOS Purch. Request Header", 'OnAfterInsertEvent', '', true, false)]
-    local procedure AssignDSStatus(var Rec: Record "EOS Purch. Request Header"; RunTrigger: Boolean)
-    var
-        DSMgt: Codeunit "EOS DS Management";
-        RecRef: RecordRef;
-    begin
-        if Rec.IsTemporary() then exit;
-        RecRef.GetTable(Rec);
-        DSMgt.SetFirstStatus(RecRef);
-        RecRef.SetTable(Rec);
-    end;
-
-
-
 }
