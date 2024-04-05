@@ -534,16 +534,18 @@ report 18123351 "EOS Vendor Aging"
         DueDateFilterPrmtr: Text;
         PostingDateFilterPrmtr: Text;
         DetailLevelPrmtr: Enum "EOS008 CVD Vend Detail Level";
+        NewPagePerVendorPrmtr: Boolean;
+        OnlyOpenPrmtr: Boolean;
+        ShowFiltersPrmtr: Boolean;
+        ShowLinkedEntriesPrmtr: Boolean;
+        SortOrderPrmtr: Enum "EOS008 CVS Vend Detail Order";
+        PaymentMethodFilterPrmtr: Text;
 
     var
         AssetsEngine: Codeunit "EOS AdvCustVendStat Engine";
         SubscriptionMgt: Codeunit "EOS AdvCustVendStat Subscript";
         Window: Dialog;
         CompanyNameText: Text;
-        NewPagePerVendorPrmtr: Boolean;
-        OnlyOpenPrmtr: Boolean;
-        ShowFiltersPrmtr: Boolean;
-        ShowLinkedEntriesPrmtr: Boolean;
         LinkedEntriesEnabled: Boolean;
         NewPagePerVendorEnabled: Boolean;
         EndingDueDate: Date;
@@ -554,8 +556,6 @@ report 18123351 "EOS Vendor Aging"
         PageGroup: Integer;
         PrevGroup: Integer;
         TempEntryNo: Integer;
-        SortOrderPrmtr: Enum "EOS008 CVS Vend Detail Order";
-        PaymentMethodFilterPrmtr: Text;
         DueDateFilterTextMsg: Label 'Due Date Filter:';
         ExcludingBalanceTextMsg: Label 'without';
         IncludingBalanceTextMsg: Label 'with';

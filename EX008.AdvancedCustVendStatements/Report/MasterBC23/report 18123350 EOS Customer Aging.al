@@ -612,12 +612,21 @@ report 18123350 "EOS Customer Aging"
 
     protected var
         TempReportingBuffer: Record "EOS Statem. Assets Buffer EXT" temporary;
+        ParametersBuffer: Record "EOS008 CVS Report Parameters";
         PostingDateFilterPrmtr: Text;
         DueDateFilterPrmtr: Text;
         DetailLevelPrmtr: Enum "EOS008 CVD Cust Detail Level";
+        HideSalespersonTotalPrmtr: Boolean;
+        NewPagePerCustomerPrmtr: Boolean;
+        NewPagePerSalespersonPrmtr: Boolean;
+        OnlyOpenPrmtr: Boolean;
+        ShowFiltersPrmtr: Boolean;
+        ShowLinkedEntriesPrmtr: Boolean;
+        UseSalespersonFromCustomerPrmtr: Boolean;
+        SortOrderPrmtr: Enum "EOS008 CVS Cust Detail Order";
+        PaymentMethodFilterPrmtr: Text;
 
     var
-        ParametersBuffer: Record "EOS008 CVS Report Parameters";
         TempGenericCustomerBuffer: Record "EOS008 Reporting Buffer" temporary;
         TempGenericSalespersonBuffer: Record "EOS008 Reporting Buffer" temporary;
         TempProcessedCustomerList: Record Customer temporary;
@@ -626,14 +635,7 @@ report 18123350 "EOS Customer Aging"
         SubscriptionMgt: Codeunit "EOS AdvCustVendStat Subscript";
         CompanyNameText: Text;
         HideMasterTotal: Boolean;
-        HideSalespersonTotalPrmtr: Boolean;
-        NewPagePerCustomerPrmtr: Boolean;
-        NewPagePerSalespersonPrmtr: Boolean;
-        OnlyOpenPrmtr: Boolean;
-        ShowFiltersPrmtr: Boolean;
-        ShowLinkedEntriesPrmtr: Boolean;
         SubscriptionActive: Boolean;
-        UseSalespersonFromCustomerPrmtr: Boolean;
         HideSalespersonTotalEnabled: Boolean;
         LinkedEntriesEnabled: Boolean;
         NewPagePerCustomerEnabled: Boolean;
@@ -648,8 +650,6 @@ report 18123350 "EOS Customer Aging"
         PrevSalespersonGroup: Integer;
         ReportLineCount: Integer;
         TempEntryNo: Integer;
-        SortOrderPrmtr: Enum "EOS008 CVS Cust Detail Order";
-        PaymentMethodFilterPrmtr: Text;
         CustomerFilterTextTxt: Label 'Customer Filters:';
         DueDateFilterTextTxt: Label 'Due Date Filter:';
         ExcludingBalanceTxt: Label 'without';

@@ -597,8 +597,14 @@ report 18123360 "EOS Vendor Statement - Curr."
     protected var
         TempDueAmountsBuffer: array[4] of Record "EOS Statem. Assets Buffer EXT" temporary;
         TempReportingBuffer: array[4] of Record "EOS Statem. Assets Buffer EXT" temporary;
+        SortOrderPrmtr: Option VendorNo,VendorName;
         PostingDateFilterPrmtr: Text;
         DueDateFilterPrmtr: Text;
+        PaymentMethodFilterPrmtr: Text;
+        OnlyOpenPrmtr: Boolean;
+        ShowLinkedEntriesPrmtr: Boolean;
+        UseSalespersonFromVendorPrmtr: Boolean;
+        PrintStatementCurrencyfromDocumentCurrencyPrmtr: Boolean;
 
     var
         CompanyInformation: Record "Company Information";
@@ -607,21 +613,13 @@ report 18123360 "EOS Vendor Statement - Curr."
         AssetsEngine: Codeunit "EOS AdvCustVendStat Engine";
         SubscriptionMgt: Codeunit "EOS AdvCustVendStat Subscript";
         CompanyNameText: Text;
-        OnlyOpenPrmtr: Boolean;
-        ShowLinkedEntriesPrmtr: Boolean;
-        UseSalespersonFromVendorPrmtr: Boolean;
-        PrintStatementCurrencyfromDocumentCurrencyPrmtr: Boolean;
         EndingDueDate: Date;
         EndingPostingDate: Date;
         StartingDueDate: Date;
         StartingPostingDate: Date;
         DetailLoopNo: Integer;
-        SortOrderPrmtr: Option VendorNo,VendorName;
         SupportedOutputMethod: Option Print,Preview;
-        PaymentMethodFilterPrmtr: Text;
         VendorAddress: array[11] of Text[100];
-
-
         ReportTitleLbl: label 'Vendor Account Statement at';
         VendorNoLbl: label 'Vendor';
         SalesPersonLbl: label 'Salesperson';
