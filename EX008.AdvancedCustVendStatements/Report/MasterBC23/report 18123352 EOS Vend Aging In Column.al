@@ -428,22 +428,12 @@ report 18123352 "EOS Vend Aging In Column"
 
     protected var
         TempCurrencyBuffer: Record "EOS AdvCustVend Buffer" temporary;
+        ParametersBuffer: Record "EOS008 CVS Report Parameters";
         PostingDateFilterPrmtr: Text;
         DueDateFilterPrmtr: Text;
         DetailLevelPrmtr: Enum "EOS008 CVD Vend Detail Level";
-
-    var
-        GeneralLedgerSetup: Record "General Ledger Setup";
-        ParametersBuffer: Record "EOS008 CVS Report Parameters";
-        AssetsEngine: Codeunit "EOS AdvCustVendStat Engine";
-        SubscriptionMgt: Codeunit "EOS AdvCustVendStat Subscript";
         PeriodLengthPrmtr: DateFormula;
-        PageGroup: Integer;
-        LinkedEntriesEnabled: Boolean;
-        ReportLineCount: Integer;
-        CompanyNameText: Text;
         PaymentMethodFilterPrmtr: Text;
-        OnlyOpen: Boolean;
         DueDateAtPrmtr: Date;
         ColumnLayoutPrmtr: Enum "EOS008 CVD Vend Column setup";
         HeadingTypePrmtr: Enum "EOS008 CVS Report Heading Type";
@@ -451,6 +441,16 @@ report 18123352 "EOS Vend Aging In Column"
         NewPagePerVendorPrmtr: Boolean;
         PrintFiltersPrmtr: Boolean;
         UseSalespersonFromVendorPrmtr: Boolean;
+
+    var
+        GeneralLedgerSetup: Record "General Ledger Setup";
+        AssetsEngine: Codeunit "EOS AdvCustVendStat Engine";
+        SubscriptionMgt: Codeunit "EOS AdvCustVendStat Subscript";
+        PageGroup: Integer;
+        LinkedEntriesEnabled: Boolean;
+        ReportLineCount: Integer;
+        CompanyNameText: Text;
+        OnlyOpen: Boolean;
         StartingPostingDate: Date;
         EndingPostingDate: Date;
         StartingDueDate: Date;

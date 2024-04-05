@@ -548,32 +548,31 @@ report 18123355 "EOS Customer Statement"
     end;
 
     protected var
+        ParametersBuffer: Record "EOS008 CVS Report Parameters";
         TempDueAmountsBuffer: array[4] of Record "EOS Statem. Assets Buffer EXT" temporary;
         TempReportingBuffer: array[4] of Record "EOS Statem. Assets Buffer EXT" temporary;
         DueDateFilterPrmtr: Text;
         PostingDateFilterPrmtr: Text;
+        OnlyOpenPrmtr: Boolean;
+        ShowLinkedEntriesPrmtr: Boolean;
+        UseSalespersonFromCustomerPrmtr: Boolean;
+        PaymentMethodFilterPrmtr: Text;
+        SortOrderPrmtr: Option CustomerNo,CustomerName;
 
     var
         CompanyInformation: Record "Company Information";
-        ParametersBuffer: Record "EOS008 CVS Report Parameters";
         AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
         AssetsEngine: Codeunit "EOS AdvCustVendStat Engine";
         SubscriptionMgt: Codeunit "EOS AdvCustVendStat Subscript";
         CompanyNameText: Text;
-        OnlyOpenPrmtr: Boolean;
-        ShowLinkedEntriesPrmtr: Boolean;
         SubscriptionActive: Boolean;
-        UseSalespersonFromCustomerPrmtr: Boolean;
         EndingDueDate: Date;
         EndingPostingDate: Date;
         StartingDueDate: Date;
         StartingPostingDate: Date;
         DetailLoopNo: Integer;
-        SortOrderPrmtr: Option CustomerNo,CustomerName;
         SupportedOutputMethod: Option Print,Preview;
         CustomerAddress: array[11] of Text[100];
-        PaymentMethodFilterPrmtr: Text;
-
         ReportTitleLbl: label 'Customer Account Statement at';
         CustomerNoLbl: label 'Customer';
         SalesPersonLbl: label 'Salesperson';
