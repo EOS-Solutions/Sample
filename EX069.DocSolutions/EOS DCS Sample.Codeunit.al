@@ -7,7 +7,7 @@ codeunit 50000 "EOS DCS Sample"
         DocSolutionsDocLibrary: Record "EOS069 DocLibrary";
         DCSLibraryTableLink: Record "EOS069 Library Table Link";
         DCSFileBuffer: Record "EOS069 File Buffer" temporary;
-        iStorage: interface "EOS069 DCS iStorage";
+        iStorage: interface "EOS069 DCS IStorage v2";
     begin
         TempCurrRec.GetTable(RecRef);
 
@@ -37,7 +37,7 @@ codeunit 50000 "EOS DCS Sample"
     local procedure OtherOperations(RecRef: RecordRef)
     var
         DCSFileBuffer, FileUpload : Record "EOS069 File Buffer" temporary;
-        iStorage: interface "EOS069 DCS iStorage";
+        iStorage: interface "EOS069 DCS IStorage v2";
         TempCurrRec: Record "EOS Record Ident. Buffer" temporary;
         DocSolutionsDocLibrary: Record "EOS069 DocLibrary";
 
