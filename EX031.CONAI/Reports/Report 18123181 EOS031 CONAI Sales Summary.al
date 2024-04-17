@@ -29,7 +29,7 @@ Report 18123181 "EOS031 CONAI Sales Summary"
 
                     TempCONAILedgerEntry := "CONAI Ledger Entry";
                     TempCONAILedgerEntry.Insert();
-                    CONAIMgt.UpdateLedgersWithAmounts(TempCONAILedgerEntry, false);
+                    CONAIMgt.UpdateLedgersWithAmounts(TempCONAILedgerEntry, true);
                     "CONAI Ledger Entry" := TempCONAILedgerEntry;
 
                     EntryNo += 1;
@@ -110,7 +110,7 @@ Report 18123181 "EOS031 CONAI Sales Summary"
                 {
                     IncludeCaption = true;
                 }
-                column(SubjectedQty; "Material Qty" - "Exemption Qty")
+                column(SubjectedQty; ReportContributionWeight)
                 {
                 }
                 column(ContributionUnitAmount; "Contribution Unit Amount")
@@ -129,6 +129,21 @@ Report 18123181 "EOS031 CONAI Sales Summary"
                 {
                     IncludeCaption = true;
                 }
+
+                trigger OnAfterGetRecord()
+                begin
+                    if CONAIRoundingPerKg then begin
+                        CONAIMgt.GetCONAIRoundingKg("Material Qty");
+                        CONAIMgt.GetCONAIRoundingKg("Exemption Qty");
+                    end;
+
+                    ReportContributionWeight := "Material Qty" - "Exemption Qty";
+
+                    if CONAIMgt.IsEnabledWeightExemptionCalc(TempCONAIReportingDetail."Table ID") then begin
+                        CalculateContributionFieldsFromCONAIEntries(TempCONAIReportingDetail);
+                        ReportContributionWeight := TempCONAIReportingDetail."Contribution Weight";
+                    end;
+                end;
             }
 
             trigger OnAfterGetRecord()
@@ -170,7 +185,17 @@ Report 18123181 "EOS031 CONAI Sales Summary"
     var
         CONAIMgt: Codeunit "EOS031 CONAI Mgt.";
         NettifiedWeigth: Decimal;
+        ReportContributionWeight: Decimal;
         EntryNo: Integer;
+        CONAIRoundingPerKg: Boolean;
+
+    trigger OnPreReport()
+    var
+        EOS031CONAISetup: Record "EOS031 CONAI Setup";
+    begin
+        if EOS031CONAISetup.Get() then
+            CONAIRoundingPerKg := EOS031CONAISetup."CONAI Rounding per Kg";
+    end;
 
     procedure GetTableCaption(TableID: Integer): Text
     var
@@ -197,5 +222,33 @@ Report 18123181 "EOS031 CONAI Sales Summary"
     begin
         exit("CONAI Ledger Entry".GetFilters);
     end;
-}
 
+    local procedure CalculateContributionFieldsFromCONAIEntries(var TempCONAIReportingDetail: Record "EOS031 CONAI Reporting")
+    var
+        TempCONAIDocumentDetail: Record "EOS031 CONAI Document Detail" temporary;
+        DocumentVariant: Variant;
+        Sign: Integer;
+    begin
+        CONAIMgt.FromPrimaryKey2Variant(TempCONAIReportingDetail."Table ID", 0, TempCONAIReportingDetail."Document No.", 0, DocumentVariant);
+        TempCONAIDocumentDetail."Table ID" := TempCONAIReportingDetail."Table ID";
+        TempCONAIDocumentDetail."Document No." := TempCONAIReportingDetail."Document No.";
+        TempCONAIDocumentDetail.Insert();
+        CONAIMgt.UpdateDetailWithCONAILedgerEntries(DocumentVariant, TempCONAIDocumentDetail);
+
+        Sign := CONAIMgt.GetDocumentSignForConaiEntries(TempCONAIReportingDetail."Table ID");
+
+        TempCONAIReportingDetail."Contribution Weight" := 0;
+        TempCONAIReportingDetail."Contribution Amount" := 0;
+
+        TempCONAIDocumentDetail.Reset();
+        TempCONAIDocumentDetail.SetRange("Table ID", TempCONAIReportingDetail."Table ID");
+        TempCONAIDocumentDetail.SetRange("Document No.", TempCONAIReportingDetail."Document No.");
+        TempCONAIDocumentDetail.SetRange("CONAI Material Code", TempCONAIReportingDetail."Material Code");
+        if TempCONAIDocumentDetail.FindSet() then
+            repeat
+                TempCONAIReportingDetail."Contribution Weight" += abs(TempCONAIDocumentDetail."Contribution Weight") * Sign;
+                TempCONAIReportingDetail."Contribution Amount" += abs(CONAIMgt.CalculateNetAmountOnNetWeight(TempCONAIDocumentDetail."Contribution Weight", TempCONAIReportingDetail."Contribution Unit Amount")) * Sign;
+                TempCONAIReportingDetail.Modify();
+            until TempCONAIDocumentDetail.Next() = 0;
+    end;
+}

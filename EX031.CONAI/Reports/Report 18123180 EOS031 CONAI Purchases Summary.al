@@ -30,7 +30,7 @@ Report 18123180 "EOS031 CONAI Purchases Summary"
 
                     TempCONAILedgerEntry := "CONAI Ledger Entry";
                     TempCONAILedgerEntry.Insert();
-                    CONAIMgt.UpdateLedgersWithAmounts(TempCONAILedgerEntry, false);
+                    CONAIMgt.UpdateLedgersWithAmounts(TempCONAILedgerEntry, true);
                     "CONAI Ledger Entry" := TempCONAILedgerEntry;
 
                     EntryNo += 1;
@@ -234,4 +234,3 @@ Report 18123180 "EOS031 CONAI Purchases Summary"
         end;
     end;
 }
-
