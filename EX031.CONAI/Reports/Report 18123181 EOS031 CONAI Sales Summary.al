@@ -20,17 +20,13 @@ Report 18123181 "EOS031 CONAI Sales Summary"
 
                 trigger OnAfterGetRecord()
                 var
-                    TempCONAILedgerEntry: Record "EOS031 CONAI Ledger Entry" temporary;
                     SourceDoc: Variant;
                 begin
                     NettifiedWeigth := GetNettifiedWeight();
                     if NettifiedWeigth = 0 then
                         CurrReport.Skip();
 
-                    TempCONAILedgerEntry := "CONAI Ledger Entry";
-                    TempCONAILedgerEntry.Insert();
-                    CONAIMgt.UpdateLedgersWithAmounts(TempCONAILedgerEntry, true);
-                    "CONAI Ledger Entry" := TempCONAILedgerEntry;
+                    OnAfterGetRecordCONAILedgerEntry("CONAI Ledger Entry");
 
                     EntryNo += 1;
 
@@ -250,5 +246,14 @@ Report 18123181 "EOS031 CONAI Sales Summary"
                 TempCONAIReportingDetail."Contribution Amount" += abs(CONAIMgt.CalculateNetAmountOnNetWeight(TempCONAIDocumentDetail."Contribution Weight", TempCONAIReportingDetail."Contribution Unit Amount")) * Sign;
                 TempCONAIReportingDetail.Modify();
             until TempCONAIDocumentDetail.Next() = 0;
+    end;
+
+    /// <summary>
+    /// Raised at the beginning in trigger OnAfterGetRecord of the dataitem CONAI Ledger Entry.
+    /// </summary>
+    /// <param name="CONAILedgerEntry">Current record CONAI Ledger Entry</param>
+    [IntegrationEvent(false, false)]
+    local procedure OnAfterGetRecordCONAILedgerEntry(var CONAILedgerEntry: Record "EOS031 CONAI Ledger Entry")
+    begin
     end;
 }
