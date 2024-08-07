@@ -633,14 +633,14 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
 
                 'EOS_OTTIMAX':
                     begin
-                        if not NotDirectShip then begin
+                        orderNo := line.Field(BufferTMP.FieldNo("EOS Order No.")).Value();
+                        headerOrder.SetRange("No.", orderNo);
+                        if (not NotDirectShip) or headerOrder.IsEmpty then begin
                             DataTypeManagement.FindFieldByName(header, FldRef, DocumentTMP.FieldName("Sell-to Customer No."));
                             DocumentTMP."Sell-to Customer No." := FldRef.Value();
                             DataTypeManagement.FindFieldByName(header, FldRef, DocumentTMP.FieldName("Ship-to Code"));
                             DocumentTMP."Ship-to Code" := FldRef.Value();
                         end else begin
-                            orderNo := line.Field(BufferTMP.FieldNo("EOS Order No.")).Value();
-                            headerOrder.SetRange("No.", orderNo);
                             headerOrder.FindSet();
 
                             DocumentTMP."Sell-to Customer No." := headerOrder."Sell-to Customer No.";
