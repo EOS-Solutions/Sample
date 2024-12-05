@@ -69,8 +69,8 @@ codeunit 50000 "EOS DCS Sample"
         //Base64Convert.FromBase64(Base64Blob, os);
         //UploadIntoStream()
         FileUpload.Insert(true);
-        iStorage.SetMetadata(DCSFileBuffer, TempCurrRec);
-        iStorage.UploadFile(DCSFileBuffer);
+        iStorage.SetMetadata(FileUpload, TempCurrRec);
+        iStorage.UploadFile(FileUpload);
     end;
 
     local procedure TransferAttachmentsBetweenRec(SourceDocument: Variant; Document: Variant)
