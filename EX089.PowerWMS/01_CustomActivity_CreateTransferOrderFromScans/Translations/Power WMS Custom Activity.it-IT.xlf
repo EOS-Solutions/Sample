@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file datatype="xml" source-language="en-US" target-language="it-IT">
+    <body>
+      <group id="body">
+        <trans-unit id="Codeunit 2475595227 - Method 3514624047 - NamedType 1742701991" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Activity %1 not allowed for Source %2</source>
+          <target>Attività %1 non consentita per origine %2</target>
+        </trans-unit>
+        <trans-unit id="Codeunit 2475595227 - Method 2731000887 - NamedType 3239513518" translate="yes" size-unit="char" xml:space="preserve">
+          <source>%1 No. %2 reset successfully</source>
+          <target>%1 nr. %2 ripristinato correttamente</target>
+        </trans-unit>
+        <trans-unit id="Codeunit 2475595227 - Method 1983700343 - NamedType 272352229" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Nothing to post</source>
+          <target>Niente da registrare</target>
+        </trans-unit>
+        <trans-unit id="EnumExtension 741312325 - EnumValue 3431463797 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Custom</source>
+          <target>Personalizzato</target>
+        </trans-unit>
+        <trans-unit id="Codeunit 2475595227 - Method 1978962747 - NamedType 2485552466" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Transfer Order No. %1 created successfully</source>
+          <target>Ordine di trasferimento %1 creato</target>
+        </trans-unit>
+        <trans-unit id="EnumExtension 487472513 - EnumValue 1019468596 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Create Transfer Order</source>
+          <target>Crea ordine di trasferimento</target>
+        </trans-unit>
+        <trans-unit id="PageExtension 594752536 - Control 2699169470 - Property 1295455071" translate="yes" size-unit="char" xml:space="preserve">
+          <source>To Bin Code</source>
+          <target>A cod. collocazione</target>
+        </trans-unit>
+        <trans-unit id="PageExtension 594752536 - Control 1765973574 - Property 1295455071" translate="yes" size-unit="char" xml:space="preserve">
+          <source>To Location Code</source>
+          <target>A cod. ubicazione</target>
+        </trans-unit>
+        <trans-unit id="TableExtension 686880407 - Field 1765973574 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>To Location Code</source>
+          <target>A cod. ubicazione</target>
+        </trans-unit>
+        <trans-unit id="PageExtension 1179431516 - Control 1765973574 - Property 1295455071" translate="yes" size-unit="char" xml:space="preserve">
+          <source>To Location Code</source>
+          <target>A cod. ubicazione</target>
+        </trans-unit>
+        <trans-unit id="PageExtension 1179431516 - Control 2699169470 - Property 1295455071" translate="yes" size-unit="char" xml:space="preserve">
+          <source>To Bin Code</source>
+          <target>A cod. collocazione</target>
+        </trans-unit>
+        <trans-unit id="TableExtension 686880407 - Field 2699169470 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>To Bin Code</source>
+          <target>A cod. collocazione</target>
+        </trans-unit>
+        <trans-unit id="TableExtension 555639951 - Field 1765973574 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>To Location Code</source>
+          <target>A cod. ubicazione</target>
+        </trans-unit>
+        <trans-unit id="TableExtension 555639951 - Field 2699169470 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>To Bin Code</source>
+          <target>A cod. collocazione</target>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
