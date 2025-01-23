@@ -1,19 +1,18 @@
 codeunit 50100 "EOS004 APP Run. Check Consumer"
 {
-    var
-        EOSAPPRunChkFacade: Codeunit "EOS004 APP Run. Check Facade";
+
 
     /// <summary>
     /// This is the main event Subscriber to let an APP activate for Env. Key Management
-    /// APP configuration will then appear on "RuntimeCheck Setup" Page for manual RuntimeCheck and configuration
+    /// APP configuration will then appear on "Access Check Setup" Page for manual Check and configuration
     /// </summary>
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"EOS004 APP Run. Check Facade", 'OnBeforeLoadRuntimeCheckSetupSupportedAppList', '', false, false)]
-    local procedure AddCurrentAppToList()
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"EOS004 APP Access Check Facade", 'OnBeforeLoadAccessCheckSetupSupportedAppList', '', false, false)]
+    local procedure AddCurrentAppToList(sender: Codeunit "EOS004 APP Access Check Facade")
     var
         EOSEnvKeyCalcType: Enum "EOS004 Env. Key Calc. Type";
     begin
 
-        EOSAPPRunChkFacade.AddCurrentAppToList(AppId(), EOSEnvKeyCalcType::Default);
+        sender.AddCurrentAppToList(AppId(), EOSEnvKeyCalcType::Default);
     end;
 
     /// <summary>
@@ -21,8 +20,10 @@ codeunit 50100 "EOS004 APP Run. Check Consumer"
     /// is activated and env key is valid in order to perform an action
     /// </summary>
     procedure ExecuteAction()
+    var
+        EOSAPPAccessChkFacade: Codeunit "EOS004 APP Access Check Facade";
     begin
-        EOSAPPRunChkFacade.AssertIsActive(AppId());
+        EOSAPPAccessChkFacade.AssertIsActive(AppId());
 
         message('you can do this!');
     end;
@@ -37,6 +38,10 @@ codeunit 50100 "EOS004 APP Run. Check Consumer"
         exit(EOSAPPRunChkFacade.IsActive(AppId()));
     end;
 
+    /// <summary>
+    /// Utility function to get the current AppId
+    /// </summary>
+    /// <returns>Guid</returns>
     local procedure AppId(): Guid
     var
         modInfo: ModuleInfo;
@@ -45,5 +50,3 @@ codeunit 50100 "EOS004 APP Run. Check Consumer"
         exit(modInfo.Id());
     end;
 }
-
-
