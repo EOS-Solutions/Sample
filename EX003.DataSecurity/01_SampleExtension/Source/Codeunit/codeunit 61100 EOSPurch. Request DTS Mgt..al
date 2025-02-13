@@ -63,4 +63,18 @@ codeunit 61100 "EOSPurch. Request DTS Mgt."
 
         ContinueExecution := true;
     end;
+
+    //Modify Records
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"EOS003 Tables Operations", 'OnBeforeModifyRecord', '', true, false)]
+    local procedure EOS003TablesOperations_OnBeforeModifyRecord(var RecRef: RecordRef; var ModifyValue: Boolean; var IsHandled: Boolean)
+    begin
+        if not (RecRef.Number() in [Database::"EOS Purch. Request Header", Database::"EOS Purch. Req. Header Archive"]) then
+            exit;
+
+        if RecRef.IsTemporary then
+            exit;
+
+        IsHandled := true;
+        ModifyValue := RecRef.Modify();
+    end;
 }
