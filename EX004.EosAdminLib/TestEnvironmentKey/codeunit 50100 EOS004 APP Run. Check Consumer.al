@@ -1,4 +1,4 @@
-codeunit 50100 "EOS004 APP Run. Check Consumer"
+codeunit 50100 "EOS004 APP Access Check Consumer"
 {
 
 
@@ -35,7 +35,7 @@ codeunit 50100 "EOS004 APP Run. Check Consumer"
     /// <returns> True if the App is active, False otherwise </returns>
     procedure IsActive(): Boolean
     begin
-        exit(EOSAPPRunChkFacade.IsActive(AppId()));
+        exit(EOSAPPAccessChkFacade.IsActive(AppId()));
     end;
 
     /// <summary>
