@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file datatype="xml" source-language="en-US" target-language="it-IT">
+    <body>
+      <group id="body">
+        <trans-unit id="EnumExtension 501902109 - EnumValue 3262220883 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>EOS Get started with Packing List (PCK)</source>
+          <target>EOS inizia ad usare la Packing List (PCK)</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - NamedType 2760722073" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Checkout this video</source>
+          <target>Guarda il video introduttivo</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - NamedType 849289934" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Video Demo</source>
+          <target>Guarda la demo estesa</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - NamedType 2847157583" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Follow this guide</source>
+          <target>Guida</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - NamedType 3867268924" translate="yes" size-unit="char" xml:space="preserve">
+          <source>New Sales Order</source>
+          <target>Nuovo Ordine di vendita</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - NamedType 3494195350" translate="yes" size-unit="char" xml:space="preserve">
+          <source>New Setup Wizard</source>
+          <target>Nuovo Setup Wizard</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - NamedType 2605505753" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Open Sales Order</source>
+          <target>Apri Ordine di vendita</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - NamedType 1625202150" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Packaging Setup</source>
+          <target>Setup imballaggio</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - NamedType 1335450309" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Packaging Instructions</source>
+          <target>Istruzioni di imballaggio</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - NamedType 38060061" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Packaging Materials</source>
+          <target>Materiali di imballaggio</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - NamedType 2468939860" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Print Packing List</source>
+          <target>Stampa Packing List</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - NamedType 2308719956" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Handling Units</source>
+          <target>Unità di Carico</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 2859305099 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Let's go!</source>
+          <target>Andiamo!</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 979583616 - Property 1968111052" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Select Next to continue.</source>
+          <target>Seleziona Avanti per continuare.</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 4220954472 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Setup Wizard</source>
+          <target>Setup Wizard</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Packing List Setup</source>
+          <target>Setup Packing List</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 3800514526 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Welcome to the Packing List Assisted Setup</source>
+          <target>Benvenuti nel Setup assistito della Packing List</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 4220954472 - Property 1968111052" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Run the "New Setup Wizard" to create default data. It is recommended to use it in a Test Environment!</source>
+          <target>Esegui il "Nuovo Setup Wizard" per creare dati predefiniti. Si consiglia di eseguirlo in un ambiente di test!</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 563683793 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Create a Sales Order and the Packing List.</source>
+          <target>Crea un ordine di vendita e la lista di imballaggio.</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 141120214 - Method 1845446376 - NamedType 1392294842" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Sales Order %1 created successfully!</source>
+          <target>Ordine di vendita %1 creato con successo!</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 3494195350 - Method 1845446376 - NamedType 4103709050" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Do you want to run the Setup Wizard?\It is recommended to run it in a Test Environment!</source>
+          <target>Si desidera eseguire il Setup Wizard?\Si consiglia di eseguirlo in un ambiente di test.</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 3494195350 - Method 1845446376 - NamedType 3667098245" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Setup wizard completed successfully!</source>
+          <target>La procedura guidata di installazione è stata completata con successo!</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 2153548775 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Step by Step</source>
+          <target>Passo dopo passo</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 2632937198 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Handling Unit Types</source>
+          <target>Tipi di Unità di Carico</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 2153548775 - Property 1968111052" translate="yes" size-unit="char" xml:space="preserve">
+          <source>The Setup Wizard first sets the following fields in "Packaging Setup".</source>
+          <target>La procedura guidata di configurazione imposta innanzitutto i seguenti campi nel "Setup Imballaggio".</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Action 2667510389 - Property 1295455071" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Finish this guide</source>
+          <target>Completa questa guida</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Action 2667510389 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Finish</source>
+          <target>Fine</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Action 742034285 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Back</source>
+          <target>Indietro</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Action 1235620153 - Property 1295455071" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Procede with the next step</source>
+          <target>Procedi con il passaggio successivo</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Action 1235620153 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Next</source>
+          <target>Avanti</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Action 742034285 - Property 1295455071" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Go back to the previous step</source>
+          <target>Torna al passaggio precedente</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 1081011691 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Congrats!</source>
+          <target>Congratulazioni!</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 2994101542 - Property 1968111052" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Click on the Finish button to complete this wizard.</source>
+          <target>Fare clic sul pulsante Fine per completare questa procedura guidata.</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 1081011691 - Property 1968111052" translate="yes" size-unit="char" xml:space="preserve">
+          <source>You have finished this guide!</source>
+          <target>Hai terminato questa guida!</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 3169205740 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Handling Units</source>
+          <target>Unità di Carico</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 565531501 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Packaging Instructions</source>
+          <target>Istruzioni di imballaggio</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 719847347 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Load Carrier (e.g. Pallet)</source>
+          <target>Portacarico ( Pallet )</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 1357543964 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Package (e.g. Box)</source>
+          <target>Collo ( Scatola )</target>
+        </trans-unit>
+        <trans-unit id="PageExtension 2937948147 - Action 1750244366 - Property 1064389655" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Packing List</source>
+          <target>Packing List</target>
+        </trans-unit>
+        <trans-unit id="PageExtension 4213341381 - Control 4079827045 - Property 1064389655" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Packing List Report No.</source>
+          <target>Nr. report packing list</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 719847347 - Property 1968111052" translate="yes" size-unit="char" xml:space="preserve">
+          <source>On the load carrier you can load packages and items.</source>
+          <target>Su un portacarico si possono caricare colli e articoli.</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 1357543964 - Property 1968111052" translate="yes" size-unit="char" xml:space="preserve">
+          <source>On the packages you can load other packages and items.</source>
+          <target>Su un collo si possono caricare altre scatole e articoli.</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 3739421409 - Property 2879900210" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Default Packaging Materials have been created</source>
+          <target>Sono stati creati i materiali di imballaggio predefiniti</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 3169205740 - Property 1968111052" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Handling Units can be created from the packing list, from the journals and manually.</source>
+          <target>Le unità di carico possono essere create dalla packing list, dai giornali di registrazione e manualmente.</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 4222802180 - Property 1968111052" translate="yes" size-unit="char" xml:space="preserve">
+          <source>The instructions are used to suggest the packing list for the document.</source>
+          <target>Le istruzioni servono a suggerire la lista di imballaggio per il documento.</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 565531501 - Property 1968111052" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Define how items are packed into handling units.</source>
+          <target>Definiscono la modalità di imballaggio degli articoli nelle unità di carico.</target>
+        </trans-unit>
+        <trans-unit id="PageExtension 4213341381 - Control 4079827045 - Property 247559172" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Specifies the report to use for printing the packing list.</source>
+          <target>Specifica il report da utilizzare per la stampa della packing list.</target>
+        </trans-unit>
+        <trans-unit id="PageExtension 2937948147 - Action 1750244366 - Property 247559172" translate="yes" size-unit="char" xml:space="preserve">
+          <source>Assign Packing List to this document or suggest it from the packaging instructions.</source>
+          <target>Assegna la Packing List a questo documento o suggeriscila dalle istruzioni per l'imballaggio.</target>
+        </trans-unit>
+        <trans-unit id="Page 1308517547 - Control 1617280233 - Property 1968111052" translate="yes" size-unit="char" xml:space="preserve">
+          <source>We're gonna set up default data to start using the Packing List.</source>
+          <target>Imposteremo i dati predefiniti per iniziare a utilizzare la Packing List.</target>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
