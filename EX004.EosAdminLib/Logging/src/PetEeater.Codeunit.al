@@ -5,7 +5,7 @@ codeunit 50200 PetEeater
 
 
     var
-        Logger: Codeunit "EOS004 App Diag. Logger";
+        Logger: Codeunit "EOS004 App Logger";
 
 
     trigger OnRun()
@@ -53,13 +53,13 @@ codeunit 50200 PetEeater
         Logger.InitializeFromCaller('pets');
         pb.Init();
         pb.Add('CustomerNo', Customer."No.");
-        Logger.LogMessage('ETP001', msg, pb);
+        Logger.LogMessage('ETP001', msg, pb.Build());
     end;
 
 
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"EOS004 App Diag. Logger", OnCollectLogCategories, '', false, false)]
-    local procedure "EOS004 App Diag. Logger_OnCollectLogCategories"(AppId: Guid; var TempLogCategory: Record "EOS004 Log Category" temporary)
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"EOS004 App Logger", OnCollectLogCategories, '', false, false)]
+    local procedure "EOS004 App Diag. Logger_OnCollectLogCategories"(AppId: Guid; var TempLogCategory: Record "EOS004 App Log Category" temporary)
     var
         mi: ModuleInfo;
     begin
