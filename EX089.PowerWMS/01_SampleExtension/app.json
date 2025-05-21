@@ -1,0 +1,50 @@
+{
+  "id": "2a9a6417-cc31-42bf-ba51-ad5d773e78ee",
+  "name": "Power WMS Custom Activity",
+  "publisher": "EOS Solutions",
+  "brief": "Power WMS Custom Activity",
+  "description": "Power WMS Custom Activity",
+  "version": "25.0.0.0",
+  "privacyStatement": "https://www.eos-solutions.it/en/privacy.html",
+  "EULA": "https://www.eos-solutions.it/en/eula.html",
+  "help": "https://www.eos-solutions.it/en/power-wms.html",
+  "url": "https://www.eos-solutions.it/",
+  "contextSensitiveHelpUrl": "https://docs.eos-solutions.it/en/docs/apps-func/power-wms.html",
+  "logo": "Images/logo-432.png",
+  "features": [
+    "TranslationFile"
+  ],
+  "supportedLocales": [
+    "it-IT",
+    "en-US"
+  ],
+  "dependencies": [
+    {
+      "id": "15dd7d69-e3fa-4da9-acc3-9828b2795643",
+      "name": "Power WMS",
+      "publisher": "EOS Solutions",
+      "version": "25.0.47.0"
+    },
+    {
+      "id": "0ab25a58-2869-4ca7-b12c-a16594852658",
+      "name": "Power WMS for Handling Units",
+      "publisher": "EOS Solutions",
+      "version": "25.0.31.0"
+    } 
+  ],
+  "screenshots": [],
+  "platform": "1.0.0.0",
+  "application": "25.0.0.0",
+  "idRanges": [
+    {
+      "from": 50100,
+      "to": 50149
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": true,
+    "includeSourceInSymbolFile": true
+  },
+  "runtime": "14.0"
+}
