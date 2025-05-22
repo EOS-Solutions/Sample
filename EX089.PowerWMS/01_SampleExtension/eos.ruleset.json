@@ -1,0 +1,86 @@
+{
+    "name": "EOS default ruleset with mandatory rules",
+    "description": "This is the default ruleset for AppSource with mandatory rules used in build pipeline.",
+    "rules": [
+        {
+            "id": "AA0072",
+            "action": "None",
+            "justification": "Hungarian notation: no"
+        },
+        {
+            "id": "AA0074",
+            "action": "Warning",
+            "justification": "Err: Variable 'xxx' must have a suffix from this list: Msg, Tok, Err, Qst, Lbl, Txt."
+        },
+        {
+            "id": "AA0214",
+            "action": "None",
+            "justification": "The record xxx should be modified before saving to the database."
+        },
+        {
+            "id": "AA0215",
+            "action": "None",
+            "justification": "File name incorrect."
+        },
+        {
+            "id": "AS0073",
+            "action": "Error",
+            "justification": "Obsolete Tag must be set."
+        },
+        {
+            "id": "AS0075",
+            "action": "Error",
+            "justification": "Obsolete Reason must be set."
+        },
+        {
+            "id": "AS0076",
+            "action": "Error",
+            "justification": "Obsolete Tag must have a specific format."
+        },
+        {
+            "id": "AL0432",
+            "action": "Error",
+            "justification": "Err: Method 'xxxx' is marked for removal. Reason: Replaced by CreateReservEntryFor"
+        },
+        {
+            "id": "AL0606",
+            "action": "Error",
+            "justification": "Err: The 'with' statement is deprecated and will be removed for cloud development in a future release. This warning will become an error in a future release."
+        },
+        {
+            "id": "AL0667",
+            "action": "Error",
+            "justification": "Err: 'PageNo' is being deprecated in the versions: '1.0' or greater. This warning will become an error in a future release."
+        },
+        {
+            "id": "AL1025",
+            "action": "Warning",
+            "justification": "The file at location '...permissionset.xml' does NOT match any definition."
+        },
+        {
+            "id": "AS0053",
+            "action": "None",
+            "justification": "The compilation target is set to 'OnPrem', but it must be set to 'Cloud' or 'Extension'."
+        },
+        {
+            "id": "AS0055",
+            "action": "None",
+            "justification": "List of localizations missing in AppSourceCop."
+        },
+        {
+            "id": "AW0011",
+            "action": "None",
+            "justification": "PromotedOnly: ignore"
+        },
+        {
+            "id": "AA0470",
+            "action": "None",
+            "justification": "Explain placeholders in labels: ignore"
+        },
+        {
+            "id": "AS0084",
+            "action": "None",
+            "justification": "Custom Dev"
+        }
+    ]
+}

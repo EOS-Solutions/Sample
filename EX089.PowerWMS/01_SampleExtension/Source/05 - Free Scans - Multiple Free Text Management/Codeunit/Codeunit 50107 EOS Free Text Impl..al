@@ -1,5 +1,7 @@
-codeunit 50000 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity Interface V5"
+codeunit 50107 "EOS Free Text Impl." implements "EOS089 WMS Activity Interface V5"
 {
+    Permissions = TableData "EOS089 WMS Custom Act. Header" = im, TableData "EOS089 WMS Custom Act. Line" = im;
+
     #region InterfaceSettings
     // Change Source Records and Activity Information according to Interface Type
     var
@@ -43,7 +45,7 @@ codeunit 50000 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
 
     local procedure ActivityType(): Enum "EOS089 WMS Activity Type"
     begin
-        exit(Enum::"EOS089 WMS Activity Type"::EOSCreateTransferOrder);  // Change with the corresponding "Activity Type" value
+        exit(Enum::"EOS089 WMS Activity Type"::EOSFreeText);  // Change with the corresponding "Activity Type" value
     end;
 
     local procedure SourceTable1(): Integer;
@@ -64,11 +66,11 @@ codeunit 50000 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
     local procedure GetPostedSourceMessage(PostedSourceNo: Text; SourceId: Text)
     var
         EOS089WMSReturnValuesMgmt: Codeunit "EOS089 WMS Return Values Mgmt.";
-        SourcePostedLbl: Label 'Transfer Order No. %1 created successfully', Comment = '%1: Transfer Order No.';    // Change message text
+        SourcePostedLbl: Label '%1 No. %2 posted successfully as %3', Comment = '%1: Source Type, %2: Source No., %3: Posted Source No.';    // Change message text
     begin
         Clear(EOS089WMSReturnValuesMgmt);
         EOS089WMSReturnValuesMgmt.PrepareReturnValues();
-        EOS089WMSReturnValuesMgmt.SetMessage(StrSubstNo(SourcePostedLbl, SourceId));
+        EOS089WMSReturnValuesMgmt.SetMessage(StrSubstNo(SourcePostedLbl, SourceTableDescription(), SourceId, PostedSourceNo));
         EOS089WMSReturnValuesMgmt.SetResult(Enum::"EOS089 WMS Activity Result"::Completed);
         EOS089WMSReturnValuesMgmt.SetPostedDocumentNo(CopyStr(PostedSourceNo, 1, 20));
         EOS089WMSReturnValuesMgmt.SetActionGoTo(Enum::"EOS089 WMS Action Go To"::List);
@@ -114,13 +116,16 @@ codeunit 50000 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
         PageFilterBuilder: FilterPageBuilder;
         LocationFilter: Text;
         CurrentView: Text;
+        ScannerSetupCodeLbl: label 'FREETEXT', Locked = true;
     begin
         // Change at your own risk!
         InitActivityFields();
+        InitScannerSetup(ScannerSetupCodeLbl);
 
         EOS089WMSUserActivity.Category := ActivityCategory();
         EOS089WMSUserActivity.Group := ActivityGroup();
         EOS089WMSUserActivity."Custom Type" := Enum::"EOS089 WMS Act. Custom Type"::FreeScans;
+        EOS089WMSUserActivity."Scanner Setup" := ScannerSetupCodeLbl;
 
         EOS089WMSUserActivity."Apply User Id Filter" := false;
         EOS089WMSUserActivity."Allow Blank User Id" := true;
@@ -399,8 +404,8 @@ codeunit 50000 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
             exit(0);
 
         // Change source table to count
-        EOS089WMSCustomActLine_Internal.SetView(EOS089WMSUserActivity.GetView1(true));
-        Counter := EOS089WMSCustomActLine_Internal.Count();
+        EOS089WMSCustomActHeader_Internal.SetView(EOS089WMSUserActivity.GetView1(true));
+        Counter := EOS089WMSCustomActHeader_Internal.Count();
         exit(Counter);
     end;
 
@@ -410,8 +415,8 @@ codeunit 50000 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
             exit;
 
         // Change Page to run as source list
-        EOS089WMSCustomActLine_Internal.SetView(EOS089WMSUserActivity.GetView1(true));
-        Page.RunModal(Page::"Transfer Orders", EOS089WMSCustomActLine_Internal);
+        EOS089WMSCustomActHeader_Internal.SetView(EOS089WMSUserActivity.GetView1(true));
+        Page.RunModal(Page::"EOS089 WMS Custom Activities", EOS089WMSCustomActHeader_Internal);
     end;
 
     procedure GetSourceDetails() Details: JsonObject
@@ -442,8 +447,6 @@ codeunit 50000 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
     procedure GetDefaultActivityFields(TableNo: Integer; ActivityFieldClass: Enum "EOS089 WMS Act. Field Class"; var Fields: Record "EOS089 WMS Activity Field" temporary)
     var
         EOS089WMSMiscHelper: Codeunit "EOS089 WMS Misc. Helper";
-        LocationLbl: Label 'LOCATIONS', Locked = true;
-        BinLbl: Label 'BINS', Locked = true;
     begin
         // Add custom fields here programmatically
 
@@ -461,44 +464,7 @@ codeunit 50000 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
                                 exit;
 
                             EOS089WMSMiscHelper.ActivityFields_Init();
-                            EOS089WMSMiscHelper.ActivityFields_Insert(EOS089WMSCustomActHeader_Internal.FieldNo("Location Code"), Fields);
-                            EOS089WMSMiscHelper.ActivityFields_Insert(EOS089WMSCustomActHeader_Internal.FieldNo("Bin Code"), Fields);
-                            EOS089WMSMiscHelper.ActivityFields_Insert(EOS089WMSCustomActHeader_Internal.FieldNo("EOS To Location Code"), Fields);
-                            EOS089WMSMiscHelper.ActivityFields_Insert(EOS089WMSCustomActHeader_Internal.FieldNo("EOS To Bin Code"), Fields);
-                        end;
-                    Enum::"EOS089 WMS Act. Field Class"::Detail:
-                        begin
-                            if not FieldDetailsEnabled1() then
-                                exit;
-
-                            EOS089WMSMiscHelper.ActivityFields_Init();
-                            EOS089WMSMiscHelper.ActivityFields_Insert(EOS089WMSCustomActHeader_Internal.FieldNo("Location Code"), Fields);
-                            Fields."Field Editable" := true;
-                            Fields."Field Mandatory" := true;
-                            Fields."Validate Field" := true;
-                            Fields."LookUp List Code" := LocationLbl;
-                            Fields.Modify();
-
-                            EOS089WMSMiscHelper.ActivityFields_Insert(EOS089WMSCustomActHeader_Internal.FieldNo("Bin Code"), Fields);
-                            Fields."Field Editable" := true;
-                            Fields."Field Mandatory" := true;
-                            Fields."Validate Field" := true;
-                            Fields."LookUp List Code" := BinLbl;
-                            Fields.Modify();
-
-                            EOS089WMSMiscHelper.ActivityFields_Insert(EOS089WMSCustomActHeader_Internal.FieldNo("EOS To Location Code"), Fields);
-                            Fields."Field Editable" := true;
-                            Fields."Field Mandatory" := true;
-                            Fields."Validate Field" := true;
-                            Fields."LookUp List Code" := LocationLbl;
-                            Fields.Modify();
-
-                            EOS089WMSMiscHelper.ActivityFields_Insert(EOS089WMSCustomActHeader_Internal.FieldNo("EOS To Bin Code"), Fields);
-                            Fields."Field Editable" := true;
-                            Fields."Field Mandatory" := true;
-                            Fields."Validate Field" := true;
-                            Fields."LookUp List Code" := BinLbl;
-                            Fields.Modify();
+                            EOS089WMSMiscHelper.ActivityFields_Insert(EOS089WMSCustomActHeader_Internal.FieldNo("No."), Fields);
                         end;
                 end;
         end;
@@ -547,7 +513,23 @@ codeunit 50000 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
     end;
 
     procedure ManageActivityScanParameters(var EOS089WMSActivityScan: Record "EOS089 WMS Activity Scan"; JsonObject: JsonObject)
+    var
+        Location: Record Location;
+        Bin: Record Bin;
     begin
+        // Move free text fields to "standard" fields
+        if Location.Get(CopyStr(EOS089WMSActivityScan."Free Text 1", 1, MaxStrLen(Location.Code))) then
+            EOS089WMSActivityScan."Location Code" := CopyStr(EOS089WMSActivityScan."Free Text 1", 1, MaxStrLen(EOS089WMSActivityScan."Location Code"));
+        if Location."Bin Mandatory" then begin
+            Bin.Reset();
+            Bin.SetRange("Location Code", EOS089WMSActivityScan."Location Code");
+            Bin.SetRange("Code", CopyStr(EOS089WMSActivityScan."Free Text 2", 1, MaxStrLen(Bin.Code)));
+            if not Bin.IsEmpty() then
+                EOS089WMSActivityScan."Bin Code" := CopyStr(EOS089WMSActivityScan."Free Text 2", 1, MaxStrLen(EOS089WMSActivityScan."Bin Code"));
+        end;
+        if EOS089WMSActivityScan."Free Text 3" <> '' then
+            if not Evaluate(EOS089WMSActivityScan."Expiration Date", EOS089WMSActivityScan."Free Text 3", 9) then
+                EOS089WMSActivityScan."Expiration Date" := 0D;
     end;
 
     procedure FilterActivityScanParameters(EOS089WMSActivityScan: Record "EOS089 WMS Activity Scan"; var TempEOS089WMSActivityScan: Record "EOS089 WMS Activity Scan" temporary)
@@ -637,102 +619,19 @@ codeunit 50000 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
     procedure PostSource(EOS089WMSActivityEntry: Record "EOS089 WMS Activity Entry"; var PostedDocumentNo: Code[20])
     var
         EOS089WMSRegCusActHdr: Record "EOS089 WMS Reg. Cus. Act. Hdr.";
-        EOS089WMSRegCusActLine: Record "EOS089 WMS Reg. Cus. Act. Line";
-        TransferHeader: Record "Transfer Header";
-        TransferLine: Record "Transfer Line";
-        EOS089WMSUserActivityMgmt: Codeunit "EOS089 WMS User Activity Mgmt.";
-        EOS089WMSAutomaticTracking: Codeunit "EOS089 WMS Automatic Tracking";
-        LineNo: Integer;
-        ScanId, NewScanId : Guid;
-        NothingToPostErr: Label 'Nothing to post';
+        EOS089WMSCustomActPost: Codeunit "EOS089 WMS Custom Act. - Post";
     begin
         // Manage here the output of the custom activity scans
         EOS089WMSCustomActHeader_Internal.Get(ActivityType(), EOS089WMSActivityEntry."Source ID");
 
-        if FieldDetailsEnabled1() then
-            EOS089WMSUserActivityMgmt.CheckMandatoryFields(EOS089WMSActivityEntry."Employee No.", EOS089WMSActivityEntry."Activity Type", EOS089WMSCustomActHeader_Internal.RecordId());
-        if FieldDetailsEnabled2() then
-            EOS089WMSUserActivityMgmt.CheckMandatoryFieldsFromSourceScan(EOS089WMSActivityEntry."Employee No.", EOS089WMSActivityEntry."Activity Type", SourceTable2(), EOS089WMSActivityEntry.GetScanId());
+        EOS089WMSCustomActPost.SetEmployee(EOS089WMSActivityEntry."Employee No.");
+        EOS089WMSCustomActPost.Run(EOS089WMSCustomActHeader_Internal);
 
-        EOS089WMSCustomActLine_Internal.Reset();
-        EOS089WMSCustomActLine_Internal.SetRange("Activity Type", ActivityType());
-        EOS089WMSCustomActLine_Internal.SetRange("Document No.", EOS089WMSActivityEntry."Source ID");
-        if EOS089WMSCustomActLine_Internal.IsEmpty() then
-            Error(NothingToPostErr);
-
-        ScanId := EOS089WMSActivityEntry.GetScanId();
-        NewScanId := CreateGuid();
-
-        // Create Transfer Header
-        TransferHeader.Init();
-        TransferHeader.Insert(true);
-        TransferHeader.Validate("Transfer-from Code", EOS089WMSCustomActHeader_Internal."Location Code");
-        TransferHeader.Validate("Transfer-to Code", EOS089WMSCustomActHeader_Internal."EOS To Location Code");
-        TransferHeader.Validate("In-Transit Code", 'LOG. EST.');
-        TransferHeader.Modify(true);
-
-        EOS089WMSRegCusActHdr.Init();
-        EOS089WMSRegCusActHdr.TransferFields(EOS089WMSCustomActHeader_Internal);
-        EOS089WMSRegCusActHdr."No." := '';
-        EOS089WMSRegCusActHdr."Document No." := EOS089WMSCustomActHeader_Internal."No.";
-        EOS089WMSRegCusActHdr."Linked Activity Type" := Enum::"EOS089 WMS Activity Type"::"Transfer Shipment";
-        EOS089WMSRegCusActHdr."Linked Source Id" := TransferHeader."No.";
-        EOS089WMSRegCusActHdr.Insert(true);
-
-        // Create Transfer Lines
-        EOS089WMSCustomActLine_Internal.FindSet();
-        repeat
-            LineNo += 10000;
-            EOS089WMSRegCusActLine.Init();
-            EOS089WMSRegCusActLine.TransferFields(EOS089WMSCustomActLine_Internal);
-            EOS089WMSRegCusActLine."Document No." := EOS089WMSRegCusActHdr."No.";
-            EOS089WMSRegCusActLine.Insert(true);
-
-            TransferLine.Reset();
-            TransferLine.SetRange("Document No.", TransferHeader."No.");
-            TransferLine.SetRange("Item No.", EOS089WMSCustomActLine_Internal."Item No.");
-            TransferLine.SetRange("Variant Code", EOS089WMSCustomActLine_Internal."Variant Code");
-            if TransferLine.IsEmpty() then begin
-                TransferLine.Init();
-                TransferLine.Validate("Document No.", TransferHeader."No.");
-                TransferLine."Line No." := LineNo;
-                TransferLine.Insert(true);
-
-                TransferLine.Validate("Item No.", EOS089WMSCustomActLine_Internal."Item No.");
-                TransferLine.Validate("Variant Code", EOS089WMSCustomActLine_Internal."Variant Code");
-                TransferLine."Transfer-from Code" := TransferHeader."Transfer-from Code";
-                TransferLine."Transfer-to Code" := TransferHeader."Transfer-to Code";
-                TransferLine."Transfer-from Bin Code" := EOS089WMSCustomActHeader_Internal."Bin Code";
-                TransferLine."Transfer-to Bin Code" := EOS089WMSCustomActHeader_Internal."EOS To Bin Code";
-            end else
-                TransferLine.FindLast();
-
-            TransferLine.Validate("Quantity", TransferLine.Quantity + EOS089WMSCustomActLine_Internal.Quantity);
-            TransferLine.Validate("Qty. to Ship", TransferLine."Qty. to Ship" + EOS089WMSCustomActLine_Internal.Quantity);
-            TransferLine.Modify(true);
-
-            // Assign Tracking
-            if EOS089WMSCustomActLine_Internal."Tracking Type" <> Enum::"EOS089 WMS Tracking Type"::None then begin
-                EOS089WMSAutomaticTracking.SetDirection(Enum::"Transfer Direction"::Outbound);
-                EOS089WMSAutomaticTracking.SetDirectTransfer(false);
-                EOS089WMSAutomaticTracking.SetSource(TransferLine);
-                EOS089WMSAutomaticTracking.AddTracking(EOS089WMSCustomActLine_Internal."Serial No.", EOS089WMSCustomActLine_Internal."Lot No.", EOS089WMSCustomActLine_Internal."Package No.", EOS089WMSCustomActLine_Internal."Quantity (Base)", 0D, 0D);
-                EOS089WMSAutomaticTracking.Save();
-            end;
-
-            // Create Source Scan Line for Transfer Line
-            CopySourceScan(ScanId, NewScanId, EOS089WMSCustomActLine_Internal, TransferLine);
-
-        until EOS089WMSCustomActLine_Internal.Next() = 0;
-
-        // Release
-        Codeunit.Run(Codeunit::"Release Transfer Document", TransferHeader);
-
-        EOS089WMSCustomActHeader_Internal.Delete(true);
+        EOS089WMSRegCusActHdr := EOS089WMSCustomActPost.GetRegisteredDocument();
 
         PostedDocumentNo := EOS089WMSRegCusActHdr."No.";
 
-        GetPostedSourceMessage(EOS089WMSRegCusActHdr."No.", TransferHeader."No.");
+        GetPostedSourceMessage(PostedDocumentNo, EOS089WMSActivityEntry."Source ID");
     end;
 
     procedure DeleteSourceScans(EOS089WMSActivityEntry: Record "EOS089 WMS Activity Entry"): Boolean
@@ -862,7 +761,6 @@ codeunit 50000 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
         EOS089WMSCustomActHeader_Internal.SetAutoCalcFields("Pending Activities");
         EOS089WMSCustomActHeader_Internal.SetLoadFields("Pending Activities");
         EOS089WMSCustomActHeader_Internal.SetRange("No.", SearchValue);
-        EOS089WMSCustomActHeader_Internal.SetRange("Employee No.", EOS089WMSActivityEntry."Employee No.");
         SetFiltersOnHeader();
         if EOS089WMSCustomActHeader_Internal.Count() = 1 then
             if EOS089WMSCustomActHeader_Internal.FindFirst() then begin
@@ -886,6 +784,108 @@ codeunit 50000 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
         EOS089WMSActivityField.SetRange(Activity, ActivityType());
         if EOS089WMSActivityField.IsEmpty() then
             EOS089WMSActivityManagement.InitActivityFields(ActivityType());
+    end;
+
+    local procedure InitScannerSetup(ScannerSetupCode: Code[20])
+    var
+        EOS089WMSScannerSetup: Record "EOS089 WMS Scanner Setup";
+        EOS089WMSScannerDetail: Record "EOS089 WMS Scanner Detail";
+        EOS089WMSCaptionTrans: Record "EOS089 WMS Caption Trans.";
+    begin
+        EOS089WMSCaptionTrans.Init();
+        EOS089WMSCaptionTrans."Language Code" := 'ENU';
+        EOS089WMSCaptionTrans."Caption Name" := 'FreeText_Location';
+        EOS089WMSCaptionTrans."Caption Value" := 'Location Code';
+        EOS089WMSCaptionTrans.Scope := Enum::"EOS089 WMS Translation Scope"::ScannerToken;
+        if not EOS089WMSCaptionTrans.Insert() then
+            EOS089WMSCaptionTrans.Modify();
+
+        EOS089WMSCaptionTrans.Init();
+        EOS089WMSCaptionTrans."Language Code" := 'ENU';
+        EOS089WMSCaptionTrans."Caption Name" := 'FreeText_Bin';
+        EOS089WMSCaptionTrans."Caption Value" := 'Bin Code';
+        EOS089WMSCaptionTrans.Scope := Enum::"EOS089 WMS Translation Scope"::ScannerToken;
+        if not EOS089WMSCaptionTrans.Insert() then
+            EOS089WMSCaptionTrans.Modify();
+
+        EOS089WMSCaptionTrans.Init();
+        EOS089WMSCaptionTrans."Language Code" := 'ENU';
+        EOS089WMSCaptionTrans."Caption Name" := 'FreeText_ExpDate';
+        EOS089WMSCaptionTrans."Caption Value" := 'Expiration Date';
+        EOS089WMSCaptionTrans.Scope := Enum::"EOS089 WMS Translation Scope"::ScannerToken;
+        if not EOS089WMSCaptionTrans.Insert() then
+            EOS089WMSCaptionTrans.Modify();
+
+        EOS089WMSCaptionTrans.Init();
+        EOS089WMSCaptionTrans."Language Code" := 'ITA';
+        EOS089WMSCaptionTrans."Caption Name" := 'FreeText_Location';
+        EOS089WMSCaptionTrans."Caption Value" := 'Cod. ubicazione';
+        EOS089WMSCaptionTrans.Scope := Enum::"EOS089 WMS Translation Scope"::ScannerToken;
+        if not EOS089WMSCaptionTrans.Insert() then
+            EOS089WMSCaptionTrans.Modify();
+
+        EOS089WMSCaptionTrans.Init();
+        EOS089WMSCaptionTrans."Language Code" := 'ITA';
+        EOS089WMSCaptionTrans."Caption Name" := 'FreeText_Bin';
+        EOS089WMSCaptionTrans."Caption Value" := 'Cod. collocazione';
+        EOS089WMSCaptionTrans.Scope := Enum::"EOS089 WMS Translation Scope"::ScannerToken;
+        if not EOS089WMSCaptionTrans.Insert() then
+            EOS089WMSCaptionTrans.Modify();
+
+        EOS089WMSCaptionTrans.Init();
+        EOS089WMSCaptionTrans."Language Code" := 'ITA';
+        EOS089WMSCaptionTrans."Caption Name" := 'FreeText_ExpDate';
+        EOS089WMSCaptionTrans."Caption Value" := 'Data scadenza';
+        EOS089WMSCaptionTrans.Scope := Enum::"EOS089 WMS Translation Scope"::ScannerToken;
+        if not EOS089WMSCaptionTrans.Insert() then
+            EOS089WMSCaptionTrans.Modify();
+
+        EOS089WMSScannerSetup.Init();
+        EOS089WMSScannerSetup.Code := ScannerSetupCode;
+        EOS089WMSScannerSetup."Scanner Type" := Enum::"EOS089 WMS Scanner Type"::Sequential;
+        EOS089WMSScannerSetup."Barcode Type" := Enum::"EOS089 WMS Barcode Type"::" ";
+        if not EOS089WMSCaptionTrans.Insert() then
+            EOS089WMSCaptionTrans.Modify();
+
+        if EOS089WMSScannerSetup.Get(ScannerSetupCode) then
+            exit;
+
+        EOS089WMSScannerSetup.Init();
+        EOS089WMSScannerSetup.Code := ScannerSetupCode;
+        EOS089WMSScannerSetup."Scanner Type" := Enum::"EOS089 WMS Scanner Type"::Sequential;
+        EOS089WMSScannerSetup."Barcode Type" := Enum::"EOS089 WMS Barcode Type"::" ";
+        EOS089WMSScannerSetup.Description := 'Free text Example';
+        EOS089WMSScannerSetup.Insert();
+
+        EOS089WMSScannerDetail.Init();
+        EOS089WMSScannerDetail."Scanner Code" := ScannerSetupCode;
+        EOS089WMSScannerDetail."Line No." := 10000;
+        EOS089WMSScannerDetail."Barcode Part" := Enum::"EOS089 WMS Barcode Part"::"Item Id";
+        EOS089WMSScannerDetail.Insert();
+
+        EOS089WMSScannerDetail.Init();
+        EOS089WMSScannerDetail."Scanner Code" := ScannerSetupCode;
+        EOS089WMSScannerDetail."Line No." := 20000;
+        EOS089WMSScannerDetail."Barcode Part" := Enum::"EOS089 WMS Barcode Part"::FreeText;
+        EOS089WMSScannerDetail."Token Caption Name" := 'FreeText_Location';
+        EOS089WMSScannerDetail.Insert();
+
+        EOS089WMSScannerDetail.Init();
+        EOS089WMSScannerDetail."Scanner Code" := ScannerSetupCode;
+        EOS089WMSScannerDetail."Line No." := 30000;
+        EOS089WMSScannerDetail."Barcode Part" := Enum::"EOS089 WMS Barcode Part"::FreeText2;
+        EOS089WMSScannerDetail."Token Caption Name" := 'FreeText_Bin';
+        EOS089WMSScannerDetail.Insert();
+
+        EOS089WMSScannerDetail.Init();
+        EOS089WMSScannerDetail."Scanner Code" := ScannerSetupCode;
+        EOS089WMSScannerDetail."Line No." := 40000;
+        EOS089WMSScannerDetail."Barcode Part" := Enum::"EOS089 WMS Barcode Part"::FreeText3;
+        EOS089WMSScannerDetail."Token Caption Name" := 'FreeText_ExpDate';
+        EOS089WMSScannerDetail.Insert();
+
+        EOS089WMSScannerSetup.Status := Enum::"EOS089 WMS Generic Status"::Enabled;
+        EOS089WMSScannerSetup.Modify();
     end;
 
     local procedure SetDefaultFilters1(EOS089WMSUserActivity: Record "EOS089 WMS User Activity")
@@ -941,7 +941,7 @@ codeunit 50000 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
         ApplySystemIdFilter: Boolean;
         NoFilters: Text;
     begin
-        EmployeeNo := CopyStr(EOS089WMSCustomActHeader_Internal.GetFilter("Employee No."), 1, MaxStrLen(EmployeeNo));
+        EmployeeNo := CopyStr(EOS089WMSCustomActHeader_Internal.GetFilter("Employee No. Filter"), 1, MaxStrLen(EmployeeNo));
         ApplySystemIdFilter := EOS089WMSCustomActHeader_Internal.GetFilter("SystemId") <> '';
         if ApplySystemIdFilter then
             Evaluate(SystemIdFilter, EOS089WMSCustomActHeader_Internal.GetFilter("SystemId"));
@@ -963,8 +963,8 @@ codeunit 50000 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
         if ApplySystemIdFilter then
             EOS089WMSCustomActHeader_Internal.SetFilter("SystemId", SystemIdFilter);
 
-        EOS089WMSCustomActHeader_Internal.SetRange("Employee No.", EmployeeNo);
-        EOS089WMSCustomActHeader_Internal.SetRange("Activity Type", ActivityType());
+        EOS089WMSCustomActHeader_Internal.SetRange("Employee No. Filter", EmployeeNo);
+        EOS089WMSCustomActHeader_Internal.SetRange("Activity Type Filter", ActivityType());
 
         exit(true);
     end;
@@ -989,50 +989,8 @@ codeunit 50000 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
         EOS089WMSCustomActLine_Internal.SetFilter("Document No.", DocumentNo);
 
         EOS089WMSCustomActLine_Internal.SetRange("Employee No. Filter", EmployeeNo);
-        EOS089WMSCustomActLine_Internal.SetRange("Activity Type", ActivityType());
+        EOS089WMSCustomActLine_Internal.SetRange("Activity Type Filter", ActivityType());
 
         exit(true);
-    end;
-
-    local procedure CopySourceScan(ScanId: Guid; NewScanId: Guid; EOS089WMSCustomActLine: Record "EOS089 WMS Custom Act. Line"; TransferLine: Record "Transfer Line")
-    var
-        EOS089WMSSourceScan, EOS089WMSSourceScan2 : Record "EOS089 WMS Source Scan";
-    begin
-        // Raw procedure to transfer source scans, in order to have Transfer Order as "scanned"
-        EOS089WMSSourceScan.Reset();
-        EOS089WMSSourceScan.SetRange("Scan Id", ScanId);
-        EOS089WMSSourceScan.SetRange("Source SystemId", EOS089WMSCustomActLine.SystemId);
-        EOS089WMSSourceScan.FindLast();
-
-        EOS089WMSSourceScan2.Init();
-        EOS089WMSSourceScan2."Scan Id" := NewScanId;
-        EOS089WMSSourceScan2."Scan Line Id" := CreateGuid();
-        EOS089WMSSourceScan2."Activity Type" := Enum::"EOS089 WMS Activity Type"::"Transfer Shipment";
-        EOS089WMSSourceScan2.Type := Enum::"EOS089 WMS Scan Entity Type"::Item;
-        EOS089WMSSourceScan2."Item No." := EOS089WMSSourceScan."Item No.";
-        EOS089WMSSourceScan2."Variant Code" := EOS089WMSSourceScan."Variant Code";
-        EOS089WMSSourceScan2."Tracking Type" := EOS089WMSSourceScan."Tracking Type";
-        EOS089WMSSourceScan2."Serial No." := EOS089WMSSourceScan."Serial No.";
-        EOS089WMSSourceScan2."Lot No." := EOS089WMSSourceScan."Lot No.";
-        EOS089WMSSourceScan2."Package No." := EOS089WMSSourceScan."Package No.";
-        EOS089WMSSourceScan2.Quantity := EOS089WMSSourceScan.Quantity;
-        EOS089WMSSourceScan2."Quantity (Base)" := EOS089WMSSourceScan."Quantity (Base)";
-        EOS089WMSSourceScan2."Location Code" := EOS089WMSSourceScan."Location Code";
-        EOS089WMSSourceScan2."Bin Code" := EOS089WMSSourceScan."Bin Code";
-        EOS089WMSSourceScan2."Automatic Tracking" := EOS089WMSSourceScan."Automatic Tracking";
-
-        EOS089WMSSourceScan2."Item Journal Entry Type" := EOS089WMSSourceScan."Item Journal Entry Type";
-
-        EOS089WMSSourceScan2."Source Type" := Database::"Transfer Line";
-        EOS089WMSSourceScan2."Source Subtype" := Enum::"EOS089 WMS Source Subtype"::"0";
-        EOS089WMSSourceScan2."Source Subtype As Int" := Enum::"EOS089 WMS Source Subtype"::"0".AsInteger();
-        EOS089WMSSourceScan2."Source ID" := TransferLine."Document No.";
-        EOS089WMSSourceScan2."Source Ref. No." := TransferLine."Line No.";
-        EOS089WMSSourceScan2."Unit Of Measure Code" := TransferLine."Unit Of Measure Code";
-        EOS089WMSSourceScan2."Source SystemId" := TransferLine.SystemId;
-        EOS089WMSSourceScan2.Description := TransferLine.Description;
-        EOS089WMSSourceScan2."Description 2" := TransferLine."Description 2";
-
-        EOS089WMSSourceScan2.Insert();
     end;
 }

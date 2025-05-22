@@ -1,4 +1,4 @@
-pageextension 50001 "EOS Custom Hdr" extends "EOS089 WMS Custom Act. Card"
+pageextension 50101 "EOS RCAHC-Create Trans. Order" extends "EOS089 WMS Reg. Cus. Act. Card"
 {
     layout
     {

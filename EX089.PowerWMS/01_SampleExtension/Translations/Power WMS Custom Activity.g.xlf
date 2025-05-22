@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="en-US" original="Power WMS Custom Activity">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 3310386476 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Custom Activity Setup</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table EOS Custom Activity Setup - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3310386476 - Field 2814799924 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Bin Code</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table EOS Custom Activity Setup - Field Bin Code - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3310386476 - Field 2442812157 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Item No. 1</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table EOS Custom Activity Setup - Field Item No. 1 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3310386476 - Field 1805115540 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Item No. 2</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table EOS Custom Activity Setup - Field Item No. 2 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3310386476 - Field 1167418923 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Item No. 3</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table EOS Custom Activity Setup - Field Item No. 3 - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3310386476 - Field 2161572060 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Location Code</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table EOS Custom Activity Setup - Field Location Code - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3310386476 - Field 1663593181 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Primary Key</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table EOS Custom Activity Setup - Field Primary Key - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 1310564538 - Method 3514624047 - NamedType 1742701991" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Activity %1 not allowed for Source %2</source>
+          <note from="Developer" annotates="general" priority="2">%1: Activity, %2: Source Type</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit EOS Create Box Impl. - Method CheckSourceAllowedForActivity - NamedType ActivityNotAllowedErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 1310564538 - Method 1978962747 - NamedType 2988421817" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Box created</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit EOS Create Box Impl. - Method GetPostedSourceMessage - NamedType SourceCreatedLbl</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 1310564538 - Method 2731000887 - NamedType 3239513518" size-unit="char" translate="yes" xml:space="preserve">
+          <source>%1 No. %2 reset successfully</source>
+          <note from="Developer" annotates="general" priority="2">%1: Source Type, %2: Source No.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit EOS Create Box Impl. - Method GetResetSourceMessage - NamedType SourceResetLbl</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 2475595227 - Method 3514624047 - NamedType 1742701991" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Activity %1 not allowed for Source %2</source>
+          <note from="Developer" annotates="general" priority="2">%1: Activity, %2: Source Type</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit EOS Create Trans. Order Impl. - Method CheckSourceAllowedForActivity - NamedType ActivityNotAllowedErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 2475595227 - Method 1978962747 - NamedType 2485552466" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Transfer Order No. %1 created successfully</source>
+          <note from="Developer" annotates="general" priority="2">%1: Transfer Order No.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit EOS Create Trans. Order Impl. - Method GetPostedSourceMessage - NamedType SourcePostedLbl</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 2475595227 - Method 2731000887 - NamedType 3239513518" size-unit="char" translate="yes" xml:space="preserve">
+          <source>%1 No. %2 reset successfully</source>
+          <note from="Developer" annotates="general" priority="2">%1: Source Type, %2: Source No.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit EOS Create Trans. Order Impl. - Method GetResetSourceMessage - NamedType SourceResetLbl</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 2983988237 - Method 3514624047 - NamedType 1742701991" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Activity %1 not allowed for Source %2</source>
+          <note from="Developer" annotates="general" priority="2">%1: Activity, %2: Source Type</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit EOS Create Whse. Ships. Impl. - Method CheckSourceAllowedForActivity - NamedType ActivityNotAllowedErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 2983988237 - Method 540889095 - NamedType 7893067" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Scan %1 is not a valid Sales Order</source>
+          <note from="Developer" annotates="general" priority="2">%1: Scan Document No.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit EOS Create Whse. Ships. Impl. - Method GetRecordRefForScanManagement - NamedType ScanNotValidErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 2983988237 - Method 2731000887 - NamedType 3239513518" size-unit="char" translate="yes" xml:space="preserve">
+          <source>%1 No. %2 reset successfully</source>
+          <note from="Developer" annotates="general" priority="2">%1: Source Type, %2: Source No.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit EOS Create Whse. Ships. Impl. - Method GetResetSourceMessage - NamedType SourceResetLbl</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 85235394 - Method 3514624047 - NamedType 1742701991" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Activity %1 not allowed for Source %2</source>
+          <note from="Developer" annotates="general" priority="2">%1: Activity, %2: Source Type</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit EOS Free Text Impl. - Method CheckSourceAllowedForActivity - NamedType ActivityNotAllowedErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 85235394 - Method 1978962747 - NamedType 2485552466" size-unit="char" translate="yes" xml:space="preserve">
+          <source>%1 No. %2 posted successfully as %3</source>
+          <note from="Developer" annotates="general" priority="2">%1: Source Type, %2: Source No., %3: Posted Source No.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit EOS Free Text Impl. - Method GetPostedSourceMessage - NamedType SourcePostedLbl</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 85235394 - Method 2731000887 - NamedType 3239513518" size-unit="char" translate="yes" xml:space="preserve">
+          <source>%1 No. %2 reset successfully</source>
+          <note from="Developer" annotates="general" priority="2">%1: Source Type, %2: Source No.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit EOS Free Text Impl. - Method GetResetSourceMessage - NamedType SourceResetLbl</note>
+        </trans-unit>
+        <trans-unit id="Page 3310386476 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Custom Activity Setup (WMS)</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page EOS Custom Activity Setup - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3310386476 - Control 1650993547 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Create Box</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page EOS Custom Activity Setup - Control CreateBox - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3310386476 - Control 2814799924 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the "Bin Code" field</source>
+          <note from="Developer" annotates="general" priority="2">%</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page EOS Custom Activity Setup - Control Bin Code - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3310386476 - Control 2442812157 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the "Item No. 1" field</source>
+          <note from="Developer" annotates="general" priority="2">%</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page EOS Custom Activity Setup - Control Item No. 1 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3310386476 - Control 1805115540 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the "Item No. 2" field</source>
+          <note from="Developer" annotates="general" priority="2">%</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page EOS Custom Activity Setup - Control Item No. 2 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3310386476 - Control 1167418923 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the "Item No. 3" field</source>
+          <note from="Developer" annotates="general" priority="2">%</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page EOS Custom Activity Setup - Control Item No. 3 - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3310386476 - Control 2161572060 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the value of the "Location Code" field</source>
+          <note from="Developer" annotates="general" priority="2">%</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page EOS Custom Activity Setup - Control Location Code - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 2831998037 - Control 2699169470 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 3841142506">
+          <source>To Bin Code</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension EOS CAHC-Create Trans. Order - Control EOS To Bin Code - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 2831998037 - Control 1765973574 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 3841142506">
+          <source>To Location Code</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension EOS CAHC-Create Trans. Order - Control EOS To Location Code - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 1349278551 - Action 3206712416 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 566554635">
+          <source>Create Custom Document Sample</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension EOS Custom Document - Action EOSCreateCustomDocumentBox - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 1349278551 - Action 3206712416 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 566554635">
+          <source>Create Custom Document Sample</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension EOS Custom Document - Action EOSCreateCustomDocumentBox - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 4093766067 - Control 2699169470 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 3072154652">
+          <source>To Bin Code</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension EOS RCAHC-Create Trans. Order - Control EOS To Bin Code - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="PageExtension 4093766067 - Control 1765973574 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Page 3072154652">
+          <source>To Location Code</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PageExtension EOS RCAHC-Create Trans. Order - Control EOS To Location Code - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2762870380 - Field 580412389 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 4167401631">
+          <source>Document Date</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension EOS CAH-Create Trans. Order - Field Document Date - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2762870380 - Field 2699169470 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 4167401631">
+          <source>To Bin Code</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension EOS CAH-Create Trans. Order - Field EOS To Bin Code - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2762870380 - Field 1765973574 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 4167401631">
+          <source>To Location Code</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension EOS CAH-Create Trans. Order - Field EOS To Location Code - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2762870380 - Field 3804864045 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 4167401631">
+          <source>Shipment Destination No.</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension EOS CAH-Create Trans. Order - Field Shipment Destination No. - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 2762870380 - Field 556062453 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 4167401631">
+          <source>Vendor Shipment No.</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension EOS CAH-Create Trans. Order - Field Vendor Shipment No. - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 1569693662 - Field 2699169470 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 3390660608">
+          <source>To Bin Code</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension EOS RCAH-Create Trans. Order - Field EOS To Bin Code - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="TableExtension 1569693662 - Field 1765973574 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Table 3390660608">
+          <source>To Location Code</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">TableExtension EOS RCAH-Create Trans. Order - Field EOS To Location Code - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="EnumExtension 741312325 - EnumValue 3431463797 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Enum 2868106005">
+          <source>Custom</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">EnumExtension EOS Activity Group - EnumValue Custom - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="EnumExtension 197923121 - EnumValue 2941241855 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Enum 3464590463">
+          <source>HUOrItem</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">EnumExtension EOS Barcode Switch - EnumValue HUOrItem - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="EnumExtension 3592856001 - EnumValue 3018985828 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Enum 4244104744">
+          <source>Create Box</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">EnumExtension EOS Create Box - EnumValue EOSCreateBox - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="EnumExtension 3592856001 - EnumValue 1019468596 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Enum 4244104744">
+          <source>Create Transfer Order</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">EnumExtension EOS Create Trans. Order - EnumValue EOSCreateTransferOrder - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="EnumExtension 3592856001 - EnumValue 2757580313 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Enum 4244104744">
+          <source>Create Warehouse Shipments</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">EnumExtension EOS Create Whse. Shipments - EnumValue EOSCreateWhseShipments - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="EnumExtension 3592856001 - EnumValue 959914636 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Enum 4244104744">
+          <source>Free Text</source>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">EnumExtension EOS Free Text - EnumValue EOSFreeText - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
