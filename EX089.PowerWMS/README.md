@@ -16,9 +16,9 @@ Provide samples for custom activities powered by PowerWMS engine
 "id": "15dd7d69-e3fa-4da9-acc3-9828b2795643",  
 "name": "Power WMS",  
 "publisher": "EOS Solutions",  
-"version": "25.0.47.0"  
+"version": "25.0.57.0"  
 
 "id": "0ab25a58-2869-4ca7-b12c-a16594852658",  
 "name": "Power WMS for Handling Units",  
 "publisher": "EOS Solutions",  
-"version": "25.0.31.0"  
+"version": "25.0.34.0"  
