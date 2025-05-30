@@ -302,4 +302,44 @@ codeunit 50101 "EOS Create Trans.Ord. Ev.Subs."
 
         EOS089WMSSourceScan2.Insert();
     end;
+
+    [EventSubscriber(ObjectType::Table, Database::"EOS089 WMS Scanner Reference", OnLookupReferenceNo, '', false, false)]
+    local procedure T18060024_OnLookupReferenceNo(TableNo: Integer; FieldNo: Integer; var ReferenceNo: Code[20]; var IsHandled: Boolean)
+    var
+        EOS089WMSCustomActHeader: Record "EOS089 WMS Custom Act. Header";
+        Location: Record Location;
+        LocationList: Page "Location List";
+    begin
+        IsHandled := false;
+        if TableNo <> Database::"EOS089 WMS Custom Act. Header" then
+            exit;
+
+        case FieldNo of
+            EOS089WMSCustomActHeader.FieldNo("Location Code"):
+                begin
+                    LocationList.LookUpMode(true);
+                    if LocationList.RunModal() = Action::LookupOK then begin
+                        LocationList.GetRecord(Location);
+                        ReferenceNo := Location.Code;
+                        IsHandled := true;
+                    end;
+                end;
+        end;
+    end;
+
+    [EventSubscriber(ObjectType::Table, Database::"EOS089 WMS Scanner Reference", OnValidateReferenceNo, '', false, false)]
+    local procedure T18060024_OnValidateReferenceNo(EOS089WMSScannerReference: Record "EOS089 WMS Scanner Reference"; xEOS089WMSScannerReference: Record "EOS089 WMS Scanner Reference")
+    var
+        EOS089WMSCustomActHeader: Record "EOS089 WMS Custom Act. Header";
+        Location: Record Location;
+    begin
+        EOS089WMSScannerReference.TestField("Reference Field No.");
+        if EOS089WMSScannerReference."Reference No." = '' then
+            exit;
+
+        case EOS089WMSScannerReference."Reference Field No." of
+            EOS089WMSCustomActHeader.FieldNo("Location Code"):
+                Location.Get(EOS089WMSScannerReference."Reference No.");
+        end;
+    end;
 }
