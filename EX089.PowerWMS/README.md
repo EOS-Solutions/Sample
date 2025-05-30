@@ -5,7 +5,7 @@ EX089 PowerWMS
 Provide samples for custom activities powered by PowerWMS engine
 
 # Example:
-- 01 - Free scans activity - Create a Transfer Order ready to ship from item scans made with PowerWMS
+- 01 - Free scans activity - Create a Transfer Order ready to ship from item scans made with PowerWMS. Also extends Scanner References (page extension 50103 and table "EOS089 WMS Scanner Reference" subscribers)
 - 02 - Free scans activity -  Create a warehouse shipment scanning Sales Orders Nos.
 - 03 - Custom Barcode -  Fill scanner tokens based on barcode format
 - 04 - Document activity -  Scan items for an extisting custom document
