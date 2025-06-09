@@ -73,14 +73,14 @@ codeunit 50000 "Outb. EDoc. Cust. Format"
         DocumentTMP: Record "Sales Invoice Header" temporary;
         DocumentLineTMP: Record "Sales Invoice Line" temporary;
         CompanyInfoPA: Record "EOS Outb. Electr. Doc. Setup";
-        ItemCrossReference: Record "Item Cross Reference";
+        ItemReference: Record "Item Reference";
         FldRef: FieldRef;
         DummyText: Text[20];
         CustNo: Code[20];
     begin
         CustNo := header.Field(DocumentTMP.FieldNo("Bill-to Customer No.")).Value();
         Handled := false;
-        if not EOSEDocSetupMgt.GetCustGroupSetup(CustNo, OutbElectrDocSetupGroup) then
+        if not EOSEDocSetupMgt.GetCustGroupSetup(CustNo, OutbElectrDocSetupGroup, header) then
             exit;
 
         case OutbElectrDocSetupGroup."EOS Hook Group Code" of
@@ -101,8 +101,8 @@ codeunit 50000 "Outb. EDoc. Cust. Format"
                         DocumentLineTMP."Variant Code" := FldRef.Value();
                         DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("No."));
                         DocumentLineTMP."No." := FldRef.Value();
-                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Cross-Reference No."));
-                        DocumentLineTMP."Cross-Reference No." := FldRef.Value();
+                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Item Reference No."));
+                        DocumentLineTMP."Item Reference No." := FldRef.Value();
 
                         if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
                             XmlWriter.WriteStartElement('CodiceArticolo');
@@ -114,10 +114,10 @@ codeunit 50000 "Outb. EDoc. Cust. Format"
                             XmlWriter.WriteEndElement();
 
                             //CrossReference
-                            if DocumentLineTMP."Cross-Reference No." <> '' then begin
+                            if DocumentLineTMP."Item Reference No." <> '' then begin
                                 XmlWriter.WriteStartElement('CodiceArticolo');
                                 XmlWriter.WriteElementValue('CodiceTipo', 'articolobrico');
-                                XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."Cross-Reference No.");
+                                XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."Item Reference No.");
                                 XmlWriter.WriteEndElement();
                             end;
                         end;
@@ -143,8 +143,6 @@ codeunit 50000 "Outb. EDoc. Cust. Format"
                         DocumentLineTMP."Variant Code" := FldRef.Value();
                         DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("No."));
                         DocumentLineTMP."No." := FldRef.Value();
-                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Cross-Reference No."));
-                        DocumentLineTMP."Cross-Reference No." := FldRef.Value();
 
                         if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
                             XmlWriter.WriteStartElement('CodiceArticolo');
@@ -177,28 +175,31 @@ codeunit 50000 "Outb. EDoc. Cust. Format"
                         DocumentLineTMP."Variant Code" := FldRef.Value();
                         DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("No."));
                         DocumentLineTMP."No." := FldRef.Value();
-                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Cross-Reference No."));
-                        DocumentLineTMP."Cross-Reference No." := FldRef.Value();
+                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Item Reference No."));
+                        DocumentLineTMP."Item Reference No." := FldRef.Value();
+                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Sell-to Customer No."));
+                        DocumentLineTMP."Sell-to Customer No." := FldRef.Value();
 
                         if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
-                            ItemCrossReference.SetRange("Item No.", DocumentLineTMP."No.");
-                            ItemCrossReference.SetFilter("Cross-Reference Type", '%1|%2',
-                                ItemCrossReference."Cross-Reference Type"::"Bar Code", ItemCrossReference."Cross-Reference Type"::Customer);
-                            if DocumentLineTMP."Cross-Reference No." <> '' then
-                                ItemCrossReference.SetRange("Cross-Reference No.", DocumentLineTMP."Cross-Reference No.");
-                            if ItemCrossReference.FindSet(false, false) then
+                            ItemReference.SetRange("Item No.", DocumentLineTMP."No.");
+                            ItemReference.SetFilter("Reference Type", '%1|%2',
+                                ItemReference."Reference Type"::"Bar Code", ItemReference."Reference Type"::Customer);
+                            if DocumentLineTMP."Item Reference No." <> '' then
+                                ItemReference.SetRange("Reference No.", DocumentLineTMP."Item Reference No.");
+                            if ItemReference.FindSet() then
                                 repeat
-                                    XmlWriter.WriteStartElement('CodiceArticolo');
-                                    case ItemCrossReference."Cross-Reference Type" of
-                                        ItemCrossReference."Cross-Reference Type"::Customer:
-                                            XmlWriter.WriteElementValue('CodiceTipo', 'BP');
-                                        ItemCrossReference."Cross-Reference Type"::"Bar Code":
-                                            XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
+                                    if not ((ItemReference."Reference Type" = ItemReference."Reference Type"::Customer) and (ItemReference."Reference Type No." <> DocumentLineTMP."Sell-to Customer No.")) then begin
+                                        XmlWriter.WriteStartElement('CodiceArticolo');
+                                        case ItemReference."Reference Type" of
+                                            ItemReference."Reference Type"::Customer:
+                                                XmlWriter.WriteElementValue('CodiceTipo', 'BP');
+                                            ItemReference."Reference Type"::"Bar Code":
+                                                XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
+                                        end;
+                                        XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
+                                        XmlWriter.WriteEndElement();
                                     end;
-                                    XmlWriter.WriteElementValue('CodiceValore', ItemCrossReference."Cross-Reference No.");
-                                    XmlWriter.WriteEndElement();
-
-                                until ItemCrossReference.Next() = 0;
+                                until ItemReference.Next() = 0;
 
                         end;
                     end;
@@ -222,8 +223,10 @@ codeunit 50000 "Outb. EDoc. Cust. Format"
                         DocumentLineTMP."Variant Code" := FldRef.Value();
                         DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("No."));
                         DocumentLineTMP."No." := FldRef.Value();
-                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Cross-Reference No."));
-                        DocumentLineTMP."Cross-Reference No." := FldRef.Value();
+                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Item Reference No."));
+                        DocumentLineTMP."Item Reference No." := FldRef.Value();
+                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Sell-to Customer No."));
+                        DocumentLineTMP."Sell-to Customer No." := FldRef.Value();
 
                         if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
                             XmlWriter.WriteStartElement('CodiceArticolo');
@@ -234,26 +237,26 @@ codeunit 50000 "Outb. EDoc. Cust. Format"
                                 XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No.");
                             XmlWriter.WriteEndElement();
 
-
-                            ItemCrossReference.SetRange("Item No.", DocumentLineTMP."No.");
-                            ItemCrossReference.SetFilter("Cross-Reference Type", '%1|%2',
-                                ItemCrossReference."Cross-Reference Type"::"Bar Code", ItemCrossReference."Cross-Reference Type"::Customer);
-                            if DocumentLineTMP."Cross-Reference No." <> '' then
-                                ItemCrossReference.SetRange("Cross-Reference No.", DocumentLineTMP."Cross-Reference No.");
-                            if ItemCrossReference.FindSet(false, false) then
+                            ItemReference.SetRange("Item No.", DocumentLineTMP."No.");
+                            ItemReference.SetFilter("Reference Type", '%1|%2',
+                                ItemReference."Reference Type"::"Bar Code", ItemReference."Reference Type"::Customer);
+                            if DocumentLineTMP."Item Reference No." <> '' then
+                                ItemReference.SetRange("Reference No.", DocumentLineTMP."Item Reference No.");
+                            if ItemReference.FindSet() then
                                 repeat
-                                    XmlWriter.WriteStartElement('CodiceArticolo');
-                                    case ItemCrossReference."Cross-Reference Type" of
-                                        ItemCrossReference."Cross-Reference Type"::Customer:
-                                            XmlWriter.WriteElementValue('CodiceTipo', '01');
-                                        ItemCrossReference."Cross-Reference Type"::"Bar Code":
-                                            XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
+                                    if not ((ItemReference."Reference Type" = ItemReference."Reference Type"::Customer) and (ItemReference."Reference Type No." <> DocumentLineTMP."Sell-to Customer No.")) then begin
+                                        XmlWriter.WriteStartElement('CodiceArticolo');
+                                        case ItemReference."Reference Type" of
+                                            ItemReference."Reference Type"::Customer:
+                                                XmlWriter.WriteElementValue('CodiceTipo', '01');
+                                            ItemReference."Reference Type"::"Bar Code":
+                                                XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
+                                        end;
+
+                                        XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
+                                        XmlWriter.WriteEndElement();
                                     end;
-
-                                    XmlWriter.WriteElementValue('CodiceValore', ItemCrossReference."Cross-Reference No.");
-                                    XmlWriter.WriteEndElement();
-
-                                until ItemCrossReference.Next() = 0;
+                                until ItemReference.Next() = 0;
 
                         end;
                     end;
@@ -277,21 +280,21 @@ codeunit 50000 "Outb. EDoc. Cust. Format"
                         DocumentLineTMP."Variant Code" := FldRef.Value();
                         DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("No."));
                         DocumentLineTMP."No." := FldRef.Value();
-                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Cross-Reference No."));
-                        DocumentLineTMP."Cross-Reference No." := FldRef.Value();
+                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Item Reference No."));
+                        DocumentLineTMP."Item Reference No." := FldRef.Value();
 
                         if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
-                            ItemCrossReference.SetRange("Item No.", DocumentLineTMP."No.");
-                            ItemCrossReference.SetRange("Cross-Reference Type", ItemCrossReference."Cross-Reference Type"::"Bar Code");
-                            if DocumentLineTMP."Cross-Reference No." <> '' then
-                                ItemCrossReference.SetRange("Cross-Reference No.", DocumentLineTMP."Cross-Reference No.");
-                            if ItemCrossReference.FindSet(false, false) then
+                            ItemReference.SetRange("Item No.", DocumentLineTMP."No.");
+                            ItemReference.SetFilter("Reference Type", '%1', ItemReference."Reference Type"::"Bar Code");
+                            if DocumentLineTMP."Item Reference No." <> '' then
+                                ItemReference.SetRange("Reference No.", DocumentLineTMP."Item Reference No.");
+                            if ItemReference.FindSet() then
                                 repeat
                                     XmlWriter.WriteStartElement('CodiceArticolo');
                                     XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
-                                    XmlWriter.WriteElementValue('CodiceValore', ItemCrossReference."Cross-Reference No.");
+                                    XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
                                     XmlWriter.WriteEndElement();
-                                until ItemCrossReference.Next() = 0
+                                until ItemReference.Next() = 0
                             else begin
                                 XmlWriter.WriteStartElement('CodiceArticolo');
                                 XmlWriter.WriteElementValue('CodiceTipo', 'Codice Uso Fornitore');
@@ -324,8 +327,10 @@ codeunit 50000 "Outb. EDoc. Cust. Format"
                         DocumentLineTMP."Variant Code" := FldRef.Value();
                         DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("No."));
                         DocumentLineTMP."No." := FldRef.Value();
-                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Cross-Reference No."));
-                        DocumentLineTMP."Cross-Reference No." := FldRef.Value();
+                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Item Reference No."));
+                        DocumentLineTMP."Item Reference No." := FldRef.Value();
+                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Sell-to Customer No."));
+                        DocumentLineTMP."Sell-to Customer No." := FldRef.Value();
 
                         if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
 
@@ -337,23 +342,25 @@ codeunit 50000 "Outb. EDoc. Cust. Format"
                                 XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No.");
                             XmlWriter.WriteEndElement();
 
-                            ItemCrossReference.SetRange("Item No.", DocumentLineTMP."No.");
-                            ItemCrossReference.SetFilter("Cross-Reference Type", '%1|%2',
-                                ItemCrossReference."Cross-Reference Type"::"Bar Code", ItemCrossReference."Cross-Reference Type"::Customer);
-                            if DocumentLineTMP."Cross-Reference No." <> '' then
-                                ItemCrossReference.SetRange("Cross-Reference No.", DocumentLineTMP."Cross-Reference No.");
-                            if ItemCrossReference.FindSet(false, false) then
+                            ItemReference.SetRange("Item No.", DocumentLineTMP."No.");
+                            ItemReference.SetFilter("Reference Type", '%1|%2',
+                                ItemReference."Reference Type"::"Bar Code", ItemReference."Reference Type"::Customer);
+                            if DocumentLineTMP."Item Reference No." <> '' then
+                                ItemReference.SetRange("Reference No.", DocumentLineTMP."Item Reference No.");
+                            if ItemReference.FindSet() then
                                 repeat
-                                    XmlWriter.WriteStartElement('CodiceArticolo');
-                                    case ItemCrossReference."Cross-Reference Type" of
-                                        ItemCrossReference."Cross-Reference Type"::Customer:
-                                            XmlWriter.WriteElementValue('CodiceTipo', 'IN');
-                                        ItemCrossReference."Cross-Reference Type"::"Bar Code":
-                                            XmlWriter.WriteElementValue('CodiceTipo', 'EN');
+                                    if not ((ItemReference."Reference Type" = ItemReference."Reference Type"::Customer) and (ItemReference."Reference Type No." <> DocumentLineTMP."Sell-to Customer No.")) then begin
+                                        XmlWriter.WriteStartElement('CodiceArticolo');
+                                        case ItemReference."Reference Type" of
+                                            ItemReference."Reference Type"::Customer:
+                                                XmlWriter.WriteElementValue('CodiceTipo', 'IN');
+                                            ItemReference."Reference Type"::"Bar Code":
+                                                XmlWriter.WriteElementValue('CodiceTipo', 'EN');
+                                        end;
+                                        XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
+                                        XmlWriter.WriteEndElement();
                                     end;
-                                    XmlWriter.WriteElementValue('CodiceValore', ItemCrossReference."Cross-Reference No.");
-                                    XmlWriter.WriteEndElement();
-                                until ItemCrossReference.Next() = 0;
+                                until ItemReference.Next() = 0;
 
                         end;
                     end;
@@ -377,8 +384,10 @@ codeunit 50000 "Outb. EDoc. Cust. Format"
                         DocumentLineTMP."Variant Code" := FldRef.Value();
                         DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("No."));
                         DocumentLineTMP."No." := FldRef.Value();
-                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Cross-Reference No."));
-                        DocumentLineTMP."Cross-Reference No." := FldRef.Value();
+                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Item Reference No."));
+                        DocumentLineTMP."Item Reference No." := FldRef.Value();
+                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Sell-to Customer No."));
+                        DocumentLineTMP."Sell-to Customer No." := FldRef.Value();
 
                         if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
 
@@ -390,27 +399,27 @@ codeunit 50000 "Outb. EDoc. Cust. Format"
                                 XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No.");
                             XmlWriter.WriteEndElement();
 
-
-                            ItemCrossReference.SetRange("Item No.", DocumentLineTMP."No.");
-                            ItemCrossReference.SetFilter("Cross-Reference Type", '%1|%2',
-                                ItemCrossReference."Cross-Reference Type"::"Bar Code", ItemCrossReference."Cross-Reference Type"::Customer);
-                            if DocumentLineTMP."Cross-Reference No." <> '' then
-                                ItemCrossReference.SetRange("Cross-Reference No.", DocumentLineTMP."Cross-Reference No.");
-                            if ItemCrossReference.FindSet(false, false) then
+                            ItemReference.SetRange("Item No.", DocumentLineTMP."No.");
+                            ItemReference.SetFilter("Reference Type", '%1|%2',
+                                ItemReference."Reference Type"::"Bar Code", ItemReference."Reference Type"::Customer);
+                            if DocumentLineTMP."Item Reference No." <> '' then
+                                ItemReference.SetRange("Reference No.", DocumentLineTMP."Item Reference No.");
+                            if ItemReference.FindSet() then
                                 repeat
-                                    XmlWriter.WriteStartElement('CodiceArticolo');
-                                    XmlWriter.WriteElementValue('CodiceTipo', 'articolobrico');
-                                    case ItemCrossReference."Cross-Reference Type" of
-                                        ItemCrossReference."Cross-Reference Type"::Customer:
-                                            XmlWriter.WriteElementValue('CodiceTipo', 'Codice Art. Cliente');
-                                        ItemCrossReference."Cross-Reference Type"::"Bar Code":
-                                            XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
+                                    if not ((ItemReference."Reference Type" = ItemReference."Reference Type"::Customer) and (ItemReference."Reference Type No." <> DocumentLineTMP."Sell-to Customer No.")) then begin
+                                        XmlWriter.WriteStartElement('CodiceArticolo');
+                                        XmlWriter.WriteElementValue('CodiceTipo', 'articolobrico');
+                                        case ItemReference."Reference Type" of
+                                            ItemReference."Reference Type"::Customer:
+                                                XmlWriter.WriteElementValue('CodiceTipo', 'Codice Art. Cliente');
+                                            ItemReference."Reference Type"::"Bar Code":
+                                                XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
+                                        end;
+
+                                        XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
+                                        XmlWriter.WriteEndElement();
                                     end;
-
-                                    XmlWriter.WriteElementValue('CodiceValore', ItemCrossReference."Cross-Reference No.");
-                                    XmlWriter.WriteEndElement();
-
-                                until ItemCrossReference.Next() = 0;
+                                until ItemReference.Next() = 0;
 
                         end;
                     end;
@@ -434,13 +443,12 @@ codeunit 50000 "Outb. EDoc. Cust. Format"
                         DocumentLineTMP."Variant Code" := FldRef.Value();
                         DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("No."));
                         DocumentLineTMP."No." := FldRef.Value();
-                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Cross-Reference No."));
-                        DocumentLineTMP."Cross-Reference No." := FldRef.Value();
+                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Item Reference No."));
+                        DocumentLineTMP."Item Reference No." := FldRef.Value();
 
                         if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
                             XmlWriter.WriteStartElement('CodiceArticolo');
                             XmlWriter.WriteElementValue('CodiceTipo', 'cod');
-                            XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."Cross-Reference No.");
                             if DocumentLineTMP."Variant Code" <> '' then
                                 XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No." + ' ' + DocumentLineTMP."Variant Code")
                             else
@@ -468,8 +476,6 @@ codeunit 50000 "Outb. EDoc. Cust. Format"
                         DocumentLineTMP."Variant Code" := FldRef.Value();
                         DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("No."));
                         DocumentLineTMP."No." := FldRef.Value();
-                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Cross-Reference No."));
-                        DocumentLineTMP."Cross-Reference No." := FldRef.Value();
 
                         if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
                             XmlWriter.WriteStartElement('CodiceArticolo');
@@ -501,8 +507,10 @@ codeunit 50000 "Outb. EDoc. Cust. Format"
                         DocumentLineTMP."Variant Code" := FldRef.Value();
                         DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("No."));
                         DocumentLineTMP."No." := FldRef.Value();
-                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Cross-Reference No."));
-                        DocumentLineTMP."Cross-Reference No." := FldRef.Value();
+                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Item Reference No."));
+                        DocumentLineTMP."Item Reference No." := FldRef.Value();
+                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Sell-to Customer No."));
+                        DocumentLineTMP."Sell-to Customer No." := FldRef.Value();
 
                         if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
                             XmlWriter.WriteStartElement('CodiceArticolo');
@@ -513,26 +521,25 @@ codeunit 50000 "Outb. EDoc. Cust. Format"
                                 XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No.");
                             XmlWriter.WriteEndElement();
 
-
-                            ItemCrossReference.SetRange("Item No.", DocumentLineTMP."No.");
-                            ItemCrossReference.SetFilter("Cross-Reference Type", '%1|%2',
-                                ItemCrossReference."Cross-Reference Type"::"Bar Code", ItemCrossReference."Cross-Reference Type"::Customer);
-                            if DocumentLineTMP."Cross-Reference No." <> '' then
-                                ItemCrossReference.SetRange("Cross-Reference No.", DocumentLineTMP."Cross-Reference No.");
-                            if ItemCrossReference.FindSet(false, false) then
+                            ItemReference.SetRange("Item No.", DocumentLineTMP."No.");
+                            ItemReference.SetFilter("Reference Type", '%1|%2',
+                                ItemReference."Reference Type"::"Bar Code", ItemReference."Reference Type"::Customer);
+                            if DocumentLineTMP."Item Reference No." <> '' then
+                                ItemReference.SetRange("Reference No.", DocumentLineTMP."Item Reference No.");
+                            if ItemReference.FindSet() then
                                 repeat
-                                    XmlWriter.WriteStartElement('CodiceArticolo');
-                                    case ItemCrossReference."Cross-Reference Type" of
-                                        ItemCrossReference."Cross-Reference Type"::Customer:
-                                            XmlWriter.WriteElementValue('CodiceTipo', 'BP');
-                                        ItemCrossReference."Cross-Reference Type"::"Bar Code":
-                                            XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
+                                    if not ((ItemReference."Reference Type" = ItemReference."Reference Type"::Customer) and (ItemReference."Reference Type No." <> DocumentLineTMP."Sell-to Customer No.")) then begin
+                                        XmlWriter.WriteStartElement('CodiceArticolo');
+                                        case ItemReference."Reference Type" of
+                                            ItemReference."Reference Type"::Customer:
+                                                XmlWriter.WriteElementValue('CodiceTipo', 'BP');
+                                            ItemReference."Reference Type"::"Bar Code":
+                                                XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
+                                        end;
+                                        XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
+                                        XmlWriter.WriteEndElement();
                                     end;
-                                    XmlWriter.WriteElementValue('CodiceValore', ItemCrossReference."Cross-Reference No.");
-                                    XmlWriter.WriteEndElement();
-
-                                until ItemCrossReference.Next() = 0;
-
+                                until ItemReference.Next() = 0;
                         end;
                     end;
                     Handled := true;
@@ -560,15 +567,15 @@ codeunit 50000 "Outb. EDoc. Cust. Format"
                         DocumentLineTMP."Variant Code" := FldRef.Value();
                         DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("No."));
                         DocumentLineTMP."No." := FldRef.Value();
-                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Cross-Reference No."));
-                        DocumentLineTMP."Cross-Reference No." := FldRef.Value();
                         DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Job No."));
                         DocumentLineTMP."Job No." := FldRef.Value();
+                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Item Reference No."));
+                        DocumentLineTMP."Item Reference No." := FldRef.Value();
 
                         if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
 
                             // Create string following Ferrari request
-                            DummyText := CopyStr(PadStr(DocumentLineTMP."Job No.", 9, ' ') + DocumentLineTMP."Cross-Reference No.", 1, 20);
+                            DummyText := CopyStr(PadStr(DocumentLineTMP."Job No.", 9, ' ') + DocumentLineTMP."Item Reference No.", 1, 20);
 
                             if DummyText <> '' then begin
                                 XmlWriter.WriteStartElement('CodiceArticolo');
@@ -600,8 +607,6 @@ codeunit 50000 "Outb. EDoc. Cust. Format"
                         DocumentLineTMP."Variant Code" := FldRef.Value();
                         DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("No."));
                         DocumentLineTMP."No." := FldRef.Value();
-                        DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Cross-Reference No."));
-                        DocumentLineTMP."Cross-Reference No." := FldRef.Value();
 
                         if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
                             XmlWriter.WriteStartElement('CodiceArticolo');
