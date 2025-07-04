@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - SO12345</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .content { margin: 20px 0; }
+        .footer { background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-top: 20px; text-align: center; }
+        .order-lines { list-style-type: none; padding: 0; }
+        .order-line { background-color: #f8f9fa; margin: 5px 0; padding: 10px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <!-- Header Template Content -->
+    <div class="header">
+        <h1>ACME Corporation</h1>
+        <h2>Order Confirmation</h2>
+        <p><strong>Customer:</strong> John Doe</p>
+        <p><strong>Date:</strong> 2024-01-15</p>
+    </div>
+    
+    <div class="content">
+        <!-- Order Details Template Content -->
+        <div class="order-details">
+            <h3>Order #SO12345</h3>
+            <p>Thank you for your order! Below are the details:</p>
+            
+            <h4>Order Lines:</h4>
+            <ul class="order-lines">
+                <li class="order-line">
+                    <strong>ITEM001</strong> - Premium Widget
+                    <br>Quantity: 2 | Unit Price: $50.00 | Amount: $100.00
+                </li>
+                <li class="order-line">
+                    <strong>ITEM002</strong> - Standard Widget
+                    <br>Quantity: 5 | Unit Price: $25.00 | Amount: $125.00
+                </li>
+            </ul>
+            
+            <div style="text-align: right; margin-top: 20px;">
+                <p><strong>Total Amount: $225.00</strong></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer Template Content -->
+    <div class="footer">
+        <p>Thank you for your business!</p>
+        <p>ACME Corporation | 123 Business St, City | (555) 123-4567</p>
+        <p><small>This is an automatically generated document.</small></p>
+    </div>
+</body>
+</html>
