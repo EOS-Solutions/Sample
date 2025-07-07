@@ -125,13 +125,16 @@ codeunit 50100 HandlebarsTest
         jw: Codeunit "Json Text Reader/Writer";
     begin
         SalesHeader.SetRange("Document Type", SalesHeader."Document Type"::Order);
-        SalesHeader.FindFirst();
+        if not SalesHeader.FindFirst() then
+            Error('No sales order found');
 
         jw.WriteStartObject('');
         jw.WriteStringProperty('No', SalesHeader."No.");
         jw.WriteStringProperty('CustomerName', SalesHeader."Sell-to Customer Name");
 
         jw.WriteStartArray('Lines');
+        SalesLine.SetRange("Document Type", SalesHeader."Document Type");
+        SalesLine.SetRange("Document No.", SalesHeader."No.");
         if SalesLine.FindSet() then
             repeat
                 jw.WriteStartObject('');
@@ -155,11 +158,13 @@ codeunit 50100 HandlebarsTest
         TotalAmount: Decimal;
     begin
         // Get company information
-        CompanyInfo.Get();
+        if not CompanyInfo.Get() then
+            Error('Company information not found');
         
         // Get a sales order
         SalesHeader.SetRange("Document Type", SalesHeader."Document Type"::Order);
-        SalesHeader.FindFirst();
+        if not SalesHeader.FindFirst() then
+            Error('No sales order found');
 
         jw.WriteStartObject('');
         
@@ -202,74 +207,86 @@ codeunit 50100 HandlebarsTest
     end;
 
     local procedure GetLayoutTemplate(): Text
+    var
+        Template: TextBuilder;
     begin
         // In a real implementation, this would load from an actual file
         // This simulates the content of templates/layout.html
-        exit('<!DOCTYPE html>' +
-             '<html lang="en">' +
-             '<head>' +
-             '    <meta charset="UTF-8">' +
-             '    <meta name="viewport" content="width=device-width, initial-scale=1.0">' +
-             '    <title>{{DocumentTitle}}</title>' +
-             '    <style>' +
-             '        body { font-family: Arial, sans-serif; margin: 20px; }' +
-             '        .header { background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px; }' +
-             '        .content { margin: 20px 0; }' +
-             '        .footer { background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-top: 20px; text-align: center; }' +
-             '        .order-lines { list-style-type: none; padding: 0; }' +
-             '        .order-line { background-color: #f8f9fa; margin: 5px 0; padding: 10px; border-radius: 3px; }' +
-             '    </style>' +
-             '</head>' +
-             '<body>' +
-             '    {{> header}}' +
-             '    <div class="content">' +
-             '        {{> order-details}}' +
-             '    </div>' +
-             '    {{> footer}}' +
-             '</body>' +
-             '</html>');
+        Template.AppendLine('<!DOCTYPE html>');
+        Template.AppendLine('<html lang="en">');
+        Template.AppendLine('<head>');
+        Template.AppendLine('    <meta charset="UTF-8">');
+        Template.AppendLine('    <meta name="viewport" content="width=device-width, initial-scale=1.0">');
+        Template.AppendLine('    <title>{{DocumentTitle}}</title>');
+        Template.AppendLine('    <style>');
+        Template.AppendLine('        body { font-family: Arial, sans-serif; margin: 20px; }');
+        Template.AppendLine('        .header { background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px; }');
+        Template.AppendLine('        .content { margin: 20px 0; }');
+        Template.AppendLine('        .footer { background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-top: 20px; text-align: center; }');
+        Template.AppendLine('        .order-lines { list-style-type: none; padding: 0; }');
+        Template.AppendLine('        .order-line { background-color: #f8f9fa; margin: 5px 0; padding: 10px; border-radius: 3px; }');
+        Template.AppendLine('    </style>');
+        Template.AppendLine('</head>');
+        Template.AppendLine('<body>');
+        Template.AppendLine('    {{> header}}');
+        Template.AppendLine('    <div class="content">');
+        Template.AppendLine('        {{> order-details}}');
+        Template.AppendLine('    </div>');
+        Template.AppendLine('    {{> footer}}');
+        Template.AppendLine('</body>');
+        Template.AppendLine('</html>');
+        exit(Template.ToText());
     end;
 
     local procedure GetHeaderTemplate(): Text
+    var
+        Template: TextBuilder;
     begin
         // In a real implementation, this would load from templates/header.html
-        exit('<div class="header">' +
-             '    <h1>{{CompanyName}}</h1>' +
-             '    <h2>Order Confirmation</h2>' +
-             '    <p><strong>Customer:</strong> {{CustomerName}}</p>' +
-             '    <p><strong>Date:</strong> {{OrderDate}}</p>' +
-             '</div>');
+        Template.AppendLine('<div class="header">');
+        Template.AppendLine('    <h1>{{CompanyName}}</h1>');
+        Template.AppendLine('    <h2>Order Confirmation</h2>');
+        Template.AppendLine('    <p><strong>Customer:</strong> {{CustomerName}}</p>');
+        Template.AppendLine('    <p><strong>Date:</strong> {{OrderDate}}</p>');
+        Template.AppendLine('</div>');
+        exit(Template.ToText());
     end;
 
     local procedure GetOrderDetailsTemplate(): Text
+    var
+        Template: TextBuilder;
     begin
         // In a real implementation, this would load from templates/order-details.html
-        exit('<div class="order-details">' +
-             '    <h3>Order #{{OrderNumber}}</h3>' +
-             '    <p>Thank you for your order! Below are the details:</p>' +
-             '    <h4>Order Lines:</h4>' +
-             '    <ul class="order-lines">' +
-             '        {{#each Lines}}' +
-             '        <li class="order-line">' +
-             '            <strong>{{No}}</strong> - {{Description}}' +
-             '            <br>Quantity: {{Quantity}} | Unit Price: {{UnitPrice}} | Amount: {{Amount}}' +
-             '        </li>' +
-             '        {{/each}}' +
-             '    </ul>' +
-             '    <div style="text-align: right; margin-top: 20px;">' +
-             '        <p><strong>Total Amount: {{TotalAmount}}</strong></p>' +
-             '    </div>' +
-             '</div>');
+        Template.AppendLine('<div class="order-details">');
+        Template.AppendLine('    <h3>Order #{{OrderNumber}}</h3>');
+        Template.AppendLine('    <p>Thank you for your order! Below are the details:</p>');
+        Template.AppendLine('    <h4>Order Lines:</h4>');
+        Template.AppendLine('    <ul class="order-lines">');
+        Template.AppendLine('        {{#each Lines}}');
+        Template.AppendLine('        <li class="order-line">');
+        Template.AppendLine('            <strong>{{No}}</strong> - {{Description}}');
+        Template.AppendLine('            <br>Quantity: {{Quantity}} | Unit Price: {{UnitPrice}} | Amount: {{Amount}}');
+        Template.AppendLine('        </li>');
+        Template.AppendLine('        {{/each}}');
+        Template.AppendLine('    </ul>');
+        Template.AppendLine('    <div style="text-align: right; margin-top: 20px;">');
+        Template.AppendLine('        <p><strong>Total Amount: {{TotalAmount}}</strong></p>');
+        Template.AppendLine('    </div>');
+        Template.AppendLine('</div>');
+        exit(Template.ToText());
     end;
 
     local procedure GetFooterTemplate(): Text
+    var
+        Template: TextBuilder;
     begin
         // In a real implementation, this would load from templates/footer.html
-        exit('<div class="footer">' +
-             '    <p>Thank you for your business!</p>' +
-             '    <p>{{CompanyName}} | {{CompanyAddress}} | {{CompanyPhone}}</p>' +
-             '    <p><small>This is an automatically generated document.</small></p>' +
-             '</div>');
+        Template.AppendLine('<div class="footer">');
+        Template.AppendLine('    <p>Thank you for your business!</p>');
+        Template.AppendLine('    <p>{{CompanyName}} | {{CompanyAddress}} | {{CompanyPhone}}</p>');
+        Template.AppendLine('    <p><small>This is an automatically generated document.</small></p>');
+        Template.AppendLine('</div>');
+        exit(Template.ToText());
     end;
 
 }
