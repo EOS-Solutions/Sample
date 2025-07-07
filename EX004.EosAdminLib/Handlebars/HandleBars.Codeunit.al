@@ -15,7 +15,6 @@ codeunit 50100 HandlebarsTest
         Handlebars: Codeunit "EOS004 Handlebars Renderer";
         Result: Text;
         Template: TextBuilder;
-        Compr: Codeunit "Data Compression";
         Payload: JsonObject;
     begin
         // initialize the codeunit with a default service config 'TEST'
@@ -47,7 +46,6 @@ codeunit 50100 HandlebarsTest
         Result: Text;
         Template: TextBuilder;
         HeaderPartial, LinePartial : TextBuilder;
-        Compr: Codeunit "Data Compression";
         Payload: JsonObject;
     begin
         // initialize the codeunit with a default service config 'TEST'
