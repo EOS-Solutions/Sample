@@ -10,9 +10,8 @@ codeunit 50109 "EOS Activity Action Sub"
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"EOS089 WMS Activity Task Mgmt.", OnExecuteActivityAction, '', false, false)]
     local procedure CU18060020_OnExecuteActivityAction(EOS089WMSActivityEntry: Record "EOS089 WMS Activity Entry"; var ReturnResult: Enum "EOS089 WMS Activity Result"; var ReturnMessage: Text; var ScanId: Guid; var IsHandled: Boolean)
     var
+        EOS089WMSToolBox: Codeunit "EOS089 WMS ToolBox";
         JsonArray: JsonArray;
-        JsonToken: JsonToken;
-        ParameterValue: Variant;
         LabelsCount: Integer;
         LabelsType: Text;
     begin
@@ -29,15 +28,10 @@ codeunit 50109 "EOS Activity Action Sub"
             'ITEM_PRINTLABELS':
                 begin
                     // Get parameters from payload
-                    EOS089WMSActivityEntry.GetPayloadAsJsonObject().Get('actionParameters', JsonToken);
-                    JsonArray := JsonToken.AsArray();
-
-                    // Retrieve parameters
-                    if GetParameterValue(JsonArray, 'NUMBER', true, FieldType::Integer, ParameterValue) then
-                        LabelsCount := ParameterValue;
-
-                    if GetParameterValue(JsonArray, 'TYPE', false, FieldType::Text, ParameterValue) then
-                        LabelsType := ParameterValue;
+                    if EOS089WMSToolBox.GetActivityActionParametersArray(EOS089WMSActivityEntry.GetPayloadAsJsonObject(), JsonArray) then begin
+                        LabelsCount := EOS089WMSToolBox.GetActivityActionParameterValue(JsonArray, 'NUMBER', true, FieldType::Integer);
+                        LabelsType := EOS089WMSToolBox.GetActivityActionParameterValue(JsonArray, 'TYPE', false, FieldType::Text);
+                    end;
 
                     // Use parameters
                     if LabelsCount < 0 then
@@ -47,7 +41,7 @@ codeunit 50109 "EOS Activity Action Sub"
                         Error('You must specify the number of labels to print.');
 
                     if LabelsType = '' then
-                        ReturnMessage := 'No label type specified, using default label type.'
+                        ReturnMessage := StrSubStNo('No label type specified, using default label type. Printed %1 label', LabelsCount)
                     else
                         ReturnMessage := StrSubStNo('Printed %1 %2 label', LabelsCount, LabelsType);
 
@@ -59,24 +53,41 @@ codeunit 50109 "EOS Activity Action Sub"
         end;
     end;
 
-    local procedure GetParameterValue(JsonArray: JsonArray; ParameterName: Code[20]; Mandatory: Boolean; FieldType: FieldType; var ParameterValue: Variant): Boolean
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"EOS089 WMS Activity Management", OnGetActionParametersDefaultValues, '', false, false)]
+    local procedure CU18060015_OnGetActionParametersDefaultValues(ActivityType: Enum "EOS089 WMS Activity Type"; ActivityAction: Code[20]; JsonPayload: JsonObject; var ReturnValues: JsonObject; var IsHandled: Boolean)
     var
-        EOS089WMSToolBox: Codeunit "EOS089 WMS ToolBox";
-        JsonToken, JsonToken2 : JsonToken;
+        EOS089WMSActActionParameter: Record "EOS089 WMS Act. Action Param.";
+        JsonArray: JsonArray;
         JsonObject: JsonObject;
     begin
-        Clear(JsonObject);
-        foreach JsonToken in JsonArray do
-            if JsonToken.IsObject() then begin
-                JsonObject := JsonToken.AsObject();
-                if JsonObject.Get('code', JsonToken2) then
-                    if JsonToken2.IsValue() then
-                        if JsonToken2.AsValue().AsCode() = ParameterName then begin
-                            ParameterValue := EOS089WMSToolBox.GetJsonValueAs(JsonObject, 'inputValue', Mandatory, FieldType);
-                            exit(true);
-                        end;
-            end;
+        if ActivityType <> Enum::"EOS089 WMS Activity Type"::"Item Information" then // Check the right activity
+            exit;
 
-        exit(false);
+        if ActivityAction <> 'ITEM_PRINTLABELS' then // Check the right action
+            exit;
+
+        EOS089WMSActActionParameter.Reset();
+        EOS089WMSActActionParameter.SetRange(Activity, ActivityType);
+        EOS089WMSActActionParameter.SetRange("Action Code", ActivityAction);
+        if EOS089WMSActActionParameter.FindSet() then
+            repeat
+                Clear(JsonObject);
+                case EOS089WMSActActionParameter.Code of
+                    'NUMBER':
+                        begin
+                            JsonObject.add('code', EOS089WMSActActionParameter.Code);
+                            JsonObject.add('value', 666);
+                        end;
+                    'TYPE':
+                        begin
+                            JsonObject.add('code', EOS089WMSActActionParameter.Code);
+                            JsonObject.add('value', 'HUGE');
+                        end;
+                end;
+                JsonArray.Add(JsonObject);
+            until EOS089WMSActActionParameter.Next() = 0;
+
+        if JsonArray.Count() > 0 then
+            ReturnValues.Add('parameters', JsonArray);
     end;
 }

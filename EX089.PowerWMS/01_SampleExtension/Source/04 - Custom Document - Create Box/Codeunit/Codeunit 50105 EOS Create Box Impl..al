@@ -130,7 +130,6 @@ codeunit 50105 "EOS Create Box Impl." implements "EOS089 WMS Activity Interface 
         EOS089WMSUserActivity."Allow All Reclass. Batches" := false;
         EOS089WMSUserActivity."Allow Scan Edit" := false;
         EOS089WMSUserActivity."Scan Mode" := "EOS089 WMS Scan Mode"::Fast;
-        EOS089WMSUserActivity."Allow New Record" := true;
 
         EOS089WMSUserActivity.CalcFields("Linked User Id", "Warehouse Employee");
 
@@ -201,13 +200,13 @@ codeunit 50105 "EOS Create Box Impl." implements "EOS089 WMS Activity Interface 
         Options.Add('showAllowSourceReset', true);
         //Options.Add('showAllowAutoTrack', true);
         //Options.Add('showAllowScanEdit', true);
-        //Options.Add('showScanMode', true);
+        Options.Add('showScanMode', true);
         //Options.Add('showFocusOnQuantity', true);
         Options.Add('showScannerSetup', true);
         //Options.Add('showQuantityManagement', true);
         //Options.Add('showBlockQuantityEdit', true);
         Options.Add('showHideQtyToHandle', true);
-        Options.Add('showAllowNewRecord', true);
+        Options.Add('showScanAutosave', true);
 
         Options.Add('editAllowAllLocations', true);
         Options.Add('editUserIdFilter', true);
@@ -220,13 +219,13 @@ codeunit 50105 "EOS Create Box Impl." implements "EOS089 WMS Activity Interface 
         Options.Add('editAllowSourceReset', true);
         //Options.Add('editAllowAutoTrack', true);
         //Options.Add('editAllowScanEdit', true);
-        //Options.Add('editScanMode', true);
+        Options.Add('editScanMode', true);
         //Options.Add('editFocusOnQuantity', true);
         Options.Add('editScannerSetup', true);
         //Options.Add('editQuantityManagement', true);
         //Options.Add('editBlockQuantityEdit', true);
         Options.Add('editHideQtyToHandle', true);
-        Options.Add('editAllowNewRecord', true);
+        Options.Add('editScanAutosave', true);
     end;
 
     procedure GetActivityView1(var EOS089WMSUserActivity: Record "EOS089 WMS User Activity"; HumanReadable: Boolean): Text

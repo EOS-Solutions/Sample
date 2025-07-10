@@ -209,6 +209,7 @@ codeunit 50100 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
         Options.Add('showQuantityManagement', true);
         Options.Add('showBlockQuantityEdit', true);
         Options.Add('showAllowNewRecord', true);
+        Options.Add('showScanAutosave', true);
 
         Options.Add('editAllowAllLocations', true);
         Options.Add('editUserIdFilter', true);
@@ -227,6 +228,7 @@ codeunit 50100 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
         Options.Add('editQuantityManagement', true);
         Options.Add('editBlockQuantityEdit', true);
         Options.Add('editAllowNewRecord', true);
+        Options.Add('editScanAutosave', true);
     end;
 
     procedure GetActivityView1(var EOS089WMSUserActivity: Record "EOS089 WMS User Activity"; HumanReadable: Boolean): Text
@@ -435,10 +437,13 @@ codeunit 50100 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
 
         TableNos.Add(SourceTable1());
         TableNos.Add(SourceTable2());
+        TableNos.Add(Database::"EOS089 WMS Source Scan");
         ListEnabled.Add(FieldListEnabled1());
         ListEnabled.Add(FieldListEnabled2());
+        ListEnabled.Add(false);
         DetailsEnabled.Add(FieldDetailsEnabled1());
         DetailsEnabled.Add(FieldDetailsEnabled2());
+        DetailsEnabled.Add(true); // Always true for "EOS089 WMS Source Scan"
     end;
 
     procedure GetDefaultActivityFields(TableNo: Integer; ActivityFieldClass: Enum "EOS089 WMS Act. Field Class"; var Fields: Record "EOS089 WMS Activity Field" temporary)

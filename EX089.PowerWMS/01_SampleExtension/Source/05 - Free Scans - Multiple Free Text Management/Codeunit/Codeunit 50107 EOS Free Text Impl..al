@@ -212,6 +212,7 @@ codeunit 50107 "EOS Free Text Impl." implements "EOS089 WMS Activity Interface V
         Options.Add('showQuantityManagement', true);
         Options.Add('showBlockQuantityEdit', true);
         Options.Add('showAllowNewRecord', true);
+        Options.Add('showScanAutosave', true);
 
         Options.Add('editAllowAllLocations', true);
         Options.Add('editUserIdFilter', true);
@@ -230,6 +231,7 @@ codeunit 50107 "EOS Free Text Impl." implements "EOS089 WMS Activity Interface V
         Options.Add('editQuantityManagement', true);
         Options.Add('editBlockQuantityEdit', true);
         Options.Add('editAllowNewRecord', true);
+        Options.Add('editScanAutosave', true);
     end;
 
     procedure GetActivityView1(var EOS089WMSUserActivity: Record "EOS089 WMS User Activity"; HumanReadable: Boolean): Text

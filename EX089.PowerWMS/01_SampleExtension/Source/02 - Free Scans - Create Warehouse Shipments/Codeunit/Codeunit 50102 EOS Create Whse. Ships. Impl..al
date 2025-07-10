@@ -213,6 +213,7 @@ codeunit 50102 "EOS Create Whse. Ships. Impl." implements "EOS089 WMS Activity I
         //Options.Add('showBlockQuantityEdit', true);
         Options.Add('showHideQtyToHandle', true);
         Options.Add('showAllowNewRecord', true);
+        Options.Add('showScanAutosave', true);
 
         Options.Add('editAllowAllLocations', true);
         Options.Add('editUserIdFilter', true);
@@ -232,6 +233,7 @@ codeunit 50102 "EOS Create Whse. Ships. Impl." implements "EOS089 WMS Activity I
         //Options.Add('editBlockQuantityEdit', true);
         Options.Add('editHideQtyToHandle', true);
         Options.Add('editAllowNewRecord', true);
+        Options.Add('editScanAutosave', true);
     end;
 
     procedure GetActivityView1(var EOS089WMSUserActivity: Record "EOS089 WMS User Activity"; HumanReadable: Boolean): Text
