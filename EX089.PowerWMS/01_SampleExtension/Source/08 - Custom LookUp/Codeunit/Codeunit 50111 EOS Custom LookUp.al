@@ -1,7 +1,7 @@
 codeunit 50111 "EOS Custom LookUp"
 {
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"EOS089 WMS LookUp Values Mgmt.", OnGetCustomLookUpValues, '', false, false)]
-    local procedure CU18060061_OnGetCustomLookUpValues(EOS089WMSLookUpListHeader: Record "EOS089 WMS LookUp List Header"; EmployeeNo: Code[20]; ActivityType: Enum "EOS089 WMS Activity Type"; ActivityAction: Code[20]; ParameterCode: Code[20]; SystemId: Guid; ActionParameters: JsonArray; var TempTempEOS089WMSLookUpListLine: Record "EOS089 WMS LookUp List Line" temporary; var IsHandled: Boolean)
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"EOS089 WMS LookUp Values Mgmt.", OnGetCustomLookUpValuesList, '', false, false)]
+    local procedure CU18060061_OnGetCustomLookUpValuesList(EOS089WMSLookUpListHeader: Record "EOS089 WMS LookUp List Header"; EmployeeNo: Code[20]; ActivityType: Enum "EOS089 WMS Activity Type"; ActivityAction: Code[20]; ParameterCode: Code[20]; SystemId: Guid; ActionParameters: JsonArray; var TempEOS089WMSLookUpListValue: Record "EOS089 WMS LookUp List Value" temporary; var IsHandled: Boolean)
     var
         EOS089WMSCustomActHeader: Record "EOS089 WMS Custom Act. Header";
         EOS089WMSToolBox: Codeunit "EOS089 WMS ToolBox";
@@ -10,7 +10,7 @@ codeunit 50111 "EOS Custom LookUp"
         VariantCode, LocationCode : Code[10];
         SerialNo, LotNo, PackageNo : Code[50];
         Quantity: Decimal;
-        CurrentSequence: Integer;
+        CurrLineNo: Integer;
     begin
         //if ActivityType <> "EOS089 WMS Activity Type"::EOSCreateBox then
         //    exit;
@@ -28,74 +28,74 @@ codeunit 50111 "EOS Custom LookUp"
             Quantity := EOS089WMSToolBox.GetLookUpInventoryInfoValue(JsonArray, 'quantity', true, FieldType::Decimal);
         end;
 
-        CurrentSequence += 1;
-        TempTempEOS089WMSLookUpListLine.Init();
-        TempTempEOS089WMSLookUpListLine.Code := EOS089WMSCustomActHeader."No.";
-        TempTempEOS089WMSLookUpListLine."Value Code" := 'C';
-        TempTempEOS089WMSLookUpListLine."Value Description" := 'C Value';
-        TempTempEOS089WMSLookUpListLine.Sequence := CurrentSequence;
-        TempTempEOS089WMSLookUpListLine.Insert();
+        CurrLineNo += 1;
+        TempEOS089WMSLookUpListValue.Init();
+        TempEOS089WMSLookUpListValue.Code := EOS089WMSLookUpListHeader.Code;
+        TempEOS089WMSLookUpListValue."Line No." := CurrLineNo;
+        TempEOS089WMSLookUpListValue."Value Code" := 'C';
+        TempEOS089WMSLookUpListValue."Value Description" := 'C Value';
+        TempEOS089WMSLookUpListValue.Insert();
 
-        CurrentSequence += 1;
-        TempTempEOS089WMSLookUpListLine.Init();
-        TempTempEOS089WMSLookUpListLine.Code := EOS089WMSCustomActHeader."No.";
-        TempTempEOS089WMSLookUpListLine."Value Code" := 'B';
-        TempTempEOS089WMSLookUpListLine."Value Description" := 'B Value';
-        TempTempEOS089WMSLookUpListLine.Sequence := CurrentSequence;
-        TempTempEOS089WMSLookUpListLine.Insert();
+        CurrLineNo += 1;
+        TempEOS089WMSLookUpListValue.Init();
+        TempEOS089WMSLookUpListValue.Code := EOS089WMSLookUpListHeader.Code;
+        TempEOS089WMSLookUpListValue."Line No." := CurrLineNo;
+        TempEOS089WMSLookUpListValue."Value Code" := 'B';
+        TempEOS089WMSLookUpListValue."Value Description" := 'B Value';
+        TempEOS089WMSLookUpListValue.Insert();
 
-        CurrentSequence += 1;
-        TempTempEOS089WMSLookUpListLine.Init();
-        TempTempEOS089WMSLookUpListLine.Code := EOS089WMSCustomActHeader."No.";
-        TempTempEOS089WMSLookUpListLine."Value Code" := 'A';
-        TempTempEOS089WMSLookUpListLine."Value Description" := 'A Value';
-        TempTempEOS089WMSLookUpListLine.Sequence := CurrentSequence;
-        TempTempEOS089WMSLookUpListLine.Insert();
+        CurrLineNo += 1;
+        TempEOS089WMSLookUpListValue.Init();
+        TempEOS089WMSLookUpListValue.Code := EOS089WMSLookUpListHeader.Code;
+        TempEOS089WMSLookUpListValue."Line No." := CurrLineNo;
+        TempEOS089WMSLookUpListValue."Value Code" := 'A';
+        TempEOS089WMSLookUpListValue."Value Description" := 'A Value';
+        TempEOS089WMSLookUpListValue.Insert();
 
         if ItemNo <> '' then begin
-            CurrentSequence += 1;
-            TempTempEOS089WMSLookUpListLine.Init();
-            TempTempEOS089WMSLookUpListLine.Code := ItemNo;
-            TempTempEOS089WMSLookUpListLine."Value Code" := ItemNo;
-            TempTempEOS089WMSLookUpListLine."Value Description" := 'Item No: ' + ItemNo;
-            TempTempEOS089WMSLookUpListLine.Sequence := CurrentSequence;
-            TempTempEOS089WMSLookUpListLine.Insert();
+            CurrLineNo += 1;
+            TempEOS089WMSLookUpListValue.Init();
+            TempEOS089WMSLookUpListValue.Code := EOS089WMSLookUpListHeader.Code;
+            TempEOS089WMSLookUpListValue."Line No." := CurrLineNo;
+            TempEOS089WMSLookUpListValue."Value Code" := ItemNo;
+            TempEOS089WMSLookUpListValue."Value Description" := 'Item No: ' + ItemNo;
+            TempEOS089WMSLookUpListValue.Insert();
         end;
         if VariantCode <> '' then begin
-            CurrentSequence += 1;
-            TempTempEOS089WMSLookUpListLine.Init();
-            TempTempEOS089WMSLookUpListLine.Code := VariantCode;
-            TempTempEOS089WMSLookUpListLine."Value Code" := VariantCode;
-            TempTempEOS089WMSLookUpListLine."Value Description" := 'Variant Code: ' + VariantCode;
-            TempTempEOS089WMSLookUpListLine.Sequence := CurrentSequence;
-            TempTempEOS089WMSLookUpListLine.Insert();
+            CurrLineNo += 1;
+            TempEOS089WMSLookUpListValue.Init();
+            TempEOS089WMSLookUpListValue.Code := EOS089WMSLookUpListHeader.Code;
+            TempEOS089WMSLookUpListValue."Line No." := CurrLineNo;
+            TempEOS089WMSLookUpListValue."Value Code" := VariantCode;
+            TempEOS089WMSLookUpListValue."Value Description" := 'Variant Code: ' + VariantCode;
+            TempEOS089WMSLookUpListValue.Insert();
         end;
         if LocationCode <> '' then begin
-            CurrentSequence += 1;
-            TempTempEOS089WMSLookUpListLine.Init();
-            TempTempEOS089WMSLookUpListLine.Code := LocationCode;
-            TempTempEOS089WMSLookUpListLine."Value Code" := LocationCode;
-            TempTempEOS089WMSLookUpListLine."Value Description" := 'Location Code: ' + LocationCode;
-            TempTempEOS089WMSLookUpListLine.Sequence := CurrentSequence;
-            TempTempEOS089WMSLookUpListLine.Insert();
+            CurrLineNo += 1;
+            TempEOS089WMSLookUpListValue.Init();
+            TempEOS089WMSLookUpListValue.Code := EOS089WMSLookUpListHeader.Code;
+            TempEOS089WMSLookUpListValue."Line No." := CurrLineNo;
+            TempEOS089WMSLookUpListValue."Value Code" := LocationCode;
+            TempEOS089WMSLookUpListValue."Value Description" := 'Location Code: ' + LocationCode;
+            TempEOS089WMSLookUpListValue.Insert();
         end;
         if BinCode <> '' then begin
-            CurrentSequence += 1;
-            TempTempEOS089WMSLookUpListLine.Init();
-            TempTempEOS089WMSLookUpListLine.Code := BinCode;
-            TempTempEOS089WMSLookUpListLine."Value Code" := BinCode;
-            TempTempEOS089WMSLookUpListLine."Value Description" := 'Bin Code: ' + BinCode;
-            TempTempEOS089WMSLookUpListLine.Sequence := CurrentSequence;
-            TempTempEOS089WMSLookUpListLine.Insert();
+            CurrLineNo += 1;
+            TempEOS089WMSLookUpListValue.Init();
+            TempEOS089WMSLookUpListValue.Code := EOS089WMSLookUpListHeader.Code;
+            TempEOS089WMSLookUpListValue."Line No." := CurrLineNo;
+            TempEOS089WMSLookUpListValue."Value Code" := BinCode;
+            TempEOS089WMSLookUpListValue."Value Description" := 'Bin Code: ' + BinCode;
+            TempEOS089WMSLookUpListValue.Insert();
         end;
         if Quantity <> 0 then begin
-            CurrentSequence += 1;
-            TempTempEOS089WMSLookUpListLine.Init();
-            TempTempEOS089WMSLookUpListLine.Code := 'QTY';
-            TempTempEOS089WMSLookUpListLine."Value Code" := 'QTY';
-            TempTempEOS089WMSLookUpListLine."Value Description" := 'Quantity: ' + Format(Quantity);
-            TempTempEOS089WMSLookUpListLine.Sequence := CurrentSequence;
-            TempTempEOS089WMSLookUpListLine.Insert();
+            CurrLineNo += 1;
+            TempEOS089WMSLookUpListValue.Init();
+            TempEOS089WMSLookUpListValue.Code := EOS089WMSLookUpListHeader.Code;
+            TempEOS089WMSLookUpListValue."Line No." := CurrLineNo;
+            TempEOS089WMSLookUpListValue."Value Code" := 'QTY';
+            TempEOS089WMSLookUpListValue."Value Description" := 'Quantity: ' + Format(Quantity);
+            TempEOS089WMSLookUpListValue.Insert();
         end;
 
         IsHandled := true;
