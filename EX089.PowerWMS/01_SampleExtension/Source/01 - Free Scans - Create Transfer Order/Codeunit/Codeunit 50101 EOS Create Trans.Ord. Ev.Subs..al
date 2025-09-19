@@ -310,7 +310,9 @@ codeunit 50101 "EOS Create Trans.Ord. Ev.Subs."
         Location: Record Location;
         LocationList: Page "Location List";
     begin
-        IsHandled := false;
+        if IsHandled then
+            exit;
+
         if TableNo <> Database::"EOS089 WMS Custom Act. Header" then
             exit;
 

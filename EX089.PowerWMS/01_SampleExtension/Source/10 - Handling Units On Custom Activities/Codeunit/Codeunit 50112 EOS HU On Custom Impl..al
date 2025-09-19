@@ -1,5 +1,8 @@
-codeunit 50105 "EOS Create Box Impl." implements "EOS089 WMS Activity Interface V5"
+codeunit 50112 "EOS HU On Custom Impl." implements "EOS089 WMS Activity Interface V5"
 {
+
+    Permissions = TableData "EOS089 WMS Custom Act. Header" = im, TableData "EOS089 WMS Custom Act. Line" = im;
+
     #region InterfaceSettings
     // Change Source Records and Activity Information according to Interface Type
     var
@@ -33,7 +36,7 @@ codeunit 50105 "EOS Create Box Impl." implements "EOS089 WMS Activity Interface 
 
     procedure ActivityCategory(): Enum "EOS089 WMS Activity Category";
     begin
-        exit(Enum::"EOS089 WMS Activity Category"::Receipt);   // Activity Category
+        exit(Enum::"EOS089 WMS Activity Category"::Shipment);   // Activity Category
     end;
 
     procedure ActivityGroup(): Enum "EOS089 WMS Activity Group";
@@ -43,7 +46,7 @@ codeunit 50105 "EOS Create Box Impl." implements "EOS089 WMS Activity Interface 
 
     local procedure ActivityType(): Enum "EOS089 WMS Activity Type"
     begin
-        exit(Enum::"EOS089 WMS Activity Type"::EOSCreateBox);  // Change with the corresponding "Activity Type" value
+        exit(Enum::"EOS089 WMS Activity Type"::EOSHUOnCustom);  // Change with the corresponding "Activity Type" value
     end;
 
     local procedure SourceTable1(): Integer;
@@ -61,14 +64,14 @@ codeunit 50105 "EOS Create Box Impl." implements "EOS089 WMS Activity Interface 
         exit(EOS089WMSCustomActHeader_Internal.TableCaption())  // Don't touch!
     end;
 
-    local procedure GetPostedSourceMessage(PostedSourceNo: Text)
+    local procedure GetPostedSourceMessage(PostedSourceNo: Text; SourceId: Text)
     var
         EOS089WMSReturnValuesMgmt: Codeunit "EOS089 WMS Return Values Mgmt.";
-        SourceCreatedLbl: Label 'Box created';    // Change message text
+        SourcePostedLbl: Label '%1 No. %2 posted successfully as %3', Comment = '%1: Source Type, %2: Source No., %3: Posted Source No.';    // Change message text
     begin
         Clear(EOS089WMSReturnValuesMgmt);
         EOS089WMSReturnValuesMgmt.PrepareReturnValues();
-        EOS089WMSReturnValuesMgmt.SetMessage(SourceCreatedLbl);
+        EOS089WMSReturnValuesMgmt.SetMessage(StrSubstNo(SourcePostedLbl, SourceTableDescription(), SourceId, PostedSourceNo));
         EOS089WMSReturnValuesMgmt.SetResult(Enum::"EOS089 WMS Activity Result"::Completed);
         EOS089WMSReturnValuesMgmt.SetPostedDocumentNo(CopyStr(PostedSourceNo, 1, 20));
         EOS089WMSReturnValuesMgmt.SetActionGoTo(Enum::"EOS089 WMS Action Go To"::List);
@@ -114,8 +117,10 @@ codeunit 50105 "EOS Create Box Impl." implements "EOS089 WMS Activity Interface 
         PageFilterBuilder: FilterPageBuilder;
         LocationFilter: Text;
         CurrentView: Text;
+        ScannerSetupCode: Code[20];
     begin
         // Change at your own risk!
+        ScannerSetupCode := InitHUScanner();
         InitActivityFields();
 
         EOS089WMSUserActivity.Category := ActivityCategory();
@@ -130,6 +135,8 @@ codeunit 50105 "EOS Create Box Impl." implements "EOS089 WMS Activity Interface 
         EOS089WMSUserActivity."Allow All Reclass. Batches" := false;
         EOS089WMSUserActivity."Allow Scan Edit" := false;
         EOS089WMSUserActivity."Scan Mode" := "EOS089 WMS Scan Mode"::Fast;
+
+        EOS089WMSUserActivity."Scanner Setup" := ScannerSetupCode;
 
         EOS089WMSUserActivity.CalcFields("Linked User Id", "Warehouse Employee");
 
@@ -199,12 +206,12 @@ codeunit 50105 "EOS Create Box Impl." implements "EOS089 WMS Activity Interface 
         Options.Add('showKeyOrder2', true);
         Options.Add('showAllowSourceReset', true);
         //Options.Add('showAllowAutoTrack', true);
-        //Options.Add('showAllowScanEdit', true);
-        Options.Add('showScanMode', true);
+        Options.Add('showAllowScanEdit', true);
+        //Options.Add('showScanMode', true);
         //Options.Add('showFocusOnQuantity', true);
         Options.Add('showScannerSetup', true);
         //Options.Add('showQuantityManagement', true);
-        //Options.Add('showBlockQuantityEdit', true);
+        Options.Add('showBlockQuantityEdit', true);
         Options.Add('showHideQtyToHandle', true);
         Options.Add('showScanAutosave', true);
 
@@ -218,12 +225,12 @@ codeunit 50105 "EOS Create Box Impl." implements "EOS089 WMS Activity Interface 
         Options.Add('editKeyOrder2', true);
         Options.Add('editAllowSourceReset', true);
         //Options.Add('editAllowAutoTrack', true);
-        //Options.Add('editAllowScanEdit', true);
-        Options.Add('editScanMode', true);
+        Options.Add('editAllowScanEdit', true);
+        //Options.Add('editScanMode', true);
         //Options.Add('editFocusOnQuantity', true);
         Options.Add('editScannerSetup', true);
         //Options.Add('editQuantityManagement', true);
-        //Options.Add('editBlockQuantityEdit', true);
+        Options.Add('editBlockQuantityEdit', true);
         Options.Add('editHideQtyToHandle', true);
         Options.Add('editScanAutosave', true);
     end;
@@ -578,7 +585,6 @@ codeunit 50105 "EOS Create Box Impl." implements "EOS089 WMS Activity Interface 
         EOS089WMSActivityTaskMgmt.ManageActivityInsertScans(EOS089WMSActivityEntry, ScanId);
     end;
 
-#pragma warning disable AA0150
     procedure ManageInsertSourceScan(TempEOS089WMSActScanDetail: Record "EOS089 WMS Act. Scan Detail" temporary; TempEOS089WMSSourceInformation: Record "EOS089 WMS Source Information"; var IsHandled: Boolean)
     begin
     end;
@@ -590,7 +596,6 @@ codeunit 50105 "EOS Create Box Impl." implements "EOS089 WMS Activity Interface 
     procedure ManageDeleteSourceScan(TempEOS089WMSActScanDetail: Record "EOS089 WMS Act. Scan Detail" temporary; var EOS089WMSSourceScan: Record "EOS089 WMS Source Scan"; var IsHandled: Boolean)
     begin
     end;
-#pragma warning restore AA0150
 
     procedure DoSomethingWithScanAfterActionDone(EOS089WMSSourceScan: Record "EOS089 WMS Source Scan"; ScanAction: Enum "EOS089 WMS Scan Action")
     begin
@@ -610,7 +615,7 @@ codeunit 50105 "EOS Create Box Impl." implements "EOS089 WMS Activity Interface 
 
         PostedDocumentNo := EOS089WMSRegCustActHdr."No.";
 
-        GetPostedSourceMessage(PostedDocumentNo);
+        GetPostedSourceMessage(EOS089WMSActivityEntry."Source ID", PostedDocumentNo);
     end;
 
     procedure DeleteSourceScans(EOS089WMSActivityEntry: Record "EOS089 WMS Activity Entry"): Boolean
@@ -721,8 +726,8 @@ codeunit 50105 "EOS Create Box Impl." implements "EOS089 WMS Activity Interface 
 
     procedure GetActivityTrackingSettings(EOS089WMSActivityEntry: Record "EOS089 WMS Activity Entry"; EOS089WMSActivityScan: Record "EOS089 WMS Activity Scan"; var ItemLedgerEntryType: Enum "Item Ledger Entry Type"; var IsInbound: Boolean)
     begin
-        ItemLedgerEntryType := ItemLedgerEntryType::Purchase;
-        IsInbound := true;
+        ItemLedgerEntryType := ItemLedgerEntryType::Sale;
+        IsInbound := false;
     end;
 
     procedure GetReservationEntries(var EOS089WMSReservationEntry: Record "EOS089 WMS Reservation Entry" temporary): Boolean
@@ -755,6 +760,37 @@ codeunit 50105 "EOS Create Box Impl." implements "EOS089 WMS Activity Interface 
             end;
 
         exit(false);
+    end;
+
+    local procedure InitHUScanner(): Code[20];
+    var
+        EOS089WMSScannerSetup: Record "EOS089 WMS Scanner Setup";
+        EOS089WMSScannerDetail: Record "EOS089 WMS Scanner Detail";
+        HUScannerSetupCodeLbl: Label 'HUSAMPLE', Locked = true;
+    begin
+        if EOS089WMSScannerSetup.Get(HUScannerSetupCodeLbl) then
+            exit(HUScannerSetupCodeLbl);
+
+        EOS089WMSScannerDetail.Reset();
+        EOS089WMSScannerDetail.SetRange("Barcode Part", EOS089WMSScannerDetail."Barcode Part"::EOSHandlingUnitNo);
+        if EOS089WMSScannerDetail.FindFirst() then
+            exit(EOS089WMSScannerDetail."Scanner Code");
+
+        EOS089WMSScannerSetup.Init();
+        EOS089WMSScannerSetup.Code := HUScannerSetupCodeLbl;
+        EOS089WMSScannerSetup."Scanner Type" := EOS089WMSScannerSetup."Scanner Type"::Sequential;
+        EOS089WMSScannerSetup.Insert(true);
+
+        EOS089WMSScannerDetail.Init();
+        EOS089WMSScannerDetail."Scanner Code" := EOS089WMSScannerSetup.Code;
+        EOS089WMSScannerDetail."Line No." := 10000;
+        EOS089WMSScannerDetail."Barcode Part" := EOS089WMSScannerDetail."Barcode Part"::EOSHandlingUnitNo;
+        EOS089WMSScannerDetail.Insert(true);
+
+        EOS089WMSScannerSetup.Validate(Status, EOS089WMSScannerSetup.Status::Enabled);
+        EOS089WMSScannerSetup.Modify(true);
+
+        exit(HUScannerSetupCodeLbl);
     end;
 
     local procedure InitActivityFields()
@@ -874,4 +910,5 @@ codeunit 50105 "EOS Create Box Impl." implements "EOS089 WMS Activity Interface 
 
         exit(true);
     end;
+
 }

@@ -19,7 +19,9 @@ pageextension 50103 "EOS Scanner Ref. List" extends "EOS089 WMS Scanner Ref. Lis
                                     If you add other activities, you won't be able to use it! */
                                     "Purchase Receipt", "Sales Return Shipment",
                                     "Sales Shipment", "Purchase Return Shipment",
-                                    "Warehouse Receipt", "Warehouse Shipment"
+                                    "Warehouse Receipt", "Warehouse Shipment",
+                                    "Put-Away", "Picking", "InvtMovement",
+                                    "Transfer Shipment", "Transfer Receipt"
                                     /* Add your custom activities here */
                                     , EOSCreateTransferOrder;
             }
