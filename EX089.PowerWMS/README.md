@@ -11,6 +11,10 @@ Provide samples for custom activities powered by PowerWMS engine
 - 04 - Document activity -  Scan items for an extisting custom document
 - 05 - Free scans activity -  Free text tokens management (from free text to standard fields)
 - 06 - Activity Action - How to manage parameters 
+- 07 - OVR in custom documents
+- 08 - Custom LookUp for action parameters
+- 09 - Scan Autosave for every activity
+- 10 - Handling Units on custom activities
 
 # App Dependencies:
 "id": "15dd7d69-e3fa-4da9-acc3-9828b2795643",  
