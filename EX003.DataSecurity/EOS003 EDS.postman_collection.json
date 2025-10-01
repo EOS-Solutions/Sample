@@ -1,0 +1,199 @@
+{
+	"info": {
+		"_postman_id": "a77a0261-05ea-4359-ba1f-0ae76044da4f",
+		"name": "EOS003 EDS",
+		"description": "- **Change Status**: endpoint that allows modifying the status of an EDS record from external systems by specifying the record, target status, and path. \\[bound action\\]\n    \n- **Read Statuses**: API to retrieve the list of available statuses for a given table. \\[page API\\]\n    \n- **Read Paths and Status Changes**: API to read the transition paths between statuses and the corresponding status changes. \\[page API\\]",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8019127"
+	},
+	"item": [
+		{
+			"name": "ChangeStatus",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"tableId\": \"18\",\r\n    \"systemId\": \"f58a3a82-2320-f011-9af3-6045bdac959d\",\r\n    \"newStatusCode\": \"EDIT\",\r\n    \"pathCode\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{BCServer}}:{{ODataPort}}/{{Instance}}/ODataV4/EOS003_ChangeStatus?company={{CompanyName}}",
+					"protocol": "http",
+					"host": [
+						"{{BCServer}}"
+					],
+					"port": "{{ODataPort}}",
+					"path": [
+						"{{Instance}}",
+						"ODataV4",
+						"EOS003_ChangeStatus"
+					],
+					"query": [
+						{
+							"key": "company",
+							"value": "{{CompanyName}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RecordStatuses",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{BCServer}}:{{ODataPort}}/{{Instance}}/api/{{Publisher}}/{{Group}}/{{Version}}/TableStatuses?$filter=tableID eq 18",
+					"protocol": "http",
+					"host": [
+						"{{BCServer}}"
+					],
+					"port": "{{ODataPort}}",
+					"path": [
+						"{{Instance}}",
+						"api",
+						"{{Publisher}}",
+						"{{Group}}",
+						"{{Version}}",
+						"TableStatuses"
+					],
+					"query": [
+						{
+							"key": "$filter",
+							"value": "tableID eq 18"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TablesChangePaths",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{BCServer}}:{{ODataPort}}/{{Instance}}/api/{{Publisher}}/{{Group}}/{{Version}}/TablesChangePaths?$filter=tableID eq 36 and tableOptionType eq '0'",
+					"protocol": "http",
+					"host": [
+						"{{BCServer}}"
+					],
+					"port": "{{ODataPort}}",
+					"path": [
+						"{{Instance}}",
+						"api",
+						"{{Publisher}}",
+						"{{Group}}",
+						"{{Version}}",
+						"TablesChangePaths"
+					],
+					"query": [
+						{
+							"key": "$filter",
+							"value": "tableID eq 36 and tableOptionType eq '0'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "StatusTransactions",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "CompanyName",
+			"value": ""
+		},
+		{
+			"key": "BCServer",
+			"value": ""
+		},
+		{
+			"key": "ODataPort",
+			"value": ""
+		},
+		{
+			"key": "Instance",
+			"value": ""
+		},
+		{
+			"key": "Publisher",
+			"value": ""
+		},
+		{
+			"key": "Group",
+			"value": ""
+		},
+		{
+			"key": "Version",
+			"value": ""
+		},
+		{
+			"key": "Entity",
+			"value": ""
+		}
+	]
+}
