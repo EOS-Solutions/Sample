@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a77a0261-05ea-4359-ba1f-0ae76044da4f",
+		"_postman_id": "c427e064-dd23-4d2b-96b2-73d35bcb7d22",
 		"name": "EOS003 EDS",
 		"description": "- **Change Status**: endpoint that allows modifying the status of an EDS record from external systems by specifying the record, target status, and path. \\[bound action\\]\n    \n- **Read Statuses**: API to retrieve the list of available statuses for a given table. \\[page API\\]\n    \n- **Read Paths and Status Changes**: API to read the transition paths between statuses and the corresponding status changes. \\[page API\\]",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
@@ -118,7 +118,29 @@
 			"name": "StatusTransactions",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "http://{{BCServer}}:{{ODataPort}}/{{Instance}}/api/{{Publisher}}/{{Group}}/{{Version}}/StatusTransactions?$filter=tableID eq 18 and tableOptionType eq '0'",
+					"protocol": "http",
+					"host": [
+						"{{BCServer}}"
+					],
+					"port": "{{ODataPort}}",
+					"path": [
+						"{{Instance}}",
+						"api",
+						"{{Publisher}}",
+						"{{Group}}",
+						"{{Version}}",
+						"StatusTransactions"
+					],
+					"query": [
+						{
+							"key": "$filter",
+							"value": "tableID eq 18 and tableOptionType eq '0'"
+						}
+					]
+				}
 			},
 			"response": []
 		}
@@ -181,19 +203,15 @@
 		},
 		{
 			"key": "Publisher",
-			"value": ""
+			"value": "eos"
 		},
 		{
 			"key": "Group",
-			"value": ""
+			"value": "eos003"
 		},
 		{
 			"key": "Version",
-			"value": ""
-		},
-		{
-			"key": "Entity",
-			"value": ""
+			"value": "v1.0"
 		}
 	]
 }
