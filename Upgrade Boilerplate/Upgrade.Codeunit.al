@@ -8,47 +8,84 @@ codeunit 9999990 "EOSxxx Upgrade" // replace xxx with your 3 digit extension cod
         UpgTag: Codeunit "EOS004 Upgrade Tags"; // this Codeunit is in "EOS Administration Library"
 
 
+    /// <summary>
+    /// This will intialize your codeunit and set globals.
+    /// </summary>
+    local procedure InitCodeunit(perDatabase: Boolean)
+    var
+        ModInfo: ModuleInfo;
+    begin
+        NavApp.GetCurrentModuleInfo(ModInfo);
+        UpgTag.SetApp(ModInfo, perDatabase);
+    end;
+
+    #region percompany-things
+
+    // Helper function that returns all tags.
+    internal procedure GetCompanyUpgradeTags() result: List of [Code[250]]
+    begin
+        InitCodeunit(false);
+        result.Add(UpgTag.FormatTag(<workitem1>));
+        result.Add(UpgTag.FormatTag(<workitem2>));
+    end;
+
     // Event that makes sure that all upgrade tags for the currently installed version are also created when new companies are created.
     // If this is not done, the first time a new version of this app is installed in the future (and therefore upgrades start running),
     // all upgrades will run, even if they (probabily) should not.
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Upgrade Tag", 'OnGetPerCompanyUpgradeTags', '', true, false)]
-    local procedure OnGetPerCompanyUpgradeTags()
+    // Makes use of 'GetCompanyUpgradeTags' to get all tags to create.
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Upgrade Tag", OnGetPerCompanyUpgradeTags, '', true, false)]
+    local procedure OnGetPerCompanyUpgradeTags(var PerCompanyUpgradeTags: List of [Code[250]])
     begin
-        CreateUpgradeTags();
+        PerCompanyUpgradeTags.AddRange(GetCompanyUpgradeTags());
     end;
 
-
-    local procedure InitCodeunit()
-    var
-        mi: ModuleInfo;
-    begin
-        NavApp.GetCurrentModuleInfo(mi);
-        UpgTag.SetApp(mi);
-    end;
-
-
-    // This is an utilty function that is used here (see event subscriber above) as well as in the installation codeunit.
-    // Remember to add any new upgrades you implement here as well
-    internal procedure CreateUpgradeTags()
-    begin
-        InitCodeunit();
-
-        UpgTag.SetUpgradeTagIfNotExists(<workitem-id-1>); // work item ID for 'RunUpgradeProcedure_One'
-        UpgTag.SetUpgradeTagIfNotExists(<workitem-id-2>); // work item ID for 'RunUpgradeProcedure_Two'
-        UpgTag.SetUpgradeTagIfNotExists(<workitem-id-3>); // work item ID for 'RunUpgradeProcedure_Three'
-        // ...
-    end;
-
-
+    // The obvious trigger that actually executes your upgrade.
     trigger OnUpgradePerCompany()
     begin
-        InitCodeunit();
+        InitCodeunit(false);
 
-        RunUpgradeProcedure_One(); // work item ID for 'RunUpgradeProcedureOne'
-        RunUpgradeProcedure_Two(); // work item ID for 'RunUpgradeProcedureTwo'
-        RunUpgradeProcedure_Three(); // work item ID for 'RunUpgradeProcedureThree'
-        // ...
+        // replace this below with your actual upgrade methods
+        RunUpgradeProcedure_One();
+        RunUpgradeProcedure_Two();
     end;
+
+    #endregion
+
+    #region perdatabase-things
+
+    // Helper function that returns all tags.
+    internal procedure GetDatabaseUpgradeTags() result: List of [Code[250]]
+    begin
+        InitCodeunit(true);
+        result.Add(UpgTag.FormatTag(<workitem3>));
+    end;
+
+    // Event that makes sure that all upgrade tags for the currently installed version are also created.
+    // If this is not done, the first time a new version of this app is installed in the future (and therefore upgrades start running),
+    // all upgrades will run, even if they (probabily) should not.
+    // Makes use of 'GetDatabaseUpgradeTags' to get all tags to create.
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Upgrade Tag", OnGetPerCompanyUpgradeTags, '', true, false)]
+    local procedure OnGetPerDatabaseUpgradeTags(var PerCompanyUpgradeTags: List of [Code[250]])
+    begin
+        PerCompanyUpgradeTags.AddRange(GetCompanyUpgradeTags());
+    end;
+
+    // The obvious trigger that actually executes your upgrade.
+    trigger OnUpgradePerDatabase()
+    begin
+        InitCodeunit(false);
+
+        // replace this below with your actual upgrade methods
+        RunUpgradeProcedure_Three();
+    end;
+
+    #endregion
+
+
+    // Everything below here is your job.
+    // Write a method for each upgrade task. Use the pattern like below.
+    // Make sure you have properly called 'InitCodeunit' (with isDatabase parameter correctly set) before any of this is run.
+    // But if you followed this boilerplate, it is so.
 
     local procedure RunUpgradeProcedureOne()
     begin
