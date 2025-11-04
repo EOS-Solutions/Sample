@@ -66,20 +66,6 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
           ];
     end;
 
-    procedure GetDocumentReasonCode(header: RecordRef) Result: Code[10];
-    var
-        TempDocument: Record "Sales Invoice Header" temporary;
-        FldRef: FieldRef;
-        isHandled: Boolean;
-    begin
-        isHandled := false;
-        OnBeforeGetReasonCode(OutbElectrDocSetupGroup, header, Result, isHandled);
-        if not isHandled then begin
-            DataTypeManagement.FindFieldByName(header, FldRef, TempDocument.FieldName("Reason Code"));
-            Result := FldRef.Value();
-        end;
-    end;
-
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"EOS FE Writer", 'OnBeforeAddCodiceArticolo', '', true, false)]
     local procedure OnBefore_CodiceArticolo(header: RecordRef; line: RecordRef; var XmlWriter: Codeunit "EOS Xml Writer"; var handled: Boolean)
     var
@@ -90,7 +76,6 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
         FldRef: FieldRef;
         DummyText: Text[20];
         CustNo: Code[20];
-        isHandled: Boolean;
     begin
         CustNo := header.Field(DocumentTMP.FieldNo("Bill-to Customer No.")).Value();
         Handled := false;
@@ -118,27 +103,23 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
                         DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Item Reference No."));
                         DocumentLineTMP."Item Reference No." := FldRef.Value();
 
-                        isHandled := false;
-                        OnBeforeExport_CodiceArticolo(OutbElectrDocSetupGroup, header, line, XmlWriter, isHandled);
+                        if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
+                            XmlWriter.WriteStartElement('CodiceArticolo');
+                            XmlWriter.WriteElementValue('CodiceTipo', 'INTERNALCODE');
+                            if DocumentLineTMP."Variant Code" <> '' then
+                                XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No." + ' ' + DocumentLineTMP."Variant Code")
+                            else
+                                XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No.");
+                            XmlWriter.WriteEndElement();
 
-                        if not isHandled then
-                            if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
+                            //CrossReference
+                            if DocumentLineTMP."Item Reference No." <> '' then begin
                                 XmlWriter.WriteStartElement('CodiceArticolo');
-                                XmlWriter.WriteElementValue('CodiceTipo', 'INTERNALCODE');
-                                if DocumentLineTMP."Variant Code" <> '' then
-                                    XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No." + ' ' + DocumentLineTMP."Variant Code")
-                                else
-                                    XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No.");
+                                XmlWriter.WriteElementValue('CodiceTipo', 'articolobrico');
+                                XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."Item Reference No.");
                                 XmlWriter.WriteEndElement();
-
-                                //CrossReference
-                                if DocumentLineTMP."Item Reference No." <> '' then begin
-                                    XmlWriter.WriteStartElement('CodiceArticolo');
-                                    XmlWriter.WriteElementValue('CodiceTipo', 'articolobrico');
-                                    XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."Item Reference No.");
-                                    XmlWriter.WriteEndElement();
-                                end;
                             end;
+                        end;
                     end;
                     Handled := true;
                 end;
@@ -162,20 +143,16 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
                         DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("No."));
                         DocumentLineTMP."No." := FldRef.Value();
 
-                        isHandled := false;
-                        OnBeforeExport_CodiceArticolo(OutbElectrDocSetupGroup, header, line, XmlWriter, isHandled);
+                        if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
+                            XmlWriter.WriteStartElement('CodiceArticolo');
+                            XmlWriter.WriteElementValue('CodiceTipo', 'INTERNALCODE');
+                            if DocumentLineTMP."Variant Code" <> '' then
+                                XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No." + ' ' + DocumentLineTMP."Variant Code")
+                            else
+                                XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No.");
+                            XmlWriter.WriteEndElement();
 
-                        if not isHandled then
-                            if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
-                                XmlWriter.WriteStartElement('CodiceArticolo');
-                                XmlWriter.WriteElementValue('CodiceTipo', 'INTERNALCODE');
-                                if DocumentLineTMP."Variant Code" <> '' then
-                                    XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No." + ' ' + DocumentLineTMP."Variant Code")
-                                else
-                                    XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No.");
-                                XmlWriter.WriteEndElement();
-
-                            end;
+                        end;
                     end;
                     Handled := true;
                 end;
@@ -208,28 +185,20 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
                                 ItemReference."Reference Type"::"Bar Code", ItemReference."Reference Type"::Customer);
                             if DocumentLineTMP."Item Reference No." <> '' then
                                 ItemReference.SetRange("Reference No.", DocumentLineTMP."Item Reference No.");
-
-                            isHandled := false;
-                            OnAfterItemReferenceFilters_CodiceArticolo(OutbElectrDocSetupGroup, header, line, ItemReference, XmlWriter, isHandled);
-
-                            if not isHandled then
-                                if ItemReference.FindSet() then
-                                    repeat
-                                        isHandled := false;
-                                        OnBeforeExportItemReference_CodiceArticolo(OutbElectrDocSetupGroup, header, line, ItemReference, XmlWriter, isHandled);
-                                        if not isHandled then
-                                            if not ((ItemReference."Reference Type" = ItemReference."Reference Type"::Customer) and (ItemReference."Reference Type No." <> DocumentLineTMP."Sell-to Customer No.")) then begin
-                                                XmlWriter.WriteStartElement('CodiceArticolo');
-                                                case ItemReference."Reference Type" of
-                                                    ItemReference."Reference Type"::Customer:
-                                                        XmlWriter.WriteElementValue('CodiceTipo', 'BP');
-                                                    ItemReference."Reference Type"::"Bar Code":
-                                                        XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
-                                                end;
-                                                XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
-                                                XmlWriter.WriteEndElement();
-                                            end;
-                                    until ItemReference.Next() = 0;
+                            if ItemReference.FindSet() then
+                                repeat
+                                    if not ((ItemReference."Reference Type" = ItemReference."Reference Type"::Customer) and (ItemReference."Reference Type No." <> DocumentLineTMP."Sell-to Customer No.")) then begin
+                                        XmlWriter.WriteStartElement('CodiceArticolo');
+                                        case ItemReference."Reference Type" of
+                                            ItemReference."Reference Type"::Customer:
+                                                XmlWriter.WriteElementValue('CodiceTipo', 'BP');
+                                            ItemReference."Reference Type"::"Bar Code":
+                                                XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
+                                        end;
+                                        XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
+                                        XmlWriter.WriteEndElement();
+                                    end;
+                                until ItemReference.Next() = 0;
 
                         end;
                     end;
@@ -272,26 +241,20 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
                                 ItemReference."Reference Type"::"Bar Code", ItemReference."Reference Type"::Customer);
                             if DocumentLineTMP."Item Reference No." <> '' then
                                 ItemReference.SetRange("Reference No.", DocumentLineTMP."Item Reference No.");
-
-                            isHandled := false;
-                            OnAfterItemReferenceFilters_CodiceArticolo(OutbElectrDocSetupGroup, header, line, ItemReference, XmlWriter, isHandled);
                             if ItemReference.FindSet() then
                                 repeat
-                                    isHandled := false;
-                                    OnBeforeExportItemReference_CodiceArticolo(OutbElectrDocSetupGroup, header, line, ItemReference, XmlWriter, isHandled);
-                                    if not isHandled then
-                                        if not ((ItemReference."Reference Type" = ItemReference."Reference Type"::Customer) and (ItemReference."Reference Type No." <> DocumentLineTMP."Sell-to Customer No.")) then begin
-                                            XmlWriter.WriteStartElement('CodiceArticolo');
-                                            case ItemReference."Reference Type" of
-                                                ItemReference."Reference Type"::Customer:
-                                                    XmlWriter.WriteElementValue('CodiceTipo', '01');
-                                                ItemReference."Reference Type"::"Bar Code":
-                                                    XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
-                                            end;
-
-                                            XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
-                                            XmlWriter.WriteEndElement();
+                                    if not ((ItemReference."Reference Type" = ItemReference."Reference Type"::Customer) and (ItemReference."Reference Type No." <> DocumentLineTMP."Sell-to Customer No.")) then begin
+                                        XmlWriter.WriteStartElement('CodiceArticolo');
+                                        case ItemReference."Reference Type" of
+                                            ItemReference."Reference Type"::Customer:
+                                                XmlWriter.WriteElementValue('CodiceTipo', '01');
+                                            ItemReference."Reference Type"::"Bar Code":
+                                                XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
                                         end;
+
+                                        XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
+                                        XmlWriter.WriteEndElement();
+                                    end;
                                 until ItemReference.Next() = 0;
 
                         end;
@@ -324,19 +287,12 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
                             ItemReference.SetFilter("Reference Type", '%1', ItemReference."Reference Type"::"Bar Code");
                             if DocumentLineTMP."Item Reference No." <> '' then
                                 ItemReference.SetRange("Reference No.", DocumentLineTMP."Item Reference No.");
-
-                            isHandled := false;
-                            OnAfterItemReferenceFilters_CodiceArticolo(OutbElectrDocSetupGroup, header, line, ItemReference, XmlWriter, isHandled);
                             if ItemReference.FindSet() then
                                 repeat
-                                    isHandled := false;
-                                    OnBeforeExportItemReference_CodiceArticolo(OutbElectrDocSetupGroup, header, line, ItemReference, XmlWriter, isHandled);
-                                    if not isHandled then begin
-                                        XmlWriter.WriteStartElement('CodiceArticolo');
-                                        XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
-                                        XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
-                                        XmlWriter.WriteEndElement();
-                                    end;
+                                    XmlWriter.WriteStartElement('CodiceArticolo');
+                                    XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
+                                    XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
+                                    XmlWriter.WriteEndElement();
                                 until ItemReference.Next() = 0
                             else begin
                                 XmlWriter.WriteStartElement('CodiceArticolo');
@@ -390,26 +346,19 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
                                 ItemReference."Reference Type"::"Bar Code", ItemReference."Reference Type"::Customer);
                             if DocumentLineTMP."Item Reference No." <> '' then
                                 ItemReference.SetRange("Reference No.", DocumentLineTMP."Item Reference No.");
-
-                            isHandled := false;
-                            OnAfterItemReferenceFilters_CodiceArticolo(OutbElectrDocSetupGroup, header, line, ItemReference, XmlWriter, isHandled);
-
                             if ItemReference.FindSet() then
                                 repeat
-                                    isHandled := false;
-                                    OnBeforeExportItemReference_CodiceArticolo(OutbElectrDocSetupGroup, header, line, ItemReference, XmlWriter, isHandled);
-                                    if not isHandled then
-                                        if not ((ItemReference."Reference Type" = ItemReference."Reference Type"::Customer) and (ItemReference."Reference Type No." <> DocumentLineTMP."Sell-to Customer No.")) then begin
-                                            XmlWriter.WriteStartElement('CodiceArticolo');
-                                            case ItemReference."Reference Type" of
-                                                ItemReference."Reference Type"::Customer:
-                                                    XmlWriter.WriteElementValue('CodiceTipo', 'IN');
-                                                ItemReference."Reference Type"::"Bar Code":
-                                                    XmlWriter.WriteElementValue('CodiceTipo', 'EN');
-                                            end;
-                                            XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
-                                            XmlWriter.WriteEndElement();
+                                    if not ((ItemReference."Reference Type" = ItemReference."Reference Type"::Customer) and (ItemReference."Reference Type No." <> DocumentLineTMP."Sell-to Customer No.")) then begin
+                                        XmlWriter.WriteStartElement('CodiceArticolo');
+                                        case ItemReference."Reference Type" of
+                                            ItemReference."Reference Type"::Customer:
+                                                XmlWriter.WriteElementValue('CodiceTipo', 'IN');
+                                            ItemReference."Reference Type"::"Bar Code":
+                                                XmlWriter.WriteElementValue('CodiceTipo', 'EN');
                                         end;
+                                        XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
+                                        XmlWriter.WriteEndElement();
+                                    end;
                                 until ItemReference.Next() = 0;
 
                         end;
@@ -454,28 +403,21 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
                                 ItemReference."Reference Type"::"Bar Code", ItemReference."Reference Type"::Customer);
                             if DocumentLineTMP."Item Reference No." <> '' then
                                 ItemReference.SetRange("Reference No.", DocumentLineTMP."Item Reference No.");
-
-                            isHandled := false;
-                            OnAfterItemReferenceFilters_CodiceArticolo(OutbElectrDocSetupGroup, header, line, ItemReference, XmlWriter, isHandled);
-
                             if ItemReference.FindSet() then
                                 repeat
-                                    isHandled := false;
-                                    OnBeforeExportItemReference_CodiceArticolo(OutbElectrDocSetupGroup, header, line, ItemReference, XmlWriter, isHandled);
-                                    if not isHandled then
-                                        if not ((ItemReference."Reference Type" = ItemReference."Reference Type"::Customer) and (ItemReference."Reference Type No." <> DocumentLineTMP."Sell-to Customer No.")) then begin
-                                            XmlWriter.WriteStartElement('CodiceArticolo');
-                                            XmlWriter.WriteElementValue('CodiceTipo', 'articolobrico');
-                                            case ItemReference."Reference Type" of
-                                                ItemReference."Reference Type"::Customer:
-                                                    XmlWriter.WriteElementValue('CodiceTipo', 'Codice Art. Cliente');
-                                                ItemReference."Reference Type"::"Bar Code":
-                                                    XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
-                                            end;
-
-                                            XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
-                                            XmlWriter.WriteEndElement();
+                                    if not ((ItemReference."Reference Type" = ItemReference."Reference Type"::Customer) and (ItemReference."Reference Type No." <> DocumentLineTMP."Sell-to Customer No.")) then begin
+                                        XmlWriter.WriteStartElement('CodiceArticolo');
+                                        XmlWriter.WriteElementValue('CodiceTipo', 'articolobrico');
+                                        case ItemReference."Reference Type" of
+                                            ItemReference."Reference Type"::Customer:
+                                                XmlWriter.WriteElementValue('CodiceTipo', 'Codice Art. Cliente');
+                                            ItemReference."Reference Type"::"Bar Code":
+                                                XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
                                         end;
+
+                                        XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
+                                        XmlWriter.WriteEndElement();
+                                    end;
                                 until ItemReference.Next() = 0;
 
                         end;
@@ -503,19 +445,15 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
                         DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Item Reference No."));
                         DocumentLineTMP."Item Reference No." := FldRef.Value();
 
-                        isHandled := false;
-                        OnBeforeExport_CodiceArticolo(OutbElectrDocSetupGroup, header, line, XmlWriter, isHandled);
-
-                        if not isHandled then
-                            if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
-                                XmlWriter.WriteStartElement('CodiceArticolo');
-                                XmlWriter.WriteElementValue('CodiceTipo', 'cod');
-                                if DocumentLineTMP."Variant Code" <> '' then
-                                    XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No." + ' ' + DocumentLineTMP."Variant Code")
-                                else
-                                    XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No.");
-                                XmlWriter.WriteEndElement();
-                            end;
+                        if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
+                            XmlWriter.WriteStartElement('CodiceArticolo');
+                            XmlWriter.WriteElementValue('CodiceTipo', 'cod');
+                            if DocumentLineTMP."Variant Code" <> '' then
+                                XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No." + ' ' + DocumentLineTMP."Variant Code")
+                            else
+                                XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No.");
+                            XmlWriter.WriteEndElement();
+                        end;
                     end;
                     Handled := true;
                 end;
@@ -538,19 +476,15 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
                         DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("No."));
                         DocumentLineTMP."No." := FldRef.Value();
 
-                        isHandled := false;
-                        OnBeforeExport_CodiceArticolo(OutbElectrDocSetupGroup, header, line, XmlWriter, isHandled);
-
-                        if not isHandled then
-                            if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
-                                XmlWriter.WriteStartElement('CodiceArticolo');
-                                XmlWriter.WriteElementValue('CodiceTipo', 'GDS');
-                                if DocumentLineTMP."Variant Code" <> '' then
-                                    XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No." + ' ' + DocumentLineTMP."Variant Code")
-                                else
-                                    XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No.");
-                                XmlWriter.WriteEndElement();
-                            end;
+                        if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
+                            XmlWriter.WriteStartElement('CodiceArticolo');
+                            XmlWriter.WriteElementValue('CodiceTipo', 'GDS');
+                            if DocumentLineTMP."Variant Code" <> '' then
+                                XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No." + ' ' + DocumentLineTMP."Variant Code")
+                            else
+                                XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No.");
+                            XmlWriter.WriteEndElement();
+                        end;
                     end;
                     Handled := true;
                 end;
@@ -591,26 +525,19 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
                                 ItemReference."Reference Type"::"Bar Code", ItemReference."Reference Type"::Customer);
                             if DocumentLineTMP."Item Reference No." <> '' then
                                 ItemReference.SetRange("Reference No.", DocumentLineTMP."Item Reference No.");
-
-                            isHandled := false;
-                            OnAfterItemReferenceFilters_CodiceArticolo(OutbElectrDocSetupGroup, header, line, ItemReference, XmlWriter, isHandled);
-
                             if ItemReference.FindSet() then
                                 repeat
-                                    isHandled := false;
-                                    OnBeforeExportItemReference_CodiceArticolo(OutbElectrDocSetupGroup, header, line, ItemReference, XmlWriter, isHandled);
-                                    if not isHandled then
-                                        if not ((ItemReference."Reference Type" = ItemReference."Reference Type"::Customer) and (ItemReference."Reference Type No." <> DocumentLineTMP."Sell-to Customer No.")) then begin
-                                            XmlWriter.WriteStartElement('CodiceArticolo');
-                                            case ItemReference."Reference Type" of
-                                                ItemReference."Reference Type"::Customer:
-                                                    XmlWriter.WriteElementValue('CodiceTipo', 'BP');
-                                                ItemReference."Reference Type"::"Bar Code":
-                                                    XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
-                                            end;
-                                            XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
-                                            XmlWriter.WriteEndElement();
+                                    if not ((ItemReference."Reference Type" = ItemReference."Reference Type"::Customer) and (ItemReference."Reference Type No." <> DocumentLineTMP."Sell-to Customer No.")) then begin
+                                        XmlWriter.WriteStartElement('CodiceArticolo');
+                                        case ItemReference."Reference Type" of
+                                            ItemReference."Reference Type"::Customer:
+                                                XmlWriter.WriteElementValue('CodiceTipo', 'BP');
+                                            ItemReference."Reference Type"::"Bar Code":
+                                                XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
                                         end;
+                                        XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
+                                        XmlWriter.WriteEndElement();
+                                    end;
                                 until ItemReference.Next() = 0;
                         end;
                     end;
@@ -644,23 +571,19 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
                         DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("Item Reference No."));
                         DocumentLineTMP."Item Reference No." := FldRef.Value();
 
-                        isHandled := false;
-                        OnBeforeExport_CodiceArticolo(OutbElectrDocSetupGroup, header, line, XmlWriter, isHandled);
+                        if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
 
-                        if not isHandled then
-                            if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
+                            // Create string following Ferrari request
+                            DummyText := CopyStr(PadStr(DocumentLineTMP."Job No.", 9, ' ') + DocumentLineTMP."Item Reference No.", 1, 20);
 
-                                // Create string following Ferrari request
-                                DummyText := CopyStr(PadStr(DocumentLineTMP."Job No.", 9, ' ') + DocumentLineTMP."Item Reference No.", 1, 20);
-
-                                if DummyText <> '' then begin
-                                    XmlWriter.WriteStartElement('CodiceArticolo');
-                                    XmlWriter.WriteElementValue('CodiceTipo', 'CODICE');
-                                    XmlWriter.WriteElementValue('CodiceValore', DummyText);
-                                    XmlWriter.WriteEndElement();
-                                end;
-
+                            if DummyText <> '' then begin
+                                XmlWriter.WriteStartElement('CodiceArticolo');
+                                XmlWriter.WriteElementValue('CodiceTipo', 'CODICE');
+                                XmlWriter.WriteElementValue('CodiceValore', DummyText);
+                                XmlWriter.WriteEndElement();
                             end;
+
+                        end;
                     end;
                     Handled := true;
                 end;
@@ -684,19 +607,15 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
                         DataTypeManagement.FindFieldByName(line, FldRef, DocumentLineTMP.FieldName("No."));
                         DocumentLineTMP."No." := FldRef.Value();
 
-                        isHandled := false;
-                        OnBeforeExport_CodiceArticolo(OutbElectrDocSetupGroup, header, line, XmlWriter, isHandled);
-
-                        if not isHandled then
-                            if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
-                                XmlWriter.WriteStartElement('CodiceArticolo');
-                                XmlWriter.WriteElementValue('CodiceTipo', 'SA');
-                                if DocumentLineTMP."Variant Code" <> '' then
-                                    XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No." + ' ' + DocumentLineTMP."Variant Code")
-                                else
-                                    XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No.");
-                                XmlWriter.WriteEndElement();
-                            end;
+                        if DocumentLineTMP.Type = DocumentLineTMP.Type::Item then begin
+                            XmlWriter.WriteStartElement('CodiceArticolo');
+                            XmlWriter.WriteElementValue('CodiceTipo', 'SA');
+                            if DocumentLineTMP."Variant Code" <> '' then
+                                XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No." + ' ' + DocumentLineTMP."Variant Code")
+                            else
+                                XmlWriter.WriteElementValue('CodiceValore', DocumentLineTMP."No.");
+                            XmlWriter.WriteEndElement();
+                        end;
                     end;
                     Handled := true;
                 end;
@@ -1166,32 +1085,59 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
         if SkipHookHandling then
             exit;
 
-        DocumentTMP."Reason Code" := GetDocumentReasonCode(header);
-
         case OutbElectrDocSetupGroup."EOS Hook Group Code" of
             'EOS_AMAZON':
-                IF header.NUMBER() IN [DATABASE::"Sales Cr.Memo Header"] THEN
+                IF header.NUMBER() IN [DATABASE::"Sales Cr.Memo Header"] THEN begin
+                    DataTypeManagement.FindFieldByName(header, FldRef, DocumentTMP.FIELDNAME("Reason Code"));
+                    DocumentTMP."Reason Code" := FldRef.VALUE();
                     IF DocumentTMP."Reason Code" <> '' THEN
                         IF ReasonCode.GET(DocumentTMP."Reason Code") THEN
                             XmlWriter.WriteElementValueIf(ReasonCode."EOS AMZ Exp. To EDoc.", 'Causale', ReasonCode.Code);
+                END;
             'EOS_CARREFOUR':
-                // Check reasons mapped as "MERCI", "FRANCHISING", "EXTRAFATTURA" or customize
-                XmlWriter.WriteElementValueIf(ReasonCode.Get(DocumentTMP."Reason Code"), 'Causale', ReasonCode.Description);
+                begin
+                    DataTypeManagement.FindFieldByName(header, FldRef, DocumentTMP.FieldName("Reason Code"));
+                    DocumentTMP."Reason Code" := FldRef.Value();
+
+                    // Check reasons mapped as "MERCI", "FRANCHISING", "EXTRAFATTURA" or customize
+                    XmlWriter.WriteElementValueIf(ReasonCode.Get(DocumentTMP."Reason Code"), 'Causale', ReasonCode.Description);
+                end;
 
             'EOS_CONAD_SIC', 'EOS_IGES':
-                // Check reasons mapped as "MAGAZZINO", "RIFATTURAZIONE", "SERVIZI" or customize
-                XmlWriter.WriteElementValueIf(ReasonCode.Get(DocumentTMP."Reason Code"), 'Causale', ReasonCode.Description);
+                begin
+                    DataTypeManagement.FindFieldByName(header, FldRef, DocumentTMP.FieldName("Reason Code"));
+                    DocumentTMP."Reason Code" := FldRef.Value();
+
+                    // Check reasons mapped as "MAGAZZINO", "RIFATTURAZIONE", "SERVIZI" or customize
+                    XmlWriter.WriteElementValueIf(ReasonCode.Get(DocumentTMP."Reason Code"), 'Causale', ReasonCode.Description);
+                end;
 
             'EOS_UNICOOPTIR':
-                // Check reasons mapped as "M" (merci), "S" (servizi) or customize
-                XmlWriter.WriteElementValueIf(ReasonCode.Get(DocumentTMP."Reason Code"), 'Causale', ReasonCode.Description);
+                begin
+                    DataTypeManagement.FindFieldByName(header, FldRef, DocumentTMP.FieldName("Reason Code"));
+                    DocumentTMP."Reason Code" := FldRef.Value();
+
+                    // Check reasons mapped as "M" (merci), "S" (servizi) or customize
+                    XmlWriter.WriteElementValueIf(ReasonCode.Get(DocumentTMP."Reason Code"), 'Causale', ReasonCode.Description);
+                end;
 
             'EOS_COOPALL3':
-                XmlWriter.WriteElementValueIf(ReasonCode.Get(DocumentTMP."Reason Code"), 'Causale', ReasonCode.Description);
+                begin
+                    DataTypeManagement.FindFieldByName(header, FldRef, DocumentTMP.FieldName("Reason Code"));
+                    DocumentTMP."Reason Code" := FldRef.Value();
+
+                    XmlWriter.WriteElementValueIf(ReasonCode.Get(DocumentTMP."Reason Code"), 'Causale', ReasonCode.Description);
+
+                end;
 
             'EOS_STEFF':
-                // Check reasons mapped as "DANNI_", "GEN_" or customize
-                XmlWriter.WriteElementValueIf(ReasonCode.Get(DocumentTMP."Reason Code"), 'Causale', ReasonCode.Description);
+                begin
+                    DataTypeManagement.FindFieldByName(header, FldRef, DocumentTMP.FieldName("Reason Code"));
+                    DocumentTMP."Reason Code" := FldRef.Value();
+
+                    // Check reasons mapped as "DANNI_", "GEN_" or customize
+                    XmlWriter.WriteElementValueIf(ReasonCode.Get(DocumentTMP."Reason Code"), 'Causale', ReasonCode.Description);
+                end;
 
             'EOS_ASCA', 'EOS_MARR':
                 begin
@@ -1537,43 +1483,45 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
 
     local procedure GetAMAZONReasonCode(header: RecordRef) Reason: Code[10]
     var
+        DocumentTMP: Record "Sales Invoice Header" temporary;
         ReasonCode: Record "Reason Code";
-        ReasonCodeValue: Code[10];
+        FldRef: FieldRef;
         CausaleList: List of [Text];
         CausaleConai: Text;
         CausaleDutyStamp: Text;
+        Causale: Text;
     begin
         EOSFEData.getCausaleTags(CausaleList, CausaleConai, CausaleDutyStamp);
 
-        ReasonCodeValue := GetDocumentReasonCode(header);
-
-        if ReasonCode.Get(ReasonCodeValue) then
+        DataTypeManagement.FindFieldByName(header, FldRef, DocumentTMP.FieldName("Reason Code"));
+        DocumentTMP."Reason Code" := FldRef.Value();
+        if ReasonCode.get(DocumentTMP."Reason Code") then
             CausaleList.Add(ReasonCode.Description);
 
         case header.Number() of
             database::"Sales Invoice Header":
                 begin
-                    ReasonCodeValue := 'NDEB';
-                    if CausaleList.Contains(ReasonCodeValue) then
-                        Reason := ReasonCodeValue;
+                    Causale := 'NDEB';
+                    if CausaleList.Contains(Causale) then
+                        Reason := copystr(Causale, 1, 10);
                 end;
             database::"Sales Cr.Memo Header":
                 begin
-                    ReasonCodeValue := 'NCSTT';
-                    if CausaleList.Contains(ReasonCodeValue) then
-                        Reason := ReasonCodeValue;
-                    ReasonCodeValue := 'NCDIF';
-                    if CausaleList.Contains(ReasonCodeValue) then
-                        Reason := ReasonCodeValue;
-                    ReasonCodeValue := 'QPD';
-                    if CausaleList.Contains(ReasonCodeValue) then
-                        Reason := ReasonCodeValue;
-                    ReasonCodeValue := 'VRET';
-                    if CausaleList.Contains(ReasonCodeValue) then
-                        Reason := ReasonCodeValue;
-                    ReasonCodeValue := 'CCOGS';
-                    if CausaleList.Contains(ReasonCodeValue) then
-                        Reason := ReasonCodeValue;
+                    Causale := 'NCSTT';
+                    if CausaleList.Contains(Causale) then
+                        Reason := copystr(Causale, 1, 10);
+                    Causale := 'NCDIF';
+                    if CausaleList.Contains(Causale) then
+                        Reason := copystr(Causale, 1, 10);
+                    Causale := 'QPD';
+                    if CausaleList.Contains(Causale) then
+                        Reason := copystr(Causale, 1, 10);
+                    Causale := 'VRET';
+                    if CausaleList.Contains(Causale) then
+                        Reason := copystr(Causale, 1, 10);
+                    Causale := 'CCOGS';
+                    if CausaleList.Contains(Causale) then
+                        Reason := copystr(Causale, 1, 10);
                 end;
         end;
     end;
@@ -1583,7 +1531,6 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
         DocumentLineTMP: Record "Sales Invoice Line" temporary;
         ItemReference: Record "Item Reference";
         FldRef: FieldRef;
-        isHandled: Boolean;
     begin
         if not (line.Number() in [DATABASE::"Sales Invoice Line", DATABASE::"Sales Cr.Memo Line"]) then
             exit;
@@ -1610,18 +1557,11 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
             //TempItemReference.SETRANGE("Discontinue Bar Code", false);
             if not ItemReference.FindFirst() then
                 ItemReference.SETRANGE("Unit of Measure");
-            isHandled := false;
-            OnAfterItemReferenceFilters_CodiceArticolo(OutbElectrDocSetupGroup, header, line, ItemReference, XmlWriter, isHandled);
-
             IF ItemReference.FINDFIRST() THEN BEGIN
-                isHandled := false;
-                OnBeforeExportItemReference_CodiceArticolo(OutbElectrDocSetupGroup, header, line, ItemReference, XmlWriter, isHandled);
-                if not isHandled then begin
-                    XmlWriter.WriteStartElement('CodiceArticolo');
-                    XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
-                    XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
-                    XmlWriter.WriteEndElement();
-                end;
+                XmlWriter.WriteStartElement('CodiceArticolo');
+                XmlWriter.WriteElementValue('CodiceTipo', 'EAN');
+                XmlWriter.WriteElementValue('CodiceValore', ItemReference."Reference No.");
+                XmlWriter.WriteEndElement();
             end;
 
             XmlWriter.WriteStartElement('CodiceArticolo');
@@ -1631,7 +1571,6 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
         END;
         Handled := TRUE;
     end;
-
 
     //#endregion AMAZON
 
@@ -1657,60 +1596,4 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
     local procedure OnBeforeOnFillCausaleTag(var header: RecordRef; var XmlWriter: Codeunit "EOS Xml Writer"; var OutbElectrDocSetupGroup: Record "EOS Outb. EDoc. Group Setup"; var Handled: Boolean)
     begin
     end;
-
-    /// <summary>
-    /// Raised after applying filters to the ItemReference record; you can apply additional filters for customization.
-    /// </summary>
-    /// <param name="OutbElectrDocSetupGroup">Current OutbElectrDocSetupGroup</param>
-    /// <param name="header">Current Header RecordRef. It cound be Sales/Service Invoice/CreditMemo</param>
-    /// <param name="line">Current Line RecordRef</param>
-    /// <param name="ItemReference">Filterd Item Reference</param>
-    /// <param name="XmlWriter">XML Writer</param>    
-    /// <param name="isHandled">if true, the default behavior will be skipped</param>
-    [IntegrationEvent(false, false)]
-    local procedure OnAfterItemReferenceFilters_CodiceArticolo(OutbElectrDocSetupGroup: Record "EOS Outb. EDoc. Group Setup"; header: RecordRef; line: RecordRef;
-                                                                var ItemReference: Record "Item Reference"; var XmlWriter: Codeunit "EOS Xml Writer"; var isHandled: Boolean)
-    begin
-    end;
-
-    /// <summary>
-    /// Raised before creating CodiceArticolo XML node; you can customize the behavior or skip it by setting isHandled to true.
-    /// </summary>
-    /// <param name="OutbElectrDocSetupGroup">Current OutbElectrDocSetupGroup</param>
-    /// <param name="header">Current Header RecordRef. It cound be Sales/Service Invoice/CreditMemo</param>
-    /// <param name="line">Current Line RecordRef</param>
-    /// <param name="ItemReference">Current Item Reference</param>
-    /// <param name="XmlWriter">XML Writer</param>    
-    /// <param name="isHandled">if true, the default behavior will be skipped</param>
-    [IntegrationEvent(false, false)]
-    local procedure OnBeforeExportItemReference_CodiceArticolo(OutbElectrDocSetupGroup: Record "EOS Outb. EDoc. Group Setup"; header: RecordRef; line: RecordRef;
-                                                                var ItemReference: Record "Item Reference"; var XmlWriter: Codeunit "EOS Xml Writer"; var isHandled: Boolean)
-    begin
-    end;
-
-    /// <summary>
-    /// Raised before creating CodiceArticolo XML node; you can customize the behavior or skip it by setting isHandled to true.
-    /// </summary>
-    /// <param name="OutbElectrDocSetupGroup">Current OutbElectrDocSetupGroup</param>
-    /// <param name="header">Current Header RecordRef. It cound be Sales/Service Invoice/CreditMemo</param>
-    /// <param name="line">Current Line RecordRef</param>
-    /// <param name="XmlWriter">XML Writer</param>    
-    /// <param name="isHandled">if true, the default behavior will be skipped</param>
-    [IntegrationEvent(false, false)]
-    local procedure OnBeforeExport_CodiceArticolo(OutbElectrDocSetupGroup: Record "EOS Outb. EDoc. Group Setup"; header: RecordRef; line: RecordRef; var XmlWriter: Codeunit "EOS Xml Writer"; var isHandled: Boolean)
-    begin
-    end;
-
-    /// <summary>
-    /// Raised before get standard header."Reason Code" value. you can customize the behavior or skip it by setting isHandled to true.
-    /// </summary>
-    /// <param name="OutbElectrDocSetupGroup">Current OutbElectrDocSetupGroup</param>
-    /// <param name="header">Current Header RecordRef. It cound be Sales/Service Invoice/CreditMemo</param>
-    /// <param name="ReasonCode">Reason Code value</param>
-    /// <param name="isHandled">if true, the default behavior will be skipped</param>
-    [IntegrationEvent(false, false)]
-    local procedure OnBeforeGetReasonCode(OutbElectrDocSetupGroup: Record "EOS Outb. EDoc. Group Setup"; header: RecordRef; var ReasonCode: Code[10]; var isHandled: Boolean)
-    begin
-    end;
-
 }
