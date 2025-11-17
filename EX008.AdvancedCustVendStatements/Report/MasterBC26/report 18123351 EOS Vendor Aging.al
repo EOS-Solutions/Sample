@@ -42,11 +42,11 @@ report 18123351 "EOS Vendor Aging"
                 Vendor.SetLoadFields(Name);
                 LastVendor := '';
 
-                AssetsEngine.BuildMultiSourceTreeView(1, VendorFilters.GetView(false), 0, StartingPostingDate, EndingPostingDate,
-                                                         StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', TempAssetsBufferLocal[1]);
+                AssetsEngine.BuildMultiSourceTreeView("EOS008 Source Type"::Vendor, VendorFilters.GetView(false), "EOS008 Date Filter Type"::"Posting Date", StartingPostingDate, EndingPostingDate,
+                                                         StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', OnHoldPrmtr, TempAssetsBufferLocal[1]);
 
-                OnAfterBuildMultiSourceTreeView(VendorFilters.GetView(false), 0, StartingPostingDate, EndingPostingDate,
-                                                         StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', TempAssetsBufferLocal[1]);
+                OnAfterBuildMultiSourceTreeView(VendorFilters.GetView(false), "EOS008 Date Filter Type"::"Posting Date", StartingPostingDate, EndingPostingDate,
+                                                         StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', OnHoldPrmtr, TempAssetsBufferLocal[1]);
 
                 if ShowLinkedEntriesPrmtr then
                     AssetsEngine.MergeMultipleLevel3Items(TempAssetsBufferLocal[1]);
@@ -306,7 +306,7 @@ report 18123351 "EOS Vendor Aging"
                 end;
                 Clear(TempReportingBuffer);
 
-                OnAfterBuildReportingDataset(VendorFilters.GetView(false), 0, StartingPostingDate, EndingPostingDate,
+                OnAfterBuildReportingDataset(VendorFilters.GetView(false), "EOS008 Date Filter Type"::"Posting Date", StartingPostingDate, EndingPostingDate,
                                              StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', TempAssetsBufferLocal[1],
                                              TempReportingBuffer)
             end;
@@ -330,8 +330,9 @@ report 18123351 "EOS Vendor Aging"
             column(VendorNo; TempReportingBuffer."EOS Source No.") { }
             column(VendorName; TempReportingBuffer."EOS Reporting Subject Name") { }
             column(PostingDate; Format(TempReportingBuffer."EOS Posting Date")) { }
-            column(DocumentType; GetDocumentTypeAbbreviation(TempReportingBuffer."EOS Document Type")) { }
+            column(DocumentType; AdvCustVendStatRoutines.GetDocumentTypeAbbreviation(TempReportingBuffer."EOS Document Type")) { }
             column(DocumentNo; TempReportingBuffer."EOS Document No.") { }
+            column(OnHold; TempReportingBuffer."On Hold") { }
             column(ExternalDocumentNo; TempReportingBuffer."EOS External Document No.") { }
             column(PaymentMethod; TempReportingBuffer."EOS Payment Method") { }
             column(DueDate; Format(TempReportingBuffer."EOS Due Date")) { }
@@ -422,9 +423,6 @@ report 18123351 "EOS Vendor Aging"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the "Posting Date Filter" field.';
                     trigger OnValidate();
-                    var
-                        AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
-
                     begin
                         AdvCustVendStatRoutines.ResolveDateFilter(PostingDateFilterPrmtr, StartingPostingDate, EndingPostingDate);
                     end;
@@ -435,8 +433,6 @@ report 18123351 "EOS Vendor Aging"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the "Due Date Filter" field.';
                     trigger OnValidate();
-                    var
-                        AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
                     begin
                         AdvCustVendStatRoutines.ResolveDateFilter(DueDateFilterPrmtr, StartingDueDate, EndingDueDate);
                     end;
@@ -454,6 +450,12 @@ report 18123351 "EOS Vendor Aging"
                             PaymentMethodFilterPrmtr := PaymentMethod.Code;
                     end;
                 }
+                field(OnHoldFilter; OnHoldPrmtr)
+                {
+                    Caption = '"On Hold" Filter';
+                    ApplicationArea = All;
+                    ToolTip = 'Use this field to filter vendor ledger entries that are on hold or not on hold.';
+                }
                 field(ShowFilters; ShowFiltersPrmtr)
                 {
                     Caption = 'Print Filters';
@@ -468,7 +470,7 @@ report 18123351 "EOS Vendor Aging"
             Parameters: Record "EOS008 CVS Report Parameters";
             AdvCustVendStatSharedMem: Codeunit "EOS AdvCustVendStat SharedMem";
         begin
-            CurrReport.RequestOptionsPage.Caption := CurrReport.RequestOptionsPage.Caption() + SubscriptionMgt.GetLicenseText();
+            SubscriptionMgt.GetSubscriptionIsActive(); //this will show any subscription warnings if needed
             OnlyOpenPrmtr := true;
             ShowLinkedEntriesPrmtr := false;
             UpdateReqPage();
@@ -526,7 +528,6 @@ report 18123351 "EOS Vendor Aging"
 
     trigger OnPreReport();
     var
-        AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
         CVStatEngine: Codeunit "EOS AdvCustVendStat Engine";
     begin
         AdvCustVendStatRoutines.ResolveDateFilter(PostingDateFilterPrmtr, StartingPostingDate, EndingPostingDate);
@@ -548,10 +549,12 @@ report 18123351 "EOS Vendor Aging"
         ShowLinkedEntriesPrmtr: Boolean;
         SortOrderPrmtr: Enum "EOS008 CVS Vend Detail Order";
         PaymentMethodFilterPrmtr: Text;
+        OnHoldPrmtr: Text;
 
     var
         AssetsEngine: Codeunit "EOS AdvCustVendStat Engine";
-        SubscriptionMgt: Codeunit "EOS AdvCustVendStat Subscript";
+        SubscriptionMgt: Codeunit "EOS008 Subscriptions";
+        AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
         Window: Dialog;
         CompanyNameText: Text;
         LinkedEntriesEnabled: Boolean;
@@ -574,6 +577,7 @@ report 18123351 "EOS Vendor Aging"
         TextDialog001Msg: Label 'Vendor #1#######';
         TextTotalTxt: Label 'Total for %1 %2';
         VendorFilterTextMsg: Label 'Vendor Filters:';
+        OnHolLbl: Label 'On Hold';
 
     local procedure GetVendorBufferGroup(var BufferAssets: Record "EOS Statem. Assets Buffer EXT" temporary): Text;
     begin
@@ -583,13 +587,6 @@ report 18123351 "EOS Vendor Aging"
             SortOrderPrmtr::DueDate:
                 exit(Format(BufferAssets."EOS Reporting Date 1", 0, 9));
         end;
-    end;
-
-    local procedure GetDocumentTypeAbbreviation(DocumentType: Integer): Text;
-    var
-        AbreviationsMsg: Label ' ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder,Refund,,,,Dishonored';
-    begin
-        exit(CopyStr(SelectStr(DocumentType + 1, Format(AbreviationsMsg)), 1, 4));
     end;
 
     local procedure GetShowGroupTotal(): Text;
@@ -760,12 +757,20 @@ report 18123351 "EOS Vendor Aging"
     end;
 
     [IntegrationEvent(false, false)]
-    local procedure OnAfterBuildMultiSourceTreeView(SourceView: Text; DateFilterType: Option "Posting Date","Document Date"; StartingDate: Date; EndingDate: Date; StartingDueDate: Date; EndingDueDate: Date; OnlyOpen: Boolean; AllowPartialOpenDoc: Boolean; DocumentFilter: Text; var TempBufferAssets: Record "EOS Statem. Assets Buffer EXT")
+    local procedure OnAfterBuildMultiSourceTreeView(SourceView: Text; DateFilterType: Enum "EOS008 Date Filter Type";
+                                                    StartingDate: Date; EndingDate: Date; StartingDueDate: Date; EndingDueDate: Date;
+                                                    OnlyOpen: Boolean; AllowPartialOpenDoc: Boolean; DocumentFilter: Text;
+                                                    OnHoldFilter: Text; var TempBufferAssets: Record "EOS Statem. Assets Buffer EXT")
     begin
     end;
 
     [IntegrationEvent(false, false)]
-    local procedure OnAfterBuildReportingDataset(SourceView: Text; DateFilterType: Option "Posting Date","Document Date"; StartingDate: Date; EndingDate: Date; StartingDueDate: Date; EndingDueDate: Date; OnlyOpen: Boolean; AllowPartialOpenDoc: Boolean; DocumentFilter: Text; var TempBufferAssets: Record "EOS Statem. Assets Buffer EXT"; var TempReportingBuffer: Record "EOS Statem. Assets Buffer EXT")
+    local procedure OnAfterBuildReportingDataset(SourceView: Text; DateFilterType: Enum "EOS008 Date Filter Type";
+                                                StartingDate: Date; EndingDate: Date; StartingDueDate: Date; EndingDueDate: Date;
+                                                OnlyOpen: Boolean; AllowPartialOpenDoc: Boolean; DocumentFilter: Text;
+                                                var TempBufferAssets: Record "EOS Statem. Assets Buffer EXT";
+                                                var TempReportingBuffer: Record "EOS Statem. Assets Buffer EXT")
+
     begin
     end;
 }

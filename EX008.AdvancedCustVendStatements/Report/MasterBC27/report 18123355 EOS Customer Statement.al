@@ -66,10 +66,10 @@ report 18123355 "EOS Customer Statement"
                 AssetsEngine.SetAddPreviousBalance(ShowPreviousBalancePrmtr = "EOS008 Show Previous Balance"::Yes);
 
                 AssetsEngine.SetForceCustomerSalesperson(UseSalespersonFromCustomerPrmtr);
-                AssetsEngine.BuildMultiSourceTreeView(0, Customer.GetView(false), 0, StartingPostingDate, EndingPostingDate,
+                AssetsEngine.BuildMultiSourceTreeView("EOS008 Source Type"::Customer, Customer.GetView(false), "EOS008 Date Filter Type"::"Posting Date", StartingPostingDate, EndingPostingDate,
                                                          StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', TempReportingBuffer[1]);
 
-                OnAfterBuildMultiSourceTreeView(Customer.GetView(false), 0, StartingPostingDate, EndingPostingDate,
+                OnAfterBuildMultiSourceTreeView(Customer.GetView(false), "EOS008 Date Filter Type"::"Posting Date", StartingPostingDate, EndingPostingDate,
                                                 StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', TempReportingBuffer[1]);
 
                 if ShowPreviousBalancePrmtr = "EOS008 Show Previous Balance"::No then begin
@@ -216,7 +216,7 @@ report 18123355 "EOS Customer Statement"
                 Clear(TempReportingBuffer);
                 Clear(TempDueAmountsBuffer);
 
-                OnAfterBuildReportingDataset(Customer.GetView(false), 0, StartingPostingDate, EndingPostingDate,
+                OnAfterBuildReportingDataset(Customer.GetView(false), "EOS008 Date Filter Type"::"Posting Date", StartingPostingDate, EndingPostingDate,
                                              StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '',
                                              TempReportingBuffer[1]);
             end;
@@ -284,8 +284,9 @@ report 18123355 "EOS Customer Statement"
                 column(DocumentGroupDate; TempReportingBuffer[1]."EOS Posting Date 1") { }
                 column(LineType; GetLineType()) { }
                 column(PostingDate; Format(TempReportingBuffer[1]."EOS Posting Date")) { }
-                column(DocumentType; GetDocumentTypeAbbreviation(TempReportingBuffer[1]."EOS Document Type")) { }
+                column(DocumentType; AdvCustVendStatRoutines.GetDocumentTypeAbbreviation3(TempReportingBuffer[1]."EOS Document Type")) { }
                 column(DocumentNo; TempReportingBuffer[1]."EOS Document No.") { }
+                column(OnHold; TempReportingBuffer[1]."On Hold") { }
                 column(Description; TempReportingBuffer[1]."EOS Description") { }
                 column(DocumentDate; Format(TempReportingBuffer[1]."EOS Document Date")) { }
                 column(PaymentMethod; GetPaymentMethod(TempReportingBuffer[1]."EOS Language Code")) { }
@@ -376,10 +377,6 @@ report 18123355 "EOS Customer Statement"
             var
                 Language: Codeunit Language;
             begin
-                //if CustomerCounter > 1 then
-                //    Clear(CompanyInformation.Picture);
-                //CustomerCounter += 1;
-
                 DetailLoopNo := 0;
                 CurrReport.Language := Language.GetLanguageIdOrDefault(CustomerPrint."Language Code");
             end;
@@ -412,8 +409,6 @@ report 18123355 "EOS Customer Statement"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the "Posting Date Filter" field.';
                     trigger OnValidate();
-                    var
-                        AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
                     begin
                         AdvCustVendStatRoutines.ResolveDateFilter(PostingDateFilterPrmtr, StartingPostingDate, EndingPostingDate);
                     end;
@@ -424,8 +419,6 @@ report 18123355 "EOS Customer Statement"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the "Due Date Filter" field.';
                     trigger OnValidate();
-                    var
-                        AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
                     begin
                         AdvCustVendStatRoutines.ResolveDateFilter(DueDateFilterPrmtr, StartingDueDate, EndingDueDate);
                     end;
@@ -465,7 +458,7 @@ report 18123355 "EOS Customer Statement"
 
         trigger OnOpenPage()
         begin
-            CurrReport.RequestOptionsPage.Caption := CurrReport.RequestOptionsPage.Caption() + SubscriptionMgt.GetLicenseText();
+            SubscriptionMgt.GetSubscriptionIsActive(); // this will raise a notification if subscription is not active
             SetReportParameters();
         end;
 
@@ -489,8 +482,8 @@ report 18123355 "EOS Customer Statement"
         DocumentNoLabel = 'Document';
         DocumentDateLabel = 'Doc. Date';
         ExternalDocumentNo = 'External Document No.';
-        PaymentMethodLabel = 'Payment Method Code';
-        PaymentTermsLabel = 'Payment Terms Code';
+        PaymentMethodLabel = 'Payment Method';
+        PaymentTermsLabel = 'Payment Terms';
         RemainingAmountLCYLabel = 'Remaining Amt. (LCY)';
         RemainingAmountLabel = 'Remaining Amount';
         AmountLCYLabel = 'Amount (LCY)';
@@ -508,14 +501,10 @@ report 18123355 "EOS Customer Statement"
         OnlyOpenPrmtr := false;
         ShowLinkedEntriesPrmtr := true;
         UseSalespersonFromCustomerPrmtr := true;
-        SubscriptionActive := SubscriptionMgt.GetSubscriptionIsActive();
     end;
 
     trigger OnPreReport()
     begin
-        if not SubscriptionActive then
-            CurrReport.Quit();
-
         SetReportParameters();
 
         CompanyInformation.Get();
@@ -541,15 +530,13 @@ report 18123355 "EOS Customer Statement"
         CompanyInformation: Record "Company Information";
         AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
         AssetsEngine: Codeunit "EOS AdvCustVendStat Engine";
-        SubscriptionMgt: Codeunit "EOS AdvCustVendStat Subscript";
+        SubscriptionMgt: Codeunit "EOS008 Subscriptions";
         CompanyNameText: Text;
-        SubscriptionActive: Boolean;
         EndingDueDate: Date;
         EndingPostingDate: Date;
         StartingDueDate: Date;
         StartingPostingDate: Date;
         DetailLoopNo: Integer;
-        SupportedOutputMethod: Option Print,Preview;
         CustomerAddress: array[11] of Text[100];
         ReportTitleLbl: Label 'Customer Account Statement at';
         CustomerNoLbl: Label 'Customer';
@@ -567,8 +554,8 @@ report 18123355 "EOS Customer Statement"
         DocumentNoLbl: Label 'Document';
         DocumentDateLbl: Label 'Doc. Date';
         ExternalDocumentNoLbl: Label 'External Document No.';
-        PaymentMethodLbl: Label 'Payment Method Code';
-        PaymentTermsLbl: Label 'Payment Terms Code';
+        PaymentMethodLbl: Label 'Payment Method';
+        PaymentTermsLbl: Label 'Payment Terms';
         RemainingAmountLCYLbl: Label 'Remaining Amt. (LCY)';
         RemainingAmountLbl: Label 'Remaining Amount';
         AmountLCYLbl: Label 'Amount (LCY)';
@@ -579,6 +566,7 @@ report 18123355 "EOS Customer Statement"
         ExposureLbl: Label 'Exposure (LCY)';
         WithExposureLbl: Label 'with exposure';
         DueDateSummaryLbl: Label 'Due by date summary';
+        OnHolLbl: Label 'On Hold';
 
     local procedure GetCompanyInfoColumn(ColumnNo: Integer): Text;
     var
@@ -629,13 +617,6 @@ report 18123355 "EOS Customer Statement"
             exit(Format(EndingPostingDate2));
 
         exit(Format(Today()));
-    end;
-
-    local procedure GetDocumentTypeAbbreviation(DocumentType: Integer): Text;
-    var
-        AbreviationsLbl: Label ' ,Pmt,Inv,CrM,FinChrge,Rem,Ref,,,,Dish,,,,,PrevBal.';
-    begin
-        exit(CopyStr(SelectStr(DocumentType + 1, Format(AbreviationsLbl)), 1, 4));
     end;
 
     // local procedure GetAmount(AssetsBuffer: Record "EOS Statem. Assets Buffer EXT"): Text;
@@ -757,6 +738,7 @@ report 18123355 "EOS Customer Statement"
         if DetailLoopNo > 1 then
             exit('');
 
+        AdvCustVendStatRoutines.GetPaymentTermsDescription(CustomerPrint."Payment Terms Code", CustomerPrint."Language Code");
         exit(CustomerPrint."Payment Terms Code");
     end;
 
@@ -845,12 +827,18 @@ report 18123355 "EOS Customer Statement"
     end;
 
     [IntegrationEvent(false, false)]
-    local procedure OnAfterBuildMultiSourceTreeView(SourceView: Text; DateFilterType: Option "Posting Date","Document Date"; StartingDate: Date; EndingDate: Date; StartingDueDate: Date; EndingDueDate: Date; OnlyOpen: Boolean; AllowPartialOpenDoc: Boolean; DocumentFilter: Text; var TempBufferAssets: Record "EOS Statem. Assets Buffer EXT")
+    local procedure OnAfterBuildMultiSourceTreeView(SourceView: Text; DateFilterType: enum "EOS008 Date Filter Type";
+                                                    StartingDate: Date; EndingDate: Date; StartingDueDate: Date; EndingDueDate: Date;
+                                                    OnlyOpen: Boolean; AllowPartialOpenDoc: Boolean; DocumentFilter: Text;
+                                                    var TempBufferAssets: Record "EOS Statem. Assets Buffer EXT")
     begin
     end;
 
     [IntegrationEvent(false, false)]
-    local procedure OnAfterBuildReportingDataset(SourceView: Text; DateFilterType: Option "Posting Date","Document Date"; StartingDate: Date; EndingDate: Date; StartingDueDate: Date; EndingDueDate: Date; OnlyOpen: Boolean; AllowPartialOpenDoc: Boolean; DocumentFilter: Text; var TempReportingBuffer: Record "EOS Statem. Assets Buffer EXT")
+    local procedure OnAfterBuildReportingDataset(SourceView: Text; DateFilterType: enum "EOS008 Date Filter Type";
+                                                StartingDate: Date; EndingDate: Date; StartingDueDate: Date; EndingDueDate: Date;
+                                                OnlyOpen: Boolean; AllowPartialOpenDoc: Boolean; DocumentFilter: Text;
+                                                var TempReportingBuffer: Record "EOS Statem. Assets Buffer EXT")
     begin
     end;
 }

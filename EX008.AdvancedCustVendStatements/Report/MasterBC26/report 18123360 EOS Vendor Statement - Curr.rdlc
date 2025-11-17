@@ -3668,6 +3668,9 @@
         <Field Name="DocumentNo">
           <DataField>DocumentNo</DataField>
         </Field>
+        <Field Name="OnHold">
+          <DataField>OnHold</DataField>
+        </Field>
         <Field Name="Description">
           <DataField>Description</DataField>
         </Field>
