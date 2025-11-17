@@ -3016,6 +3016,9 @@ End Function
         <Field Name="DocumentNo">
           <DataField>DocumentNo</DataField>
         </Field>
+        <Field Name="OnHold">
+          <DataField>OnHold</DataField>
+        </Field>
         <Field Name="ExternalDocumentNo">
           <DataField>ExternalDocumentNo</DataField>
         </Field>

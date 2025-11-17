@@ -64,9 +64,10 @@ report 18123353 "EOS Cust Aging In Column"
                         CustomerFilters.SetFilter("Salesperson Code", SalespersonFilter);
                     end;
                 AssetsEngine.SetForceCustomerSalesperson(UseSalespersonFromCustomerPrmtr);
-                AssetsEngine.BuildMultiSourceTreeView(0, CustomerFilters.GetView(false), 0, StartingPostingDate, EndingPostingDate, StartingDueDate, EndingDueDate, OnlyOpen, false, '', TempAssetsBufferLocal[1]);
+                AssetsEngine.BuildMultiSourceTreeView("EOS008 Source Type"::Customer, CustomerFilters.GetView(false), "EOS008 Date Filter Type"::"Posting Date",
+                                                        StartingPostingDate, EndingPostingDate, StartingDueDate, EndingDueDate, OnlyOpen, false, '', TempAssetsBufferLocal[1]);
 
-                OnAfterBuildMultiSourceTreeView(CustomerFilters.GetView(false), 0, StartingPostingDate, EndingPostingDate,
+                OnAfterBuildMultiSourceTreeView(CustomerFilters.GetView(false), "EOS008 Date Filter Type"::"Posting Date", StartingPostingDate, EndingPostingDate,
                                                          StartingDueDate, EndingDueDate, OnlyOpen, false, '', TempAssetsBufferLocal[1]);
 
                 if not UseSalespersonFromCustomerPrmtr then
@@ -159,10 +160,9 @@ report 18123353 "EOS Cust Aging In Column"
                 end;
                 Clear(TempReportingBuffer);
 
-                OnAfterBuildReportingDataset(CustomerFilters.GetView(false), 0, StartingPostingDate, EndingPostingDate,
+                OnAfterBuildReportingDataset(CustomerFilters.GetView(false), "EOS008 Date Filter Type"::"Posting Date", StartingPostingDate, EndingPostingDate,
                                              StartingDueDate, EndingDueDate, OnlyOpen, false, '', TempAssetsBufferLocal[1],
-                                             TempReportingBuffer)
-
+                                             TempReportingBuffer);
             end;
         }
         dataitem(ReportHeaderValues; Integer)
@@ -364,7 +364,7 @@ report 18123353 "EOS Cust Aging In Column"
         }
         trigger OnOpenPage();
         begin
-            CurrReport.RequestOptionsPage.Caption := CurrReport.RequestOptionsPage.Caption() + SubscriptionMgt.GetLicenseText();
+            SubscriptionMgt.GetSubscriptionIsActive(); //this will show any subscription warnings if needed
             SetReportParameters();
         end;
     }
@@ -394,16 +394,12 @@ report 18123353 "EOS Cust Aging In Column"
     trigger OnInitReport();
     begin
         ColumnLayoutPrmtr := ColumnLayoutPrmtr::"2/3";
-        SubscriptionActiv := SubscriptionMgt.GetSubscriptionIsActive();
     end;
 
     trigger OnPreReport();
     var
         CVStatEngine: Codeunit "EOS AdvCustVendStat Engine";
     begin
-        if not SubscriptionActiv then
-            CurrReport.Quit();
-
         SetReportParameters();
         if Format(PeriodLengthPrmtr) = '' then
             Error(Text010Err, PeriodLengthPrmtr);
@@ -433,10 +429,9 @@ report 18123353 "EOS Cust Aging In Column"
     var
         GeneralLedgerSetup: Record "General Ledger Setup";
         AssetsEngine: Codeunit "EOS AdvCustVendStat Engine";
-        SubscriptionMgt: Codeunit "EOS AdvCustVendStat Subscript";
+        SubscriptionMgt: Codeunit "EOS008 Subscriptions";
         LinkedEntriesEnabled: Boolean;
         OnlyOpen: Boolean;
-        SubscriptionActiv: Boolean;
         EndingDueDate: Date;
         EndingPostingDate: Date;
         PeriodEndDate: array[10] of Date;
@@ -861,12 +856,19 @@ report 18123353 "EOS Cust Aging In Column"
     end;
 
     [IntegrationEvent(false, false)]
-    local procedure OnAfterBuildMultiSourceTreeView(SourceView: Text; DateFilterType: Option "Posting Date","Document Date"; StartingDate: Date; EndingDate: Date; StartingDueDate: Date; EndingDueDate: Date; OnlyOpen: Boolean; AllowPartialOpenDoc: Boolean; DocumentFilter: Text; var TempBufferAssets: Record "EOS Statem. Assets Buffer EXT")
+    local procedure OnAfterBuildMultiSourceTreeView(SourceView: Text; DateFilterType: enum "EOS008 Date Filter Type";
+                                                    StartingDate: Date; EndingDate: Date; StartingDueDate: Date; EndingDueDate: Date;
+                                                    OnlyOpen: Boolean; AllowPartialOpenDoc: Boolean; DocumentFilter: Text;
+                                                    var TempBufferAssets: Record "EOS Statem. Assets Buffer EXT")
     begin
     end;
 
     [IntegrationEvent(false, false)]
-    local procedure OnAfterBuildReportingDataset(SourceView: Text; DateFilterType: Option "Posting Date","Document Date"; StartingDate: Date; EndingDate: Date; StartingDueDate: Date; EndingDueDate: Date; OnlyOpen: Boolean; AllowPartialOpenDoc: Boolean; DocumentFilter: Text; var TempBufferAssets: Record "EOS Statem. Assets Buffer EXT"; var TempReportingBuffer: Record "EOS AdvCustVend Buffer")
+    local procedure OnAfterBuildReportingDataset(SourceView: Text; DateFilterType: enum "EOS008 Date Filter Type";
+                                                StartingDate: Date; EndingDate: Date; StartingDueDate: Date; EndingDueDate: Date;
+                                                OnlyOpen: Boolean; AllowPartialOpenDoc: Boolean; DocumentFilter: Text;
+                                                var TempBufferAssets: Record "EOS Statem. Assets Buffer EXT";
+                                                var TempReportingBuffer: Record "EOS AdvCustVend Buffer")
     begin
     end;
 }

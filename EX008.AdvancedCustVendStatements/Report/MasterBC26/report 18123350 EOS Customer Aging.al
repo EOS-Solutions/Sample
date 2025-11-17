@@ -72,10 +72,10 @@ report 18123350 "EOS Customer Aging"
                     end;
 
                 AssetsEngine.SetForceCustomerSalesperson(UseSalespersonFromCustomerPrmtr);
-                AssetsEngine.BuildMultiSourceTreeView(0, CustomerFilters.GetView(false), 0, StartingPostingDate, EndingPostingDate,
+                AssetsEngine.BuildMultiSourceTreeView("EOS008 Source Type"::Customer, CustomerFilters.GetView(false), "EOS008 Date Filter Type"::"Posting Date", StartingPostingDate, EndingPostingDate,
                                                          StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', TempAssetsBufferLocal[1]);
 
-                OnAfterBuildMultiSourceTreeView(CustomerFilters.GetView(false), 0, StartingPostingDate, EndingPostingDate,
+                OnAfterBuildMultiSourceTreeView(CustomerFilters.GetView(false), "EOS008 Date Filter Type"::"Posting Date", StartingPostingDate, EndingPostingDate,
                                                          StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', TempAssetsBufferLocal[1]);
 
                 if ShowLinkedEntriesPrmtr then
@@ -371,7 +371,7 @@ report 18123350 "EOS Customer Aging"
                 end;
                 Clear(TempReportingBuffer);
 
-                OnAfterBuildReportingDataset(CustomerFilters.GetView(false), 0, StartingPostingDate, EndingPostingDate,
+                OnAfterBuildReportingDataset(CustomerFilters.GetView(false), "EOS008 Date Filter Type"::"Posting Date", StartingPostingDate, EndingPostingDate,
                                                 StartingDueDate, EndingDueDate, OnlyOpenPrmtr, false, '', TempAssetsBufferLocal[1],
                                                 TempReportingBuffer)
             end;
@@ -400,8 +400,9 @@ report 18123350 "EOS Customer Aging"
             column(CustomerNo; TempReportingBuffer."EOS Source No.") { }
             column(CustomerName; TempReportingBuffer."EOS Reporting Subject Name") { }
             column(PostingDate; Format(TempReportingBuffer."EOS Posting Date")) { }
-            column(DocumentType; GetDocumentTypeAbbreviation(TempReportingBuffer."EOS Document Type")) { }
+            column(DocumentType; AdvCustVendStatRoutines.GetDocumentTypeAbbreviation(TempReportingBuffer."EOS Document Type")) { }
             column(DocumentNo; TempReportingBuffer."EOS Document No.") { }
+            column(OnHold; TempReportingBuffer."On Hold") { }
             column(PaymentMethod; GetPaymentMethod(TempReportingBuffer."EOS Language Code")) { }
             column(DueDate; Format(TempReportingBuffer."EOS Due Date")) { }
             column(CurrencyCode; TempReportingBuffer."EOS Currency Code") { }
@@ -517,9 +518,6 @@ report 18123350 "EOS Customer Aging"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the "Posting Date Filter" field.';
                     trigger OnValidate();
-                    var
-                        AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
-
                     begin
                         AdvCustVendStatRoutines.ResolveDateFilter(PostingDateFilterPrmtr, StartingPostingDate, EndingPostingDate);
                     end;
@@ -530,8 +528,6 @@ report 18123350 "EOS Customer Aging"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the "Due Date Filter" field.';
                     trigger OnValidate();
-                    var
-                        AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
                     begin
                         AdvCustVendStatRoutines.ResolveDateFilter(DueDateFilterPrmtr, StartingDueDate, EndingDueDate);
                     end;
@@ -567,7 +563,7 @@ report 18123350 "EOS Customer Aging"
 
         trigger OnOpenPage();
         begin
-            CurrReport.RequestOptionsPage.Caption := CurrReport.RequestOptionsPage.Caption() + SubscriptionMgt.GetLicenseText();
+            SubscriptionMgt.GetSubscriptionIsActive(); //this will show any subscription warnings if needed
             SetReportParameters();
         end;
     }
@@ -599,16 +595,12 @@ report 18123350 "EOS Customer Aging"
         OnlyOpenPrmtr := true;
         ShowLinkedEntriesPrmtr := false;
         UseSalespersonFromCustomerPrmtr := true;
-        SubscriptionActive := SubscriptionMgt.GetSubscriptionIsActive();
     end;
 
     trigger OnPreReport()
     var
         CVStatEngine: Codeunit "EOS AdvCustVendStat Engine";
     begin
-        if not SubscriptionActive then
-            CurrReport.Quit();
-
         SetReportParameters();
 
         FixParameters();
@@ -652,7 +644,7 @@ report 18123350 "EOS Customer Aging"
         TempGenericSalespersonBuffer: Record "EOS008 Reporting Buffer" temporary;
         AdvCustVendStatRoutines: Codeunit "EOS AdvCustVendStat Routines";
         AssetsEngine: Codeunit "EOS AdvCustVendStat Engine";
-        SubscriptionMgt: Codeunit "EOS AdvCustVendStat Subscript";
+        SubscriptionMgt: Codeunit "EOS008 Subscriptions";
         TempProcessedCustomerList: Dictionary of [Code[20], Boolean];
         CompanyNameText: Text;
         HideMasterTotal: Boolean;
@@ -681,6 +673,7 @@ report 18123350 "EOS Customer Aging"
         PostingDateFilterTextTxt: Label 'Posting Date Filter:';
         ReportSortTextTxt: Label 'Sorted By %1 with %2 detail level %3 linked entries';
         TotalTxt: Label 'Total for %1 %2';
+        OnHolLbl: Label 'On Hold';
 
     local procedure GetSalespersonBufferGroup(var BufferAssets: Record "EOS Statem. Assets Buffer EXT" temporary): Text;
     begin
@@ -699,13 +692,6 @@ report 18123350 "EOS Customer Aging"
             SortOrderPrmtr::DueDate:
                 exit(Format(BufferAssets."EOS Reporting Date 1", 0, 9));
         end;
-    end;
-
-    local procedure GetDocumentTypeAbbreviation(DocumentType: Integer): Text;
-    var
-        AbreviationsTxt: Label ' ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder,Refund,,,,Dishonored';
-    begin
-        exit(CopyStr(SelectStr(DocumentType + 1, Format(AbreviationsTxt)), 1, 4));
     end;
 
     local procedure GetBankReceiptAbbreviation() Result: Text;
@@ -1094,12 +1080,19 @@ report 18123350 "EOS Customer Aging"
     end;
 
     [IntegrationEvent(false, false)]
-    local procedure OnAfterBuildMultiSourceTreeView(SourceView: Text; DateFilterType: Option "Posting Date","Document Date"; StartingDate: Date; EndingDate: Date; StartingDueDate: Date; EndingDueDate: Date; OnlyOpen: Boolean; AllowPartialOpenDoc: Boolean; DocumentFilter: Text; var TempBufferAssets: Record "EOS Statem. Assets Buffer EXT")
+    local procedure OnAfterBuildMultiSourceTreeView(SourceView: Text; DateFilterType: enum "EOS008 Date Filter Type";
+                                                    StartingDate: Date; EndingDate: Date; StartingDueDate: Date; EndingDueDate: Date;
+                                                    OnlyOpen: Boolean; AllowPartialOpenDoc: Boolean; DocumentFilter: Text;
+                                                    var TempBufferAssets: Record "EOS Statem. Assets Buffer EXT")
     begin
     end;
 
     [IntegrationEvent(false, false)]
-    local procedure OnAfterBuildReportingDataset(SourceView: Text; DateFilterType: Option "Posting Date","Document Date"; StartingDate: Date; EndingDate: Date; StartingDueDate: Date; EndingDueDate: Date; OnlyOpen: Boolean; AllowPartialOpenDoc: Boolean; DocumentFilter: Text; var TempBufferAssets: Record "EOS Statem. Assets Buffer EXT"; var TempReportingBuffer: Record "EOS Statem. Assets Buffer EXT")
+    local procedure OnAfterBuildReportingDataset(SourceView: Text; DateFilterType: enum "EOS008 Date Filter Type";
+                                                StartingDate: Date; EndingDate: Date; StartingDueDate: Date; EndingDueDate: Date;
+                                                OnlyOpen: Boolean; AllowPartialOpenDoc: Boolean; DocumentFilter: Text;
+                                                var TempBufferAssets: Record "EOS Statem. Assets Buffer EXT";
+                                                var TempReportingBuffer: Record "EOS Statem. Assets Buffer EXT")
     begin
     end;
 }
