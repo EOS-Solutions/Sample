@@ -1,0 +1,51 @@
+﻿{
+  "id": "4ae2562b-cf08-4b3a-883b-0878f6c872b5",
+  "name": "13_LayoutExtensions",
+  "publisher": "Default Publisher",
+  "version": "1.0.0.1",
+  "brief": "",
+  "description": "",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "",
+  "logo": "",
+  "dependencies": [
+    {
+      "id": "8bb96677-5112-4566-b742-12eebbb9a058",
+      "name": "EOS Administration Library",
+      "publisher": "EOS Solutions",
+      "version": "27.0.10.0"
+    },
+    {
+      "id": "4e2a89a2-9049-496c-8b3a-f4eee6399b0e",
+      "name": "Common Data Layer",
+      "publisher": "EOS Solutions",
+      "version": "27.0.13.0"
+    },
+    {
+      "id": "b2dd1d81-3e95-46a8-94ef-8c32d872bf0c",
+      "name": "Advanced Document Reporting",
+      "publisher": "EOS Solutions",
+      "version": "27.0.13.0"
+    }
+  ],
+  "screenshots": [],
+  "platform": "1.0.0.0",
+  "application": "25.0.0.0",
+  "idRanges": [
+    {
+      "from": 50100,
+      "to": 50149
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": true,
+    "includeSourceInSymbolFile": true
+  },
+  "runtime": "15.0",
+  "features": [
+    "NoImplicitWith"
+  ]
+}
