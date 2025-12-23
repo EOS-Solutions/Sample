@@ -16,7 +16,7 @@ Provide samples for custom activities powered by PowerWMS engine
 - 09 - Scan Autosave for every activity
 - 10 - Handling Units on custom activities
 - 11 - Modify scan values during reads handling
-- 12 - CWS: manage dialogs during posting of warehouse shipments and receipts
+- 12 - CWS: manage dialogs before posting warehouse shipments / receipts
 
 # App Dependencies:
 "id": "15dd7d69-e3fa-4da9-acc3-9828b2795643",  
