@@ -440,10 +440,13 @@ codeunit 50107 "EOS Free Text Impl." implements "EOS089 WMS Activity Interface V
 
         TableNos.Add(SourceTable1());
         TableNos.Add(SourceTable2());
+        TableNos.Add(Database::"EOS089 WMS Source Scan");
         ListEnabled.Add(FieldListEnabled1());
         ListEnabled.Add(FieldListEnabled2());
+        ListEnabled.Add(false);
         DetailsEnabled.Add(FieldDetailsEnabled1());
         DetailsEnabled.Add(FieldDetailsEnabled2());
+        DetailsEnabled.Add(true); // Always true for "EOS089 WMS Source Scan"
     end;
 
     procedure GetDefaultActivityFields(TableNo: Integer; ActivityFieldClass: Enum "EOS089 WMS Act. Field Class"; var Fields: Record "EOS089 WMS Activity Field" temporary)
@@ -895,7 +898,6 @@ codeunit 50107 "EOS Free Text Impl." implements "EOS089 WMS Activity Interface V
         EOS089WMSActivityManagement: Codeunit "EOS089 WMS Activity Management";
         RecordRef: RecordRef;
     begin
-        EOS089WMSCustomActHeader_Internal.Reset();
         EOS089WMSCustomActHeader_Internal.SetRange("Activity Type", ActivityType());
 
         if EOS089WMSUserActivity."Apply User Id Filter" then begin
@@ -924,7 +926,6 @@ codeunit 50107 "EOS Free Text Impl." implements "EOS089 WMS Activity Interface V
     var
         RecordRef: RecordRef;
     begin
-        EOS089WMSCustomActLine_Internal.Reset();
         EOS089WMSCustomActLine_Internal.SetRange("Activity Type", ActivityType());
 
         RecordRef.Open(SourceTable2());

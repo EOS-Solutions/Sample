@@ -15,14 +15,21 @@ Provide samples for custom activities powered by PowerWMS engine
 - 08 - Custom LookUp for action parameters
 - 09 - Scan Autosave for every activity
 - 10 - Handling Units on custom activities
+- 11 - Modify scan values during reads handling
+- 12 - CWS: manage dialogs during posting of warehouse shipments and receipts
 
 # App Dependencies:
 "id": "15dd7d69-e3fa-4da9-acc3-9828b2795643",  
 "name": "Power WMS",  
 "publisher": "EOS Solutions",  
-"version": "25.0.57.0"  
+"version": "27.0.18.0"  
 
 "id": "0ab25a58-2869-4ca7-b12c-a16594852658",  
 "name": "Power WMS for Handling Units",  
 "publisher": "EOS Solutions",  
-"version": "25.0.34.0"  
+"version": "27.0.0.0"
+
+"id": "a879d9e1-a8d9-4dc8-87d8-69d278c5e003",
+"name": "Combine Warehouse Shipment",
+"publisher": "EOS Solutions",
+"version": "27.0.0.0"

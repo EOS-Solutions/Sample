@@ -272,6 +272,9 @@ codeunit 50100 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
         EOS089WMSCustomActHeader_Internal.SetView(EOS089WMSUserActivity.GetView1(true));
 
         // Then, reset default filters
+        EOS089WMSCustomActHeader_Internal.SetRange("Activity Type");
+        EOS089WMSCustomActHeader_Internal.SetRange("Assigned User Id");
+
         SetDefaultFilters1(EOS089WMSUserActivity);
 
         // Finally, save updated view
@@ -354,6 +357,8 @@ codeunit 50100 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
         EOS089WMSCustomActLine_Internal.SetView(EOS089WMSUserActivity.GetView2(true));
 
         // Then, reset default filters
+        EOS089WMSCustomActLine_Internal.SetRange("Activity Type");
+
         SetDefaultFilters2(EOS089WMSUserActivity);
 
         // Finally, save updated view
@@ -817,7 +822,6 @@ codeunit 50100 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
         EOS089WMSActivityManagement: Codeunit "EOS089 WMS Activity Management";
         RecordRef: RecordRef;
     begin
-        EOS089WMSCustomActHeader_Internal.Reset();
         EOS089WMSCustomActHeader_Internal.SetRange("Activity Type", ActivityType());
 
         if EOS089WMSUserActivity."Apply User Id Filter" then begin
@@ -846,7 +850,6 @@ codeunit 50100 "EOS Create Trans. Order Impl." implements "EOS089 WMS Activity I
     var
         RecordRef: RecordRef;
     begin
-        EOS089WMSCustomActLine_Internal.Reset();
         EOS089WMSCustomActLine_Internal.SetRange("Activity Type", ActivityType());
 
         RecordRef.Open(SourceTable2());
