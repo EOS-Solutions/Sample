@@ -29,7 +29,7 @@ Provide samples for custom activities powered by PowerWMS engine
 "publisher": "EOS Solutions",  
 "version": "27.0.0.0"
 
-"id": "a879d9e1-a8d9-4dc8-87d8-69d278c5e003",
-"name": "Combine Warehouse Shipment",
-"publisher": "EOS Solutions",
+"id": "a879d9e1-a8d9-4dc8-87d8-69d278c5e003",  
+"name": "Combine Warehouse Shipment",  
+"publisher": "EOS Solutions",  
 "version": "27.0.0.0"
