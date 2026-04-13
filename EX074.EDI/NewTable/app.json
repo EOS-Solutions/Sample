@@ -12,10 +12,16 @@
   "logo": "",
   "dependencies": [
     {
+      "id": "4e2a89a2-9049-496c-8b3a-f4eee6399b0e",
+      "name": "Common Data Layer",
+      "publisher": "EOS Solutions",
+      "version": "27.0.0.0"
+    },
+    {
       "id": "35f272c8-809a-4bf9-90c7-99310400c099",
       "name": "EDI",
       "publisher": "EOS Solutions",
-      "version": "26.0.0.0"
+      "version": "27.0.0.0"
     }
   ],
   "screenshots": [],

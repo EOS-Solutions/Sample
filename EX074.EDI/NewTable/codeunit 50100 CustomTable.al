@@ -5,6 +5,25 @@ codeunit 50100 "CustomTable"
     // Using the report 'EOS074 EDI Messages Out (v2)', only documents that are picked up using this mechanism will be
     // exported to EDI. Out-of-the-box the tables "Sales Invoice Header" and "Sales Cr.Memo Header" are supported for Invoice OUT.
 
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"EOS074 EDI Management", OnAfterGetIsInbound, '', false, false)]
+    local procedure "EOS074 EDI Management_OnAfterGetIsInbound"(MessageType: Enum "EOS074 Message Type"; var inbound: Enum "EOS066 TriState Boolean")
+    begin
+        if (inbound <> Enum::"EOS066 TriState Boolean"::Undefined) then exit;
+
+        // Respond accordingly. Mandatory if your message type *is* inbound.
+        Inbound := Inbound::"False";
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"EOS074 EDI Management", OnAfterGetIsOutbound, '', false, false)]
+    local procedure "EOS074 EDI Management_OnAfterGetIsOutbound"(MessageType: Enum "EOS074 Message Type"; var outbound: Enum "EOS066 TriState Boolean")
+    begin
+        if (outbound <> Enum::"EOS066 TriState Boolean"::Undefined) then exit;
+
+        // Respond accordingly. Mandatory if your message type *is* outbound.
+        outbound := outbound::"True";
+    end;
+
     [EventSubscriber(ObjectType::Report, Report::"EOS074 EDI Messages Out (v2)", OnCollectingDocuments, '', false, false)]
     local procedure MyProcedure(
         var EDIMessageSetup: Record "EOS074 EDI Message Setup";
