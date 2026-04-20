@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{DocumentTitle}}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .content { margin: 20px 0; }
+        .footer { background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-top: 20px; text-align: center; }
+        .order-lines { list-style-type: none; padding: 0; }
+        .order-line { background-color: #f8f9fa; margin: 5px 0; padding: 10px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    {{> header}}
+    
+    <div class="content">
+        {{> order-details}}
+    </div>
+    
+    {{> footer}}
+</body>
+</html>
