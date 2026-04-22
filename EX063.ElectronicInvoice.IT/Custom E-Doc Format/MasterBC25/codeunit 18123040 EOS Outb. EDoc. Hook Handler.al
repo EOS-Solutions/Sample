@@ -465,7 +465,6 @@ codeunit 18123040 "EOS Outb. EDoc. Hook Handler"
                                     if not isHandled then
                                         if not ((ItemReference."Reference Type" = ItemReference."Reference Type"::Customer) and (ItemReference."Reference Type No." <> DocumentLineTMP."Sell-to Customer No.")) then begin
                                             XmlWriter.WriteStartElement('CodiceArticolo');
-                                            XmlWriter.WriteElementValue('CodiceTipo', 'articolobrico');
                                             case ItemReference."Reference Type" of
                                                 ItemReference."Reference Type"::Customer:
                                                     XmlWriter.WriteElementValue('CodiceTipo', 'Codice Art. Cliente');
