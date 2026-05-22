@@ -1,4 +1,4 @@
-codeunit 50100 "EDS Item Child Table Blocking"
+codeunit 61101 "EDS Item Child Table Blocking"
 {
     // Example: Extend EDS child table blocking to support the Item table.
     // When the Item record has "Changes disabled" or "Deletion disabled" set on its EDS status,
