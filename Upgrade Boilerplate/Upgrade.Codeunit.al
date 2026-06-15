@@ -64,10 +64,10 @@ codeunit 9999990 "EOSxxx Upgrade" // replace xxx with your 3 digit extension cod
     // If this is not done, the first time a new version of this app is installed in the future (and therefore upgrades start running),
     // all upgrades will run, even if they (probabily) should not.
     // Makes use of 'GetDatabaseUpgradeTags' to get all tags to create.
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Upgrade Tag", OnGetPerCompanyUpgradeTags, '', true, false)]
-    local procedure OnGetPerDatabaseUpgradeTags(var PerCompanyUpgradeTags: List of [Code[250]])
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Upgrade Tag", OnGetPerDatabaseUpgradeTags, '', true, false)]
+    local procedure OnGetPerDatabaseUpgradeTags(var PerDatabaseUpgradeTags: List of [Code[250]])
     begin
-        PerCompanyUpgradeTags.AddRange(GetCompanyUpgradeTags());
+        PerDatabaseUpgradeTags.AddRange(GetDatabaseUpgradeTags());
     end;
 
     // The obvious trigger that actually executes your upgrade.
