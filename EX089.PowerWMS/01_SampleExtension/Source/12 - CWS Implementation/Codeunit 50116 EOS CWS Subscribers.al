@@ -6,6 +6,9 @@ codeunit 50116 "EOS CWS Subscribers"
         TempEOS089WMSSourceInformation: Record "EOS089 WMS Source Information" temporary;
         EOS089WMSIntActionInfo: Codeunit "EOS089 WMS Int. Action Info";
     begin
+        if not GuiAllowed() then
+            exit;
+
         if not EOS089WMSIntActionInfo.IsPowerWMS() then
             exit;
 
@@ -31,6 +34,9 @@ codeunit 50116 "EOS CWS Subscribers"
         TempEOS089WMSSourceInformation: Record "EOS089 WMS Source Information" temporary;
         EOS089WMSIntActionInfo: Codeunit "EOS089 WMS Int. Action Info";
     begin
+        if not GuiAllowed() then
+            exit;
+
         if not EOS089WMSIntActionInfo.IsPowerWMS() then
             exit;
 
