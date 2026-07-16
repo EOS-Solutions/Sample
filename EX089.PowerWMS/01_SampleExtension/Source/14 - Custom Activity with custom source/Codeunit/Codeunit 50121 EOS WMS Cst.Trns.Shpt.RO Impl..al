@@ -1,5 +1,22 @@
 codeunit 50121 "EOS WMS Cst.Trns.Shpt.RO Impl." implements "EOS089 WMS Activity Interface V5", "EOS089 WMS Act. Int. - Alt. Views", "EOS089 WMS Custom Source Interface"
 {
+    /// <summary>
+    /// This codeunit implements the "EOS089 WMS Custom Source Interface" for managing custom activities using actual tables.
+    /// This sample is based on standard "Transfer Shipment" implementation.
+    /// Custom activities based on actual tables can be set as "Read Only".
+    /// DIFFERENCES FROM STANDARD IMPLEMENTATION:
+    /// - The activity type is a custom enum (as a custom activity)
+    /// - In InitActivity() procedure you must set custom type (mandatory for custom activities) and the Read-Only property if necessary
+    /// The interface must implement the "EOS089 WMS Custom Source Interface" interface
+    /// Following methods must be used to manage data:
+    /// - AllowCustomSource - returns true
+    /// - GetSourceTableInfo - edit with right info
+    /// - OpenSourceHeaderRecordRef - no needs to change
+    /// - FillHeaderData - change field mapping according to your source table
+    /// - OpenSourceLineRecordRef - change filter logic on source table
+    /// - FillLineData - change field mapping according to your source table
+    /// </summary>
+
 
     #region InterfaceSettings
     // Change Source Records and Activity Information according to Interface Type
