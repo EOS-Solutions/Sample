@@ -15,6 +15,9 @@ codeunit 50109 "EOS Activity Action Sub"
         LabelsCount: Integer;
         LabelsType: Text;
     begin
+        if IsHandled then
+            exit;
+
         // If nothing handle the action, generic error occurs
         if EOS089WMSActivityEntry."Activity Type" <> Enum::"EOS089 WMS Activity Type"::"Item Information" then // Check the right activity
             exit;
@@ -60,34 +63,41 @@ codeunit 50109 "EOS Activity Action Sub"
         JsonArray: JsonArray;
         JsonObject: JsonObject;
     begin
+        if IsHandled then
+            exit;
+
         if ActivityType <> Enum::"EOS089 WMS Activity Type"::"Item Information" then // Check the right activity
             exit;
 
-        if ActivityAction <> 'ITEM_PRINTLABELS' then // Check the right action
-            exit;
+        case ActivityAction of
+            'ITEM_PRINTLABELS':
+                begin
+                    EOS089WMSActActionParameter.Reset();
+                    EOS089WMSActActionParameter.SetRange(Activity, ActivityType);
+                    EOS089WMSActActionParameter.SetRange("Action Code", ActivityAction);
+                    if EOS089WMSActActionParameter.FindSet() then
+                        repeat
+                            Clear(JsonObject);
+                            case EOS089WMSActActionParameter.Code of
+                                'NUMBER':
+                                    begin
+                                        JsonObject.add('code', EOS089WMSActActionParameter.Code);
+                                        JsonObject.add('value', 123);
+                                    end;
+                                'TYPE':
+                                    begin
+                                        JsonObject.add('code', EOS089WMSActActionParameter.Code);
+                                        JsonObject.add('value', 'BIG');
+                                    end;
+                            end;
+                            JsonArray.Add(JsonObject);
+                        until EOS089WMSActActionParameter.Next() = 0;
 
-        EOS089WMSActActionParameter.Reset();
-        EOS089WMSActActionParameter.SetRange(Activity, ActivityType);
-        EOS089WMSActActionParameter.SetRange("Action Code", ActivityAction);
-        if EOS089WMSActActionParameter.FindSet() then
-            repeat
-                Clear(JsonObject);
-                case EOS089WMSActActionParameter.Code of
-                    'NUMBER':
-                        begin
-                            JsonObject.add('code', EOS089WMSActActionParameter.Code);
-                            JsonObject.add('value', 666);
-                        end;
-                    'TYPE':
-                        begin
-                            JsonObject.add('code', EOS089WMSActActionParameter.Code);
-                            JsonObject.add('value', 'HUGE');
-                        end;
+                    if JsonArray.Count() > 0 then
+                        ReturnValues.Add('parameters', JsonArray);
+
+                    IsHandled := true;
                 end;
-                JsonArray.Add(JsonObject);
-            until EOS089WMSActActionParameter.Next() = 0;
-
-        if JsonArray.Count() > 0 then
-            ReturnValues.Add('parameters', JsonArray);
+        end;
     end;
 }
