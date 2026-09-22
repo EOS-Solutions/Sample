@@ -1,0 +1,18 @@
+<div class="order-details">
+    <h3>Order #{{OrderNumber}}</h3>
+    <p>Thank you for your order! Below are the details:</p>
+    
+    <h4>Order Lines:</h4>
+    <ul class="order-lines">
+        {{#each Lines}}
+        <li class="order-line">
+            <strong>{{No}}</strong> - {{Description}}
+            <br>Quantity: {{Quantity}} | Unit Price: {{UnitPrice}} | Amount: {{Amount}}
+        </li>
+        {{/each}}
+    </ul>
+    
+    <div style="text-align: right; margin-top: 20px;">
+        <p><strong>Total Amount: {{TotalAmount}}</strong></p>
+    </div>
+</div>
