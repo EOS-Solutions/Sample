@@ -1,0 +1,42 @@
+{
+  "id": "3767d861-a912-4c21-b98b-424216b1bc38",
+  "name": "ALProject5",
+  "publisher": "Default Publisher",
+  "version": "1.0.0.0",
+  "brief": "",
+  "description": "",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "",
+  "logo": "",
+  "dependencies": [
+    {
+      "id": "e55990f0-b8ab-48b5-b6e2-3f10dea6a8fc",
+      "name": "AI Agent Library",
+      "publisher": "EOS Solutions",
+      "version": "28.0.0.0"
+    }
+  ],
+  "resourceFolders": [
+    "Instructions"
+  ],
+  "screenshots": [],
+  "platform": "1.0.0.0",
+  "application": "28.0.0.0",
+  "idRanges": [
+    {
+      "from": 50100,
+      "to": 50149
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": true,
+    "includeSourceInSymbolFile": true
+  },
+  "runtime": "17.0",
+  "features": [
+    "NoImplicitWith"
+  ]
+}
